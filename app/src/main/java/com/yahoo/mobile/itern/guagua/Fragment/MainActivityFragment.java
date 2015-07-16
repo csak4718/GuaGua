@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.parse.ParseObject;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yalantis.phoenix.PullToRefreshView;
 
@@ -44,6 +45,7 @@ public class MainActivityFragment extends Fragment {
                 }, 1);
             }
         });
+
 
         return mView;
     }
