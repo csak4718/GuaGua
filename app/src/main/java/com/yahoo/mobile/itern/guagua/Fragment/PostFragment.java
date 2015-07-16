@@ -36,9 +36,7 @@ public class PostFragment extends Fragment {
                 final String optionA = edtOptA.getText().toString();
                 final String optionB = edtOptB.getText().toString();
                 ParseUtils.postQuestions(question, optionA, optionB);
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.content_frame, new MainActivityFragment())
-                        .commit();
+                getFragmentManager().popBackStack();
 
             }
         });

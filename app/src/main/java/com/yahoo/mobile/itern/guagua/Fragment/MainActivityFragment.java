@@ -88,8 +88,10 @@ public class MainActivityFragment extends Fragment {
         mBtnAddPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.replace(R.id.content_frame, new PostFragment()).commit();
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.content_frame, new PostFragment())
+                        .addToBackStack("main")
+                        .commit();
             }
         });
 
