@@ -2,6 +2,7 @@ package com.yahoo.mobile.itern.guagua.Fragment;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +10,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.parse.ParseObject;
+import com.yahoo.mobile.itern.guagua.Event.QuestionEvent;
 import com.yahoo.mobile.itern.guagua.R;
+import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yalantis.phoenix.PullToRefreshView;
+
+import de.greenrobot.event.EventBus;
 
 
 /**
@@ -23,6 +28,22 @@ public class MainActivityFragment extends Fragment {
     PullToRefreshView mPullToRefreshView;
 
     public MainActivityFragment() {
+    }
+
+    @Override
+    public void onStart() {
+        EventBus.getDefault().register(this);
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    public void onEvent(QuestionEvent event) {
+        Log.d("eventbus", "" + event.questionList.size());
     }
 
     @Override
@@ -45,6 +66,8 @@ public class MainActivityFragment extends Fragment {
                 }, 1);
             }
         });
+
+        ParseUtils.getAllQuestions();
 
 
         return mView;
