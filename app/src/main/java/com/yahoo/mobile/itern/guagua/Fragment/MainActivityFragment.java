@@ -2,6 +2,7 @@ package com.yahoo.mobile.itern.guagua.Fragment;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -9,8 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
+import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.parse.ParseObject;
 import com.yahoo.mobile.itern.guagua.Adapter.QuestionCardAdapter;
 import com.yahoo.mobile.itern.guagua.Event.QuestionEvent;
@@ -29,11 +32,11 @@ import de.greenrobot.event.EventBus;
 public class MainActivityFragment extends Fragment {
 
     private View mView;
+    private FloatingActionButton mBtnAddPost;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private PullToRefreshView mPullToRefreshView;
     private QuestionCardAdapter mAdapter;
-
 
     public MainActivityFragment() {
     }
@@ -46,7 +49,7 @@ public class MainActivityFragment extends Fragment {
 
     @Override
     public void onStop() {
-        EventBus.getDefault().register(this);
+        EventBus.getDefault().unregister(this);
         super.onStop();
     }
 
@@ -65,6 +68,7 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_main, container, false);
+        mBtnAddPost = (FloatingActionButton) mView.findViewById(R.id.btn_add_post);
         mRecyclerView = (RecyclerView) mView.findViewById(R.id.recycler_view);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -79,6 +83,13 @@ public class MainActivityFragment extends Fragment {
                         ParseUtils.getAllQuestions();
                     }
                 });
+            }
+        });
+        mBtnAddPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, new PostFragment()).commit();
             }
         });
 
