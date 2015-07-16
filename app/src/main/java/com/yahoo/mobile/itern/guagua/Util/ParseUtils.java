@@ -35,4 +35,13 @@ public class ParseUtils {
             }
         });
     }
+    static public void postQuestions(String question, String optionA, String optionB) {
+        ParseObject mPost = new ParseObject("Prayer");
+        mPost.put("prayer", question);
+        mPost.put("QA", optionA);
+        mPost.put("QB", optionB);
+        mPost.put("A", 0);
+        mPost.put("B", 0);
+        mPost.saveInBackground();
+    }
 }

@@ -54,12 +54,36 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         return vh;
     }
 
+
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        ParseObject mQuestion = mQuestionList.get(position);
+    public void onBindViewHolder(final ViewHolder holder, int position) {
+        final ParseObject mQuestion = mQuestionList.get(position);
+        final String objectId = mQuestion.getString("objectId");
         holder.txtTitle.setText(mQuestion.getString("prayer"));
         holder.btnA.setText(mQuestion.getString("QA"));
         holder.btnB.setText(mQuestion.getString("QB"));
+        holder.btnA.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final int voteA = mQuestion.getInt("A");
+                final int voteB = mQuestion.getInt("B");
+                mQuestion.put("A", voteA + 1);
+                holder.btnA.setText(Integer.toString(voteA + 1));
+                holder.btnB.setText(Integer.toString(voteB));
+                mQuestion.saveInBackground();
+            }
+        });
+        holder.btnB.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                final int voteA = mQuestion.getInt("A");
+                final int voteB = mQuestion.getInt("B");
+                mQuestion.put("B", voteB + 1);
+                holder.btnA.setText(Integer.toString(voteA));
+                holder.btnB.setText(Integer.toString(voteB + 1));
+                mQuestion.saveInBackground();
+            }
+        });
     }
 
     @Override
