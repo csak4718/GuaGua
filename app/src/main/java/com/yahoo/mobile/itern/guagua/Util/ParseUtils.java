@@ -23,6 +23,7 @@ public class ParseUtils {
     }
     static public void getAllQuestions() {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Prayer");
+        query.orderByDescending("updatedAt");
         query.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> questionList, ParseException e) {
                 if (e == null) {
