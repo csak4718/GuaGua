@@ -9,15 +9,6 @@
             <corners android:radius="10dp" />
         </shape>
     </item>
-    <item android:state_focused="true">
-        <shape>
-            <stroke
-                android:color="@android:color/darker_gray"
-                android:width="2dp" />
-            <solid android:color="@android:color/darker_gray" />
-            <corners android:radius="10dp" />
-        </shape>
-    </item>
     <item android:state_pressed="true">
         <shape>
             <stroke

@@ -18,7 +18,9 @@ import com.parse.ParseObject;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.View.OptionButton;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by cmwang on 7/16/15.
@@ -28,6 +30,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
 
     private List<ParseObject> mQuestionList;
+    private Map<String, Boolean> voted;
     private Context mContext;
     private LayoutInflater mInflater;
 
@@ -37,7 +40,10 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         mQuestionList = list;
         mInflater = LayoutInflater.from(context);
         setHasStableIds(true);
+
+        voted = new HashMap<>();
     }
+
     public static class ViewHolder extends AbstractSwipeableItemViewHolder {
         public View mView;
         public TextView txtTitle;
@@ -71,35 +77,47 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final ParseObject mQuestion = mQuestionList.get(position);
-        final String objectId = mQuestion.getString("objectId");
+        final String objectId = mQuestion.getObjectId();
+        final int voteA = mQuestion.getInt("A");
+        final int voteB = mQuestion.getInt("B");
         holder.txtTitle.setText(mQuestion.getString("prayer"));
         holder.btnA.setVoteText(mQuestion.getString("QA"));
         holder.btnB.setVoteText(mQuestion.getString("QB"));
-        holder.btnA.setVoteNumVisibility(View.INVISIBLE);
-        holder.btnB.setVoteNumVisibility(View.INVISIBLE);
+        holder.btnA.setVoteNum(voteA);
+        holder.btnB.setVoteNum(voteB);
+        if(voted.get(objectId) == null) {
+            voted.put(objectId, false);
+        }
+        holder.btnA.setVoted(voted.get(objectId));
+        holder.btnB.setVoted(voted.get(objectId));
+
         holder.btnA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final int voteA = mQuestion.getInt("A");
-                final int voteB = mQuestion.getInt("B");
+                if(voted.get(objectId)) {
+                    return;
+                }
                 mQuestion.put("A", voteA + 1);
                 holder.btnA.setVoteNum(voteA + 1);
                 holder.btnB.setVoteNum(voteB);
-                holder.btnA.setVoteNumVisibility(View.VISIBLE);
-                holder.btnB.setVoteNumVisibility(View.VISIBLE);
+                holder.btnA.setVoted(true);
+                holder.btnB.setVoted(true);
+                voted.put(objectId, true);
                 mQuestion.saveInBackground();
             }
         });
         holder.btnB.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                final int voteA = mQuestion.getInt("A");
-                final int voteB = mQuestion.getInt("B");
+                if(voted.get(objectId)) {
+                    return;
+                }
                 mQuestion.put("B", voteB + 1);
                 holder.btnA.setVoteNum(voteA);
                 holder.btnB.setVoteNum(voteB + 1);
-                holder.btnA.setVoteNumVisibility(View.VISIBLE);
-                holder.btnB.setVoteNumVisibility(View.VISIBLE);
+                holder.btnA.setVoted(true);
+                holder.btnB.setVoted(true);
+                voted.put(objectId, true);
                 mQuestion.saveInBackground();
             }
         });
