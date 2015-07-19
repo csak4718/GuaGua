@@ -16,6 +16,7 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
 import com.parse.ParseObject;
 import com.yahoo.mobile.itern.guagua.R;
+import com.yahoo.mobile.itern.guagua.View.OptionButton;
 
 import java.util.List;
 
@@ -40,14 +41,14 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     public static class ViewHolder extends AbstractSwipeableItemViewHolder {
         public View mView;
         public TextView txtTitle;
-        public Button btnA;
-        public Button btnB;
+        public OptionButton btnA;
+        public OptionButton btnB;
         public ViewHolder(View v) {
             super(v);
             mView = v;
             txtTitle = (TextView) v.findViewById(R.id.title);
-            btnA = (Button) v.findViewById(R.id.btnA);
-            btnB = (Button) v.findViewById(R.id.btnB);
+            btnA = (OptionButton) v.findViewById(R.id.btnA);
+            btnB = (OptionButton) v.findViewById(R.id.btnB);
         }
         @Override
         public View getSwipeableContainerView() {
@@ -72,16 +73,20 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         final ParseObject mQuestion = mQuestionList.get(position);
         final String objectId = mQuestion.getString("objectId");
         holder.txtTitle.setText(mQuestion.getString("prayer"));
-        holder.btnA.setText(mQuestion.getString("QA"));
-        holder.btnB.setText(mQuestion.getString("QB"));
+        holder.btnA.setVoteText(mQuestion.getString("QA"));
+        holder.btnB.setVoteText(mQuestion.getString("QB"));
+        holder.btnA.setVoteNumVisibility(View.INVISIBLE);
+        holder.btnB.setVoteNumVisibility(View.INVISIBLE);
         holder.btnA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final int voteA = mQuestion.getInt("A");
                 final int voteB = mQuestion.getInt("B");
                 mQuestion.put("A", voteA + 1);
-                holder.btnA.setText(Integer.toString(voteA + 1));
-                holder.btnB.setText(Integer.toString(voteB));
+                holder.btnA.setVoteNum(voteA + 1);
+                holder.btnB.setVoteNum(voteB);
+                holder.btnA.setVoteNumVisibility(View.VISIBLE);
+                holder.btnB.setVoteNumVisibility(View.VISIBLE);
                 mQuestion.saveInBackground();
             }
         });
@@ -91,8 +96,10 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                 final int voteA = mQuestion.getInt("A");
                 final int voteB = mQuestion.getInt("B");
                 mQuestion.put("B", voteB + 1);
-                holder.btnA.setText(Integer.toString(voteA));
-                holder.btnB.setText(Integer.toString(voteB + 1));
+                holder.btnA.setVoteNum(voteA);
+                holder.btnB.setVoteNum(voteB + 1);
+                holder.btnA.setVoteNumVisibility(View.VISIBLE);
+                holder.btnB.setVoteNumVisibility(View.VISIBLE);
                 mQuestion.saveInBackground();
             }
         });
