@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
@@ -49,12 +50,14 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         public TextView txtTitle;
         public OptionButton btnA;
         public OptionButton btnB;
+        public ImageButton imgBtnComment;
         public ViewHolder(View v) {
             super(v);
             mView = v;
             txtTitle = (TextView) v.findViewById(R.id.title);
             btnA = (OptionButton) v.findViewById(R.id.btnA);
             btnB = (OptionButton) v.findViewById(R.id.btnB);
+            imgBtnComment = (ImageButton) v.findViewById(R.id.imgBtnComment);
         }
         @Override
         public View getSwipeableContainerView() {
@@ -73,6 +76,20 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         return vh;
     }
 
+    private void voteQuestion(ParseObject mQuestion, ViewHolder holder, int voteA, int voteB) {
+        final String objectId = mQuestion.getObjectId();
+        if(voted.get(objectId)) {
+            return;
+        }
+        mQuestion.put("A", voteA);
+        holder.btnA.setVoteNum(voteA);
+        holder.btnB.setVoteNum(voteB);
+        holder.btnA.setVoted(true);
+        holder.btnB.setVoted(true);
+        holder.imgBtnComment.setVisibility(View.VISIBLE);
+        voted.put(objectId, true);
+        mQuestion.saveInBackground();
+    }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
@@ -88,37 +105,25 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         if(voted.get(objectId) == null) {
             voted.put(objectId, false);
         }
+        if(voted.get(objectId)) {
+            holder.imgBtnComment.setVisibility(View.VISIBLE);
+        }
+        else {
+            holder.imgBtnComment.setVisibility(View.GONE);
+        }
         holder.btnA.setVoted(voted.get(objectId));
         holder.btnB.setVoted(voted.get(objectId));
 
         holder.btnA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(voted.get(objectId)) {
-                    return;
-                }
-                mQuestion.put("A", voteA + 1);
-                holder.btnA.setVoteNum(voteA + 1);
-                holder.btnB.setVoteNum(voteB);
-                holder.btnA.setVoted(true);
-                holder.btnB.setVoted(true);
-                voted.put(objectId, true);
-                mQuestion.saveInBackground();
+                voteQuestion(mQuestion, holder, voteA + 1, voteB);
             }
         });
         holder.btnB.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                if(voted.get(objectId)) {
-                    return;
-                }
-                mQuestion.put("B", voteB + 1);
-                holder.btnA.setVoteNum(voteA);
-                holder.btnB.setVoteNum(voteB + 1);
-                holder.btnA.setVoted(true);
-                holder.btnB.setVoted(true);
-                voted.put(objectId, true);
-                mQuestion.saveInBackground();
+                voteQuestion(mQuestion, holder, voteA, voteB + 1);
             }
         });
     }
