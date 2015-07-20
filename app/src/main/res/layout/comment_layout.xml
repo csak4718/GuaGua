@@ -29,9 +29,10 @@
         android:id="@+id/txt_comment_msg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:padding="15dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Medium Text"
-        android:background="@drawable/bubble"
+        android:background="@drawable/img_chats_bg_01"
         android:layout_below="@+id/txt_comment_name"
         android:layout_alignLeft="@+id/txt_comment_name"
         android:layout_alignStart="@+id/txt_comment_name" />
