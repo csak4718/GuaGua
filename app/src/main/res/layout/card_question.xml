@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="10dp"
-            android:background="@drawable/option_button"
+            android:background="@drawable/button_option"
             />
         <com.yahoo.mobile.itern.guagua.View.OptionButton
             android:id="@+id/btnB"
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="10dp"
-            android:background="@drawable/option_button" />
+            android:background="@drawable/button_option" />
         <ImageButton
             android:id="@+id/imgBtnComment"
             android:layout_width="18dp"

@@ -1,14 +1,13 @@
 package com.yahoo.mobile.itern.guagua.Adapter;
 
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -16,6 +15,7 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeMana
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
 import com.parse.ParseObject;
+import com.yahoo.mobile.itern.guagua.Fragment.CommentFragment;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.View.OptionButton;
 
@@ -70,7 +70,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     public QuestionCardAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                    int viewType) {
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.question_card, parent, false);
+                .inflate(R.layout.card_question, parent, false);
 
         ViewHolder vh = new ViewHolder(v);
         return vh;
@@ -124,6 +124,16 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             @Override
             public void onClick(View v) {
                 voteQuestion(mQuestion, holder, voteA, voteB + 1);
+            }
+        });
+        holder.imgBtnComment.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                ((AppCompatActivity) mContext).getSupportFragmentManager()
+                        .beginTransaction()
+                        .addToBackStack("main")
+                        .replace(R.id.content_frame, CommentFragment.newInstance(objectId))
+                        .commit();
             }
         });
     }

@@ -3,7 +3,7 @@
     android:id="@+id/layout_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/option_button"
+    android:background="@drawable/button_option"
     android:padding="10dp"
     android:clickable="true">
 

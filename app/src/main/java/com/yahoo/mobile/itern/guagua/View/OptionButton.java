@@ -36,7 +36,7 @@ public class OptionButton extends RelativeLayout {
 
     private void initView(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        mView = inflater.inflate(R.layout.option_button, this);
+        mView = inflater.inflate(R.layout.button_option, this);
         mRoot = (RelativeLayout) mView.findViewById(R.id.layout_root);
         txtVoteNum = (TextView) mView.findViewById(R.id.txtVoteNum);
         txtVoteText = (TextView) mView.findViewById(R.id.txtVoteText);
@@ -48,12 +48,12 @@ public class OptionButton extends RelativeLayout {
     public void setVoted(boolean voted) {
         if(voted) {
             txtVoteNum.setVisibility(VISIBLE);
-            mRoot.setBackgroundResource(R.drawable.opton_button_after_pressed);
+            mRoot.setBackgroundResource(R.drawable.button_option_after_pressed);
             isVoted = true;
         }
         else {
             txtVoteNum.setVisibility(INVISIBLE);
-            mRoot.setBackgroundResource(R.drawable.option_button);
+            mRoot.setBackgroundResource(R.drawable.button_option);
             isVoted = false;
         }
     }
