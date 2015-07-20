@@ -6,6 +6,8 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.SaveCallback;
+import com.yahoo.mobile.itern.guagua.Event.CommentEvent;
 import com.yahoo.mobile.itern.guagua.Event.QuestionEvent;
 
 import java.util.List;
@@ -27,10 +29,27 @@ public class ParseUtils {
         query.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> questionList, ParseException e) {
                 if (e == null) {
-                    Log.d("score", "Retrieved " + questionList.size() + " questions");
+                    Log.d("questions", "Retrieved " + questionList.size() + " questions");
                     EventBus.getDefault().post(new QuestionEvent(questionList));
                 } else {
-                    Log.d("score", "Error: " + e.getMessage());
+                    Log.d("questions", "Error: " + e.getMessage());
+                }
+            }
+        });
+    }
+    /*
+     * get comments related to a question
+     */
+    static public void getPostComments(String postObjectId) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Comments");
+        query.whereEqualTo("PostId", postObjectId);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> commentList, ParseException e) {
+                if (e == null) {
+                    Log.d("comments", "Retrieved " + commentList.size() + " comments");
+                    EventBus.getDefault().post(new CommentEvent(commentList));
+                } else {
+                    Log.d("comments", "Error: " + e.getMessage());
                 }
             }
         });
@@ -43,5 +62,20 @@ public class ParseUtils {
         mPost.put("A", 0);
         mPost.put("B", 0);
         mPost.saveInBackground();
+    }
+    static public void postComment(String comment, final String postId, final Boolean refreshList) {
+        ParseObject mComment = new ParseObject("Comments");
+        mComment.put("PostId", postId);
+        mComment.put("msg", comment);
+        mComment.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    if(refreshList) { getPostComments(postId); }
+                } else {
+
+                }
+            }
+        });
     }
 }
