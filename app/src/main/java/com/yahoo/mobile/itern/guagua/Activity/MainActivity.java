@@ -1,10 +1,13 @@
 package com.yahoo.mobile.itern.guagua.Activity;
 
 import android.graphics.drawable.ColorDrawable;
-import android.support.v4.app.FragmentTransaction;
+import android.os.Handler;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,9 +22,12 @@ import com.yahoo.mobile.itern.guagua.R;
 public class MainActivity extends ActionBarActivity {
 
     private LinearLayout mBannerBadge;
+    private MainActivityFragment mainFragment;
+    private Handler handler = new Handler();
+    private Runnable filterRunnable;
 
     private void setupActionBar() {
-        View actionBarView = getLayoutInflater().inflate(R.layout.actionbar_main, null);
+        View actionBarView = getLayoutInflater().inflate(R.layout.action_bar_main, null);
         Button btnActionBarTitle = (Button) actionBarView.findViewById(R.id.btn_action_bar_title);
 
         ActionBar actionBar = getSupportActionBar();
@@ -55,8 +61,9 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         mBannerBadge = (LinearLayout) findViewById(R.id.banner_badge);
         setupActionBar();
+        mainFragment = new MainActivityFragment();
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.content_frame, new MainActivityFragment())
+                .replace(R.id.content_frame, mainFragment)
                 .commit();
     }
 
@@ -65,6 +72,29 @@ public class MainActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //mainFragment.setFilter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(final String newText) {
+                handler.removeCallbacks(filterRunnable);
+                filterRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        mainFragment.setFilter(newText);
+                    }
+                };
+                handler.postDelayed(filterRunnable, 300);
+                return true;
+            }
+        });
+
         return true;
     }
 
