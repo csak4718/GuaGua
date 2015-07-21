@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,24 +18,23 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.yahoo.mobile.itern.guagua.R;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
  * Created by fanwang on 7/16/15.
  */
 
-public class GuaMapFragment extends MapFragment implements GoogleApiClient.ConnectionCallbacks,
+public class GuaMapFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,LocationListener, OnMapReadyCallback {
     private final String TAG = "GuaMapFragment";
     private View mView;
+    private MapView mMapView;
     private Location mLastLocation;
 
     private GoogleMap mMap;
@@ -76,18 +76,23 @@ public class GuaMapFragment extends MapFragment implements GoogleApiClient.Conne
                 .build();
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mView = super.onCreateView(inflater, container, savedInstanceState);
-        setUpMapIfNeeded();
-        return mView;
+        View rootView = inflater.inflate(R.layout.fragment_map, container, false);
+
+        mMapView = (MapView)rootView.findViewById(R.id.map);
+        mMapView.onCreate(savedInstanceState);
+        mMapView.onResume();
+
+
+        MapsInitializer.initialize(getActivity());
+        mMapView.getMapAsync(this);
+        return rootView;
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState){
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
     }
 
     @Override
@@ -98,8 +103,7 @@ public class GuaMapFragment extends MapFragment implements GoogleApiClient.Conne
     }
 
     private void setUpMapIfNeeded() {
-        //if(mMap == null)
-        getMapAsync(this);
+        mMapView.getMapAsync(this);
         return;
     }
 
