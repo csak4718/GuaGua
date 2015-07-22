@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -17,24 +19,32 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.ParseObject;
+import com.yahoo.mobile.itern.guagua.Event.CommunityEvent;
 import com.yahoo.mobile.itern.guagua.R;
+import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 
 /**
  * Created by fanwang on 7/16/15.
  */
 
-public class GuaMapFragment extends MapFragment implements GoogleApiClient.ConnectionCallbacks,
+public class MapFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,LocationListener, OnMapReadyCallback {
-    private final String TAG = "GuaMapFragment";
+    private final String TAG = "MapFragment";
     private View mView;
+    private Button mNextButton;
+    private MapView mMapView;
     private Location mLastLocation;
 
     private GoogleMap mMap;
@@ -42,17 +52,25 @@ public class GuaMapFragment extends MapFragment implements GoogleApiClient.Conne
     private LocationManager mLocationManager;
     private LocationRequest mLocationRequest;
 
+    private List<ParseObject> mCommunities = new ArrayList<>();
+
 
     @Override
     public void onResume() {
         super.onResume();
-
         mGoogleApiClient.connect();
-        setUpMapIfNeeded();
+        setUpMap();
+    }
+
+    @Override
+    public void onStart() {
+        EventBus.getDefault().register(this);
+        super.onStart();
     }
 
     @Override
     public void onStop(){
+        EventBus.getDefault().unregister(this);
         mGoogleApiClient.disconnect();
         super.onStop();
     }
@@ -74,20 +92,29 @@ public class GuaMapFragment extends MapFragment implements GoogleApiClient.Conne
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-    }
 
+        ParseUtils.getAllCommunities();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mView = super.onCreateView(inflater, container, savedInstanceState);
-        setUpMapIfNeeded();
-        return mView;
+        View rootView = inflater.inflate(R.layout.fragment_map, container, false);
+
+
+        mNextButton = (Button)rootView.findViewById(R.id.next_button);
+        mMapView = (MapView)rootView.findViewById(R.id.map);
+        mMapView.onCreate(savedInstanceState);
+        mMapView.onResume();
+
+
+        MapsInitializer.initialize(getActivity());
+        mMapView.getMapAsync(this);
+        return rootView;
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState){
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
     }
 
     @Override
@@ -95,11 +122,12 @@ public class GuaMapFragment extends MapFragment implements GoogleApiClient.Conne
         Log.d(TAG, "Location changed: "+location.toString());
         LatLng userLocation = new LatLng(location.getLatitude(),location.getLongitude());
         //mMap.addMarker(new MarkerOptions().position(userLocation).title("Cur"));
+
+        getCommunityIndex();
     }
 
-    private void setUpMapIfNeeded() {
-        //if(mMap == null)
-        getMapAsync(this);
+    private void setUpMap() {
+        mMapView.getMapAsync(this);
         return;
     }
 
@@ -113,8 +141,8 @@ public class GuaMapFragment extends MapFragment implements GoogleApiClient.Conne
 
         if(mLastLocation != null) {
             Log.d(TAG, "my location:" + mLastLocation.toString());
-            LatLng lastLatLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
 
+            LatLng lastLatLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
             mMap.addMarker(new MarkerOptions()
                     .position(lastLatLng)
                     .title("You are here"));
@@ -129,6 +157,12 @@ public class GuaMapFragment extends MapFragment implements GoogleApiClient.Conne
                         .position(new LatLng(point.latitude, point.longitude))
                         .title("Costume Marker"));
                 System.out.println(point.latitude + "---" + point.longitude);
+
+
+                Location location = new Location("dummyprovider");
+                location.setLatitude(point.latitude);
+                location.setLongitude(point.longitude);
+                mLastLocation = location;
             }
         });
     }
@@ -143,8 +177,8 @@ public class GuaMapFragment extends MapFragment implements GoogleApiClient.Conne
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
-        setUpMapIfNeeded();
-        Log.d(TAG, "mLastLocation:"+mLastLocation.toString());
+        setUpMap();
+        Log.d(TAG, "mLastLocation:" + mLastLocation.toString());
     }
 
     @Override
@@ -155,5 +189,38 @@ public class GuaMapFragment extends MapFragment implements GoogleApiClient.Conne
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.d(TAG, "GoogleApiClient connection has failed");
+    }
+
+
+    public void onEvent(CommunityEvent event) {
+        Log.d("eventbus", "" + event.communityList.size());
+        refreshList(event.communityList);
+    }
+
+    private void refreshList(List<ParseObject> list) {
+        mCommunities.clear();
+        mCommunities.addAll(list);
+    }
+
+    public int getCommunityIndex(){
+        double minDistance = 10E10;
+        ParseObject belongCommunity = null;
+
+        for(ParseObject com:mCommunities){
+            Location comLocation = new Location(LocationManager.GPS_PROVIDER);
+            comLocation.setLatitude(Double.parseDouble(com.getString("lat")));
+            comLocation.setLongitude(Double.parseDouble(com.getString("long")));
+
+            double distance = mLastLocation.distanceTo(comLocation);
+            Log.d("Community",""+distance+" meters to "+com.get("title"));
+
+            if(distance < minDistance) {
+                minDistance = distance;
+                belongCommunity = com;
+            }
+        }
+
+        mNextButton.setText(belongCommunity.getString("title"));
+        return 1;
     }
 }
