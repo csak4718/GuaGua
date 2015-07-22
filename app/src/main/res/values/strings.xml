@@ -1,4 +1,7 @@
 <resources>
+    <string name="facebook_app_id" translatable="false" templateMergeStrategy="preserve">
+        1624392404511434
+    </string>
     <string name="app_name">GuaGua</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
