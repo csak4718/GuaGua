@@ -55,17 +55,27 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-        <EditText
-            android:id="@+id/edt_optA"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="選項1"
-            android:background="@null"
-            android:paddingTop="10dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="10dp"/>
-            
+            <EditText
+                android:id="@+id/edt_optA"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="選項1"
+                android:background="@null"
+                android:paddingTop="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="10dp"/>
+            <ImageButton
+                android:id="@+id/btn_cameraB"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:paddingRight="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="haha"
+                android:background="@android:color/transparent"/>
+        </LinearLayout>
         <View
             android:layout_width="match_parent"
             android:layout_height="5px"
@@ -86,7 +96,7 @@
                 android:paddingRight="10dp"
                 android:paddingBottom="10dp"/>
             <ImageButton
-                android:id="@+id/btn_camera"
+                android:id="@+id/btn_cameraA"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
                 android:paddingRight="10dp"

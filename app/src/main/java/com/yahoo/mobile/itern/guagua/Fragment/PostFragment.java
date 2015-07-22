@@ -29,7 +29,9 @@ public class PostFragment extends Fragment {
     EditText edtOptB;
     Button btnPost;
     Button btnCancel;
-    ImageButton btnCamera;
+    ImageButton btnCameraA;
+    ImageButton btnCameraB;
+    boolean aorb;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -40,9 +42,11 @@ public class PostFragment extends Fragment {
         edtOptB = (EditText) mView.findViewById(R.id.edt_optB);
         btnPost = (Button) mView.findViewById(R.id.btn_post_question);
         btnCancel = (Button) mView.findViewById(R.id.btn_cancel);
-        btnCamera = (ImageButton) mView.findViewById(R.id.btn_camera);
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_local_see_black_48dp);
-        btnCamera.setImageBitmap(sqr2circle(adjustBitmap(bm,bm.getHeight())));
+        btnCameraA = (ImageButton) mView.findViewById(R.id.btn_cameraA);
+        btnCameraA.setImageBitmap(sqr2circle(adjustBitmap(bm,bm.getHeight())));
+        btnCameraB = (ImageButton) mView.findViewById(R.id.btn_cameraB);
+        btnCameraB.setImageBitmap(sqr2circle(adjustBitmap(bm,bm.getHeight())));
 
         btnPost.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,9 +65,24 @@ public class PostFragment extends Fragment {
                 getFragmentManager().popBackStack();
             }
         });
-        btnCamera.setOnClickListener(new View.OnClickListener(){
+        btnCameraA.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                aorb = false;
+                Intent i = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                final int ACTIVITY_SELECT_IMAGE = 1234;
+                Log.d("Photo", "before act");
+                getActivity().startActivityForResult(i, ACTIVITY_SELECT_IMAGE);
+                Log.d("Photo", "after act");
+                //Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_account_circle_black_48dp);
+                //btnCamera.setImageBitmap(bm);
+            }
+        });
+        btnCameraB.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                aorb = true;
                 Intent i = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI);
                 final int ACTIVITY_SELECT_IMAGE = 1234;
@@ -80,9 +99,13 @@ public class PostFragment extends Fragment {
     public void change_Image(String url){
         Bitmap bm = BitmapFactory.decodeFile(url);
         Log.d("Photo", "here");
-        bm = adjustBitmap(bm,btnCamera.getHeight());
-        //Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_account_circle_black_48dp);
-        btnCamera.setImageBitmap(bm);
+        if (aorb == false) {
+            bm = adjustBitmap(bm, btnCameraA.getHeight());
+            btnCameraA.setImageBitmap(bm);
+        }else{
+            bm = adjustBitmap(bm, btnCameraB.getHeight());
+            btnCameraB.setImageBitmap(bm);
+        }
     }
 
     //Adjust bitmap
