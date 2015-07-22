@@ -16,7 +16,8 @@ public class SplashActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         Intent it;
-        if(ParseUser.getCurrentUser() != null) {
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        if(currentUser != null) {
             it = new Intent(this, MainActivity.class);
         }
         else {
