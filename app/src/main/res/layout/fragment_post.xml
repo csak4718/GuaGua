@@ -2,42 +2,99 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:divider="?android:dividerHorizontal">
 
-    <TextView
-        android:textAppearance="?android:attr/textAppearanceLarge"
+
+    <RelativeLayout style="?android:buttonBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Question?" />
+        android:orientation="horizontal"
+        android:id="@+id/top_buttons">
+        <Button style = "?android:buttonBarButtonStyle"
+            android:id="@+id/btn_cancel"
+            android:text = "Cancel"
+            android:layout_alignParentLeft = "true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <Button style = "?android:buttonBarButtonStyle"
+            android:id="@+id/btn_post_question"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight = "true"
+            android:text="Post"/>
+
+    </RelativeLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="20px"
+        android:background= "#cccccc" />
     <EditText
         android:id="@+id/edt_question"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Ask something" />
-    <TextView
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:minLines="6"
+        android:hint="Ask something ......"
+        android:gravity="top"
+        android:background = "@null"
+        android:paddingTop="10dp"
+        android:paddingLeft="10dp"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5px"
+        android:background= "#cccccc" />
+
+    <LinearLayout
+        android:id="@+id/ab_buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Option A" />
-    <EditText
-        android:id="@+id/edt_optA"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Ex: Yes" />
-    <TextView
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Option B" />
-    <EditText
-        android:id="@+id/edt_optB"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Ex: No" />
-    <Button
-        android:id="@+id/btn_post_question"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:text="Post"/>
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true">
+        <EditText
+            android:id="@+id/edt_optA"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="選項1"
+            android:background="@null"
+            android:paddingTop="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5px"
+            android:background= "#cccccc" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/edt_optB"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="選項2"
+                android:background="@null"
+                android:paddingTop="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="10dp"/>
+            <ImageButton
+                android:id="@+id/btn_camera"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:paddingRight="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="haha"
+                android:background="@android:color/transparent"/>
+                <!--android:background="@drawable/ic_local_see_black_48dp"-->
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="20px"
+            android:background= "#cccccc" />
+    </LinearLayout>
 
 </LinearLayout>
