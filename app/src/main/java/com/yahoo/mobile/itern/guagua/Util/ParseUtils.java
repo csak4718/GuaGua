@@ -8,6 +8,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 import com.yahoo.mobile.itern.guagua.Event.CommentEvent;
+import com.yahoo.mobile.itern.guagua.Event.CommunityEvent;
 import com.yahoo.mobile.itern.guagua.Event.QuestionEvent;
 
 import java.util.List;
@@ -77,5 +78,22 @@ public class ParseUtils {
                 }
             }
         });
+    }
+
+    static public void getAllCommunities() {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Community");
+        query.orderByDescending("updatedAt");
+        query.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> questionList, ParseException e) {
+                if (e == null) {
+                    Log.d("communities", "Retrieved " + questionList.size() + " communities");
+                    EventBus.getDefault().post(new CommunityEvent(questionList));
+                } else {
+                    Log.d("communities", "Error: " + e.getMessage());
+                }
+            }
+        });
+
+
     }
 }
