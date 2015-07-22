@@ -1,9 +1,9 @@
 package com.yahoo.mobile.itern.guagua.Activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -17,7 +17,6 @@ import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.FbUtils;
-import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 
 import java.util.ArrayList;
 import java.util.List;
