@@ -1,5 +1,6 @@
 package com.yahoo.mobile.itern.guagua.Activity;
 
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -31,15 +32,6 @@ public class MainActivity extends ActionBarActivity {
         Button btnActionBarTitle = (Button) actionBarView.findViewById(R.id.btn_action_bar_title);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        actionBar.setCustomView(actionBarView,
-                new ActionBar.LayoutParams(
-                        ActionBar.LayoutParams.WRAP_CONTENT,
-                        ActionBar.LayoutParams.MATCH_PARENT,
-                        Gravity.CENTER
-                )
-        );
         actionBar.setBackgroundDrawable(new ColorDrawable(R.color.purple));
 
         btnActionBarTitle.setOnClickListener(new View.OnClickListener() {
@@ -104,6 +96,9 @@ public class MainActivity extends ActionBarActivity {
 
         if (id == R.id.action_search) {
             return true;
+        }
+        if (id == R.id.action_profile) {
+            startActivity(new Intent(this, ProfileSettingActivity.class));
         }
 
         return super.onOptionsItemSelected(item);
