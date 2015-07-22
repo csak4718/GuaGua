@@ -1,7 +1,5 @@
 package com.yahoo.mobile.itern.guagua.Adapter;
 
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +17,7 @@ import com.yahoo.mobile.itern.guagua.Fragment.CommentFragment;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.View.OptionButton;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +29,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         implements SwipeableItemAdapter<QuestionCardAdapter.ViewHolder> {
 
 
-    private List<ParseObject> mQuestionList;
+    private List<ParseObject> mAllQuestionList, mVisibleQuestionList;
     private Map<String, Boolean> voted;
     private Context mContext;
     private LayoutInflater mInflater;
@@ -38,11 +37,30 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     public QuestionCardAdapter(Context context, List<ParseObject> list) {
         super();
         mContext = context;
-        mQuestionList = list;
+        mAllQuestionList = list;
+        mVisibleQuestionList = new ArrayList<>();
+        mVisibleQuestionList.addAll(mAllQuestionList);
         mInflater = LayoutInflater.from(context);
         setHasStableIds(true);
 
         voted = new HashMap<>();
+    }
+
+    public void flushFilter() {
+        mVisibleQuestionList.clear();
+        mVisibleQuestionList.addAll(mAllQuestionList);
+    }
+    public void setFilter(String queryText) {
+        mVisibleQuestionList.clear();
+        for(ParseObject question : mAllQuestionList) {
+            if(question.getString("prayer").contains(queryText)
+                    || question.getString("QA").contains(queryText)
+                    || question.getString("QB").contains(queryText))
+            {
+                mVisibleQuestionList.add(question);
+            }
+        }
+        notifyDataSetChanged();
     }
 
     public static class ViewHolder extends AbstractSwipeableItemViewHolder {
@@ -93,7 +111,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        final ParseObject mQuestion = mQuestionList.get(position);
+        final ParseObject mQuestion = mVisibleQuestionList.get(position);
         final String objectId = mQuestion.getObjectId();
         final int voteA = mQuestion.getInt("A");
         final int voteB = mQuestion.getInt("B");
@@ -140,12 +158,12 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
     @Override
     public long getItemId(int position) {
-        return mQuestionList.get(position).hashCode();
+        return mVisibleQuestionList.get(position).hashCode();
     }
 
     @Override
     public int getItemCount() {
-        return mQuestionList.size();
+        return mVisibleQuestionList.size();
     }
 
     @Override

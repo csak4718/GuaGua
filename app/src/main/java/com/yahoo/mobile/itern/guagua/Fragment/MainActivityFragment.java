@@ -50,6 +50,15 @@ public class MainActivityFragment extends Fragment {
     public MainActivityFragment() {
     }
 
+    public void setFilter(final String queryText) {
+        mRecyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.setFilter(queryText);
+            }
+        });
+    }
+
     @Override
     public void onStart() {
         EventBus.getDefault().register(this);
@@ -70,6 +79,7 @@ public class MainActivityFragment extends Fragment {
     private void refreshList(List<ParseObject> list) {
         mList.clear();
         mList.addAll(list);
+        mAdapter.flushFilter();
         mWrappedAdapter.notifyDataSetChanged();
         mPullToRefreshView.setRefreshing(false);
     }
