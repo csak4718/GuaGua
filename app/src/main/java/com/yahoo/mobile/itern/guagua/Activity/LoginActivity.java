@@ -11,10 +11,12 @@ import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.facebook.AccessToken;
 import com.parse.LogInCallback;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 import com.yahoo.mobile.itern.guagua.R;
+import com.yahoo.mobile.itern.guagua.Util.FbUtils;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 
 import java.util.ArrayList;
@@ -46,6 +48,7 @@ public class LoginActivity extends ActionBarActivity {
                             } else {
                                 Log.d("MyApp", "User logged in through Facebook!");
                             }
+                            FbUtils.getUserProfile(AccessToken.getCurrentAccessToken());
                             gotoMainActivity();
                         }
                     }
