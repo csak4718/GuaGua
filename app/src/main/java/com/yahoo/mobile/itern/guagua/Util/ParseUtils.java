@@ -3,6 +3,7 @@ package com.yahoo.mobile.itern.guagua.Util;
 import android.util.Log;
 
 import com.parse.FindCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -25,7 +26,7 @@ public class ParseUtils {
         testObject.saveInBackground();
     }
     static public void getAllQuestions() {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Prayer");
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseKeys.OBJECT_POST);
         query.orderByDescending("updatedAt");
         query.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> questionList, ParseException e) {
@@ -42,7 +43,7 @@ public class ParseUtils {
      * get comments related to a question
      */
     static public void getPostComments(String postObjectId) {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Comments");
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(ParseKeys.OBJECT_COMMENT);
         query.whereEqualTo("PostId", postObjectId);
         query.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> commentList, ParseException e) {
@@ -56,23 +57,25 @@ public class ParseUtils {
         });
     }
     static public void postQuestions(String question, String optionA, String optionB) {
-        ParseObject mPost = new ParseObject("Prayer");
-        mPost.put("prayer", question);
-        mPost.put("QA", optionA);
-        mPost.put("QB", optionB);
-        mPost.put("A", 0);
-        mPost.put("B", 0);
+        ParseObject mPost = new ParseObject(ParseKeys.OBJECT_POST);
+        mPost.put(ParseKeys.OBJECT_POST_CONTENT, question);
+        mPost.put(ParseKeys.OBJECT_POST_QA, optionA);
+        mPost.put(ParseKeys.OBJECT_POST_QB, optionB);
+        mPost.put(ParseKeys.OBJECT_POST_QA_NUM, 0);
+        mPost.put(ParseKeys.OBJECT_POST_QB_NUM, 0);
         mPost.saveInBackground();
     }
     static public void postComment(String comment, final String postId, final Boolean refreshList) {
-        ParseObject mComment = new ParseObject("Comments");
-        mComment.put("PostId", postId);
-        mComment.put("msg", comment);
+        ParseObject mComment = new ParseObject(ParseKeys.OBJECT_COMMENT);
+        mComment.put(ParseKeys.OBJECT_COMMENT_POSTID, postId);
+        mComment.put(ParseKeys.OBJECT_COMMENT_MSG, comment);
         mComment.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    if(refreshList) { getPostComments(postId); }
+                    if (refreshList) {
+                        getPostComments(postId);
+                    }
                 } else {
 
                 }

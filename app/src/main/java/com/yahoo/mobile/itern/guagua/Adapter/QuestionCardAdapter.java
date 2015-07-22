@@ -15,6 +15,7 @@ import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemView
 import com.parse.ParseObject;
 import com.yahoo.mobile.itern.guagua.Fragment.CommentFragment;
 import com.yahoo.mobile.itern.guagua.R;
+import com.yahoo.mobile.itern.guagua.Util.ParseKeys;
 import com.yahoo.mobile.itern.guagua.View.OptionButton;
 
 import java.util.ArrayList;
@@ -53,9 +54,9 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     public void setFilter(String queryText) {
         mVisibleQuestionList.clear();
         for(ParseObject question : mAllQuestionList) {
-            if(question.getString("prayer").contains(queryText)
-                    || question.getString("QA").contains(queryText)
-                    || question.getString("QB").contains(queryText))
+            if(question.getString(ParseKeys.OBJECT_POST_CONTENT).contains(queryText)
+                    || question.getString(ParseKeys.OBJECT_POST_QA).contains(queryText)
+                    || question.getString(ParseKeys.OBJECT_POST_QB).contains(queryText))
             {
                 mVisibleQuestionList.add(question);
             }
@@ -113,11 +114,11 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final ParseObject mQuestion = mVisibleQuestionList.get(position);
         final String objectId = mQuestion.getObjectId();
-        final int voteA = mQuestion.getInt("A");
-        final int voteB = mQuestion.getInt("B");
-        holder.txtTitle.setText(mQuestion.getString("prayer"));
-        holder.btnA.setVoteText(mQuestion.getString("QA"));
-        holder.btnB.setVoteText(mQuestion.getString("QB"));
+        final int voteA = mQuestion.getInt(ParseKeys.OBJECT_POST_QA_NUM);
+        final int voteB = mQuestion.getInt(ParseKeys.OBJECT_POST_QB_NUM);
+        holder.txtTitle.setText(mQuestion.getString(ParseKeys.OBJECT_POST_CONTENT));
+        holder.btnA.setVoteText(mQuestion.getString(ParseKeys.OBJECT_POST_QA));
+        holder.btnB.setVoteText(mQuestion.getString(ParseKeys.OBJECT_POST_QB));
         holder.btnA.setVoteNum(voteA);
         holder.btnB.setVoteNum(voteB);
         if(voted.get(objectId) == null) {
