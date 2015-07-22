@@ -1,9 +1,9 @@
 package com.yahoo.mobile.itern.guagua.Activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -15,7 +15,6 @@ import com.parse.LogInCallback;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 import com.yahoo.mobile.itern.guagua.R;
-import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,8 +82,8 @@ public class LoginActivity extends ActionBarActivity {
     private void gotoMainActivity() {
         Intent it = new Intent(this, MainActivity.class);
 
-        it.setFlags(it.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
-        it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //it.setFlags(it.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
+//        it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(it);
     }
 

@@ -92,11 +92,7 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
                 .addApi(LocationServices.API)
                 .build();
 
-<<<<<<< HEAD
         //ParseUtils.getAllCommunities();
-=======
-//        ParseUtils.getAllCommunities();
->>>>>>> 8fcf0a990747707070c7cfdba63b483857f2f956
     }
 
     @Override
