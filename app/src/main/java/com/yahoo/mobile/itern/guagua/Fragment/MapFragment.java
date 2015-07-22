@@ -27,6 +27,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.ParseObject;
 import com.yahoo.mobile.itern.guagua.Event.CommunityEvent;
 import com.yahoo.mobile.itern.guagua.R;
+import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,7 +93,7 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
                 .addApi(LocationServices.API)
                 .build();
 
-        //ParseUtils.getAllCommunities();
+        ParseUtils.getAllCommunities();
     }
 
     @Override

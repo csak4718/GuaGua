@@ -81,10 +81,8 @@ public class LoginActivity extends ActionBarActivity {
 
     private void gotoMainActivity() {
         Intent it = new Intent(this, MainActivity.class);
-
-        //it.setFlags(it.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
-//        it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(it);
+        finish();
     }
 
     @Override

@@ -51,6 +51,10 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_alignParentBottom="true">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
         <EditText
             android:id="@+id/edt_optA"
             android:layout_width="match_parent"
@@ -61,6 +65,7 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:paddingBottom="10dp"/>
+            
         <View
             android:layout_width="match_parent"
             android:layout_height="5px"
