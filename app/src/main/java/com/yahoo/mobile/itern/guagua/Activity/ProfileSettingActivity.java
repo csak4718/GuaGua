@@ -6,21 +6,31 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.parse.ParseUser;
 import com.yahoo.mobile.itern.guagua.R;
+import com.yahoo.mobile.itern.guagua.Util.ParseKeys;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
 
 public class ProfileSettingActivity extends ActionBarActivity {
 
+    ParseUser user;
     Button mBtnLogout;
+    Button mBtnSaveProfile;
+    EditText mEdtNickName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        user = ParseUser.getCurrentUser();
+        final String nickName = getIntent().getStringExtra("nickname");
+
         setContentView(R.layout.activity_profile_setting);
         mBtnLogout = (Button) findViewById(R.id.btn_log_out);
+        mBtnSaveProfile = (Button) findViewById(R.id.btn_save_profile);
+        mEdtNickName = (EditText) findViewById(R.id.edt_setting_nickname);
         mBtnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -28,6 +38,18 @@ public class ProfileSettingActivity extends ActionBarActivity {
                 ProfileSettingActivity.this.finish();
             }
         });
+        mEdtNickName.setText(nickName);
+        mBtnSaveProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String nickName = mEdtNickName.getText().toString();
+                user.put(ParseKeys.OBJECT_USER_NICK, nickName);
+                user.saveInBackground();
+                Utils.gotoMainActivity(ProfileSettingActivity.this);
+                finish();
+            }
+        });
+
     }
 
     @Override

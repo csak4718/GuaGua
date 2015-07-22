@@ -4,6 +4,7 @@ package com.yahoo.mobile.itern.guagua.Util;
  * Created by cmwang on 7/22/15.
  */
 public class ParseKeys {
+    public final static String OBJECT_USER_NICK = "nickname";
     public final static String OBJECT_POST = "Prayer";
     public final static String OBJECT_POST_CONTENT = "prayer";
     public final static String OBJECT_POST_QA = "QA";
