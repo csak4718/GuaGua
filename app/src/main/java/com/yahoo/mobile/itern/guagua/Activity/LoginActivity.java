@@ -66,6 +66,8 @@ public class LoginActivity extends ActionBarActivity {
     public void onEvent(UserProfileEvent event) {
         Log.d("eventbus", "Get userprofile event");
         Intent it = new Intent(LoginActivity.this, ProfileSettingActivity.class);
+        it.putExtra("classFrom", LoginActivity.class.toString());
+        it.putExtra("id", event.mFbId);
         it.putExtra("nickname", event.mNickName);
         startActivity(it);
         finish();
