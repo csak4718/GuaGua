@@ -15,11 +15,16 @@ import com.facebook.AccessToken;
 import com.parse.LogInCallback;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
+import com.yahoo.mobile.itern.guagua.Event.QuestionEvent;
+import com.yahoo.mobile.itern.guagua.Event.UserProfileEvent;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.FbUtils;
+import com.yahoo.mobile.itern.guagua.Util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 public class LoginActivity extends ActionBarActivity {
 
@@ -44,16 +49,40 @@ public class LoginActivity extends ActionBarActivity {
                         } else {
                             if (user.isNew()) {
                                 Log.d("MyApp", "User signed up and logged in through Facebook!");
+                                FbUtils.getUserProfile(AccessToken.getCurrentAccessToken());
                             } else {
                                 Log.d("MyApp", "User logged in through Facebook!");
+                                Utils.gotoMainActivity(LoginActivity.this);
+                                finish();
                             }
-                            FbUtils.getUserProfile(AccessToken.getCurrentAccessToken());
-                            gotoMainActivity();
+
                         }
                     }
                 });
             }
         });
+    }
+
+    public void onEvent(UserProfileEvent event) {
+        Log.d("eventbus", "Get userprofile event");
+        Intent it = new Intent(LoginActivity.this, ProfileSettingActivity.class);
+        it.putExtra("classFrom", LoginActivity.class.toString());
+        it.putExtra("id", event.mFbId);
+        it.putExtra("nickname", event.mNickName);
+        startActivity(it);
+        finish();
+    }
+
+    @Override
+    protected void onStart() {
+        EventBus.getDefault().register(this);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 
     private void showLoginAnimation() {
@@ -82,12 +111,6 @@ public class LoginActivity extends ActionBarActivity {
         animation.startNow();
     }
 
-    private void gotoMainActivity() {
-        Intent it = new Intent(this, MainActivity.class);
-        startActivity(it);
-        finish();
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,7 +127,8 @@ public class LoginActivity extends ActionBarActivity {
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    gotoMainActivity();
+                    Utils.gotoMainActivity(LoginActivity.this);
+                    finish();
                 }
             }, 1000);
         }

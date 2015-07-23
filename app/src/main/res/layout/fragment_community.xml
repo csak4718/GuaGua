@@ -1,0 +1,44 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/blue">
+
+    <ImageView
+        android:id="@+id/img_community_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/splash_logo"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:textSize="36sp"
+        android:id="@+id/txt_community_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="title"
+        android:layout_above="@+id/img_community_logo"
+        android:layout_centerHorizontal="true"/>
+
+    <Button
+        android:id="@+id/no_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="NO"
+
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/img_community_logo"
+        android:layout_toEndOf="@+id/img_community_logo"/>
+
+    <Button
+        android:id="@+id/yes_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="YES"
+
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/img_community_logo"
+        android:layout_toStartOf="@+id/img_community_logo"/>
+
+</RelativeLayout>

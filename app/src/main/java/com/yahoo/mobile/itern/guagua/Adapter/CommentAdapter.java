@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.parse.ParseObject;
 import com.yahoo.mobile.itern.guagua.R;
-import com.yahoo.mobile.itern.guagua.Util.ParseKeys;
+import com.yahoo.mobile.itern.guagua.Util.Common;
 
 import java.util.List;
 
@@ -54,7 +54,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     @Override
     public void onBindViewHolder(CommentAdapter.ViewHolder holder, int position) {
         final ParseObject comment = mCommentList.get(position);
-        final String commentMsg = comment.getString(ParseKeys.OBJECT_COMMENT_MSG);
+        final String commentMsg = comment.getString(Common.OBJECT_COMMENT_MSG);
         holder.txtCommentMsg.setText(commentMsg);
 
     }
