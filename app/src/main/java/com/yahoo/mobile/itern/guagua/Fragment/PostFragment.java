@@ -20,6 +20,7 @@ import android.widget.ImageButton;
 
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
+import com.yahoo.mobile.itern.guagua.Util.Utils;
 
 public class PostFragment extends Fragment {
 
@@ -55,6 +56,7 @@ public class PostFragment extends Fragment {
                 final String optionA = edtOptA.getText().toString();
                 final String optionB = edtOptB.getText().toString();
                 ParseUtils.postQuestions(question, optionA, optionB);
+                Utils.hideSoftKeyboard(getActivity());
                 getFragmentManager().popBackStack();
 
             }
@@ -62,6 +64,7 @@ public class PostFragment extends Fragment {
         btnCancel.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                Utils.hideSoftKeyboard(getActivity());
                 getFragmentManager().popBackStack();
             }
         });

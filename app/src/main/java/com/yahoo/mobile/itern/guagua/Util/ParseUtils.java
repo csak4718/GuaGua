@@ -1,9 +1,14 @@
 package com.yahoo.mobile.itern.guagua.Util;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.parse.FindCallback;
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -97,7 +102,19 @@ public class ParseUtils {
                 }
             }
         });
-
-
+    }
+    static public void displayImage(ParseFile img, final ImageView imgView) {
+        img.getDataInBackground(new GetDataCallback() {
+            @Override
+            public void done(byte[] bytes, ParseException e) {
+                if (e == null) {
+                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0,
+                            bytes.length);
+                    if (bmp != null) {
+                        imgView.setImageBitmap(bmp);
+                    }
+                }
+            }
+        });
     }
 }

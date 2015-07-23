@@ -71,7 +71,6 @@ public class ProfileSettingActivity extends ActionBarActivity {
             }
         }
 
-
         mBtnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
