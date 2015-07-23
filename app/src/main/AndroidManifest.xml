@@ -53,6 +53,10 @@
             android:name=".Activity.ProfileSettingActivity"
             android:label="@string/title_activity_profile_setting" >
         </activity>
+        <activity
+            android:name=".Activity.PersonalPage"
+            android:label="@string/app_name" >
+        </activity>
     </application>
 
 </manifest>
