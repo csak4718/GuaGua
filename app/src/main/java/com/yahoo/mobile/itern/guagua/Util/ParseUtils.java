@@ -13,6 +13,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.yahoo.mobile.itern.guagua.Event.CollectionEvent;
 import com.yahoo.mobile.itern.guagua.Event.CommentEvent;
 import com.yahoo.mobile.itern.guagua.Event.CommunityEvent;
 import com.yahoo.mobile.itern.guagua.Event.QuestionEvent;
@@ -93,10 +94,10 @@ public class ParseUtils {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Community");
         query.orderByDescending("updatedAt");
         query.findInBackground(new FindCallback<ParseObject>() {
-            public void done(List<ParseObject> questionList, ParseException e) {
+            public void done(List<ParseObject> communityList, ParseException e) {
                 if (e == null) {
-                    Log.d("communities", "Retrieved " + questionList.size() + " communities");
-                    EventBus.getDefault().post(new CommunityEvent(questionList));
+                    Log.d("communities", "Retrieved " + communityList.size() + " communities");
+                    EventBus.getDefault().post(new CommunityEvent(communityList));
                 } else {
                     Log.d("communities", "Error: " + e.getMessage());
                 }
@@ -113,6 +114,23 @@ public class ParseUtils {
                     if (bmp != null) {
                         imgView.setImageBitmap(bmp);
                     }
+                }
+            }
+        });
+    }
+    static public void getAllCollections(String uid) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Prayer");
+        //ParseQuery<ParseObject> query = ParseQuery.getQuery("Colleciton");
+
+        query.orderByDescending("updatedAt");
+        //query.whereEqualTo("uid",uid);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> collectionList, ParseException e) {
+                if (e == null) {
+                    Log.d("collections", "Retrieved " + collectionList.size() + " collections");
+                    EventBus.getDefault().post(new CollectionEvent(collectionList));
+                } else {
+                    Log.d("collections", "Error: " + e.getMessage());
                 }
             }
         });

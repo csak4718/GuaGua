@@ -2,15 +2,22 @@ package com.yahoo.mobile.itern.guagua.Fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -25,12 +32,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.ParseObject;
+import com.yahoo.mobile.itern.guagua.Activity.CommunityActivity;
 import com.yahoo.mobile.itern.guagua.Event.CommunityEvent;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import de.greenrobot.event.EventBus;
 
@@ -43,8 +52,11 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
         GoogleApiClient.OnConnectionFailedListener,LocationListener, OnMapReadyCallback {
     private final String TAG = "MapFragment";
     private View mView;
-    private Button mNextButton;
+
+
     private MapView mMapView;
+    private TextView mSearchBarView;
+    private Button mNextButton;
     private Location mLastLocation;
 
     private GoogleMap mMap;
@@ -75,7 +87,6 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
         super.onStop();
     }
 
-
     @Override
     public void onCreate(Bundle savedBundle){
         super.onCreate(savedBundle);
@@ -100,8 +111,35 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
+        mSearchBarView = (TextView)rootView.findViewById(R.id.map_search_bar);
+        mSearchBarView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                        actionId == EditorInfo.IME_ACTION_DONE ||
+                        actionId == EditorInfo.IME_ACTION_GO ||
+                        event.getAction() == KeyEvent.ACTION_DOWN &&
+                                event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+
+                    // hide virtual keyboard
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(mSearchBarView.getWindowToken(), 0);
+
+                    new SearchClicked(mSearchBarView.getText().toString()).execute();
+                    mSearchBarView.setText("", TextView.BufferType.EDITABLE);
+                    return true;
+                }
+                return false;
+            }
+        });
 
         mNextButton = (Button)rootView.findViewById(R.id.next_button);
+        mNextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((CommunityActivity)getActivity()).gotoMainActivity();
+            }
+        });
+
         mMapView = (MapView)rootView.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
@@ -119,7 +157,7 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d(TAG, "Location changed: "+location.toString());
+        Log.d(TAG, "Location changed: " + location.toString());
         LatLng userLocation = new LatLng(location.getLatitude(),location.getLongitude());
         //mMap.addMarker(new MarkerOptions().position(userLocation).title("Cur"));
 
@@ -155,7 +193,7 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
                 mMap.clear();
                 mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(point.latitude, point.longitude))
-                        .title("Costume Marker"));
+                        .title("Your community"));
                 System.out.println(point.latitude + "---" + point.longitude);
 
 
@@ -223,4 +261,55 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
         mNextButton.setText(belongCommunity.getString("title"));
         return 1;
     }
+
+    private class SearchClicked extends AsyncTask<Void, Void, Boolean> {
+        private String toSearch;
+        private Address address;
+
+        public SearchClicked(String toSearch) {
+            this.toSearch = toSearch;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+
+            try {
+                Geocoder geocoder = new Geocoder(getActivity().getApplicationContext(), Locale.UK);
+                List<Address> results = geocoder.getFromLocationName(toSearch, 1);
+
+                if (results.size() == 0) {
+                    return false;
+                }
+
+                address = results.get(0);
+                Log.d("Search result", "" + address.getLatitude() + " " + address.getLongitude());
+
+                Location location = new Location("dummyprovider");
+                location.setLatitude(address.getLatitude());
+                location.setLongitude(address.getLongitude());
+                mLastLocation = location;
+
+
+            } catch (Exception e) {
+                Log.e("", "Something went wrong: ", e);
+                return false;
+            }
+            return true;
+        }
+
+
+        protected void onPostExecute(Boolean found){
+            if(found) {
+                LatLng lastLatLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 15));
+
+                mMap.clear();
+                mMap.addMarker(new MarkerOptions()
+                        .position(lastLatLng)
+                        .title("Your community"));
+            }
+        }
+
+    }
+
 }
