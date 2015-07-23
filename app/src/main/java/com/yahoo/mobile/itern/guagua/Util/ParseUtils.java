@@ -76,6 +76,7 @@ public class ParseUtils {
         ParseObject mComment = new ParseObject(Common.OBJECT_COMMENT);
         mComment.put(Common.OBJECT_COMMENT_POSTID, postId);
         mComment.put(Common.OBJECT_COMMENT_MSG, comment);
+        mComment.put(Common.OBJECT_COMMENT_USER, ParseUser.getCurrentUser());
         mComment.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
