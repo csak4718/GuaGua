@@ -57,7 +57,7 @@ public class MyFavoriteFragment extends Fragment {
         Fragment createFragment() {
             //return PostFragment.newInstance(mTitle, mIndicatorColor, mDividerColor);
             Log.d("MFF","Creating PostFragment");
-            return new PostFragment();
+            return new CollectionFragment();
         }
 
         /**
