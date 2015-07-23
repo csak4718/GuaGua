@@ -1,15 +1,17 @@
 package com.yahoo.mobile.itern.guagua.Activity;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
+import android.provider.MediaStore;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.support.v7.widget.SearchView;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +19,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.yahoo.mobile.itern.guagua.Fragment.MainActivityFragment;
+import com.yahoo.mobile.itern.guagua.Fragment.PostFragment;
 import com.yahoo.mobile.itern.guagua.R;
 
 
@@ -102,5 +105,34 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    // For changing camera_btn img
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // To Handle Gallery Result
+        Log.d("Photo", "in result");
+        Log.d("Photo", String.valueOf(data == null));
+        Log.d("Photo", String.valueOf(requestCode));
+        if (data != null && requestCode == 1234) {
+            Log.d("Photo", "in result");
+            Uri selectedImageUri = data.getData();
+            Log.d("Photo", "getdata");
+            String[] fileColumn = { MediaStore.Images.Media.DATA };
+            Log.d("Photo", "1");
+            Cursor imageCursor = getContentResolver().query(selectedImageUri,
+                    fileColumn, null, null, null);
+            imageCursor.moveToFirst();
+            int ori = imageCursor.getInt(0);
+            Log.d("Photo",String.valueOf(ori));
+            Log.d("Photo", "2");
+            int fileColumnIndex = imageCursor.getColumnIndex(fileColumn[0]);
+            String picturePath = imageCursor.getString(fileColumnIndex);
+            Log.d("Photo", picturePath);
+            //Bitmap pictureObject = BitmapFactory.decodeFile(picturePath);
+
+            PostFragment myf = (PostFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame);
+            myf.change_Image(picturePath);
+
+        }
     }
 }

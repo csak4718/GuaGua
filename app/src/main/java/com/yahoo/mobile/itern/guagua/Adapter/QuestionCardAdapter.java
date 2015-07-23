@@ -1,20 +1,34 @@
 package com.yahoo.mobile.itern.guagua.Adapter;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
+import com.parse.GetCallback;
+import com.parse.GetDataCallback;
+import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
+import com.squareup.picasso.Picasso;
 import com.yahoo.mobile.itern.guagua.Fragment.CommentFragment;
 import com.yahoo.mobile.itern.guagua.R;
+import com.yahoo.mobile.itern.guagua.Util.Common;
+import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
+import com.yahoo.mobile.itern.guagua.Util.Utils;
 import com.yahoo.mobile.itern.guagua.View.OptionButton;
 
 import java.util.ArrayList;
@@ -53,9 +67,9 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     public void setFilter(String queryText) {
         mVisibleQuestionList.clear();
         for(ParseObject question : mAllQuestionList) {
-            if(question.getString("prayer").contains(queryText)
-                    || question.getString("QA").contains(queryText)
-                    || question.getString("QB").contains(queryText))
+            if(question.getString(Common.OBJECT_POST_CONTENT).contains(queryText)
+                    || question.getString(Common.OBJECT_POST_QA).contains(queryText)
+                    || question.getString(Common.OBJECT_POST_QB).contains(queryText))
             {
                 mVisibleQuestionList.add(question);
             }
@@ -65,6 +79,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
     public static class ViewHolder extends AbstractSwipeableItemViewHolder {
         public View mView;
+        public ImageView imgProfile;
+        public TextView txtName;
         public TextView txtTitle;
         public OptionButton btnA;
         public OptionButton btnB;
@@ -72,6 +88,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         public ViewHolder(View v) {
             super(v);
             mView = v;
+            imgProfile = (ImageView) v.findViewById(R.id.imgProfile);
+            txtName = (TextView) v.findViewById(R.id.txtName);
             txtTitle = (TextView) v.findViewById(R.id.title);
             btnA = (OptionButton) v.findViewById(R.id.btnA);
             btnB = (OptionButton) v.findViewById(R.id.btnB);
@@ -112,12 +130,30 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final ParseObject mQuestion = mVisibleQuestionList.get(position);
+        final ParseUser postUser = mQuestion.getParseUser(Common.OBJECT_POST_USER);
         final String objectId = mQuestion.getObjectId();
-        final int voteA = mQuestion.getInt("A");
-        final int voteB = mQuestion.getInt("B");
-        holder.txtTitle.setText(mQuestion.getString("prayer"));
-        holder.btnA.setVoteText(mQuestion.getString("QA"));
-        holder.btnB.setVoteText(mQuestion.getString("QB"));
+        final int voteA = mQuestion.getInt(Common.OBJECT_POST_QA_NUM);
+        final int voteB = mQuestion.getInt(Common.OBJECT_POST_QB_NUM);
+        if(postUser != null) {
+            postUser.fetchInBackground(new GetCallback<ParseObject>() {
+                @Override
+                public void done(ParseObject parseObject, ParseException e) {
+                    if(e == null) {
+                        holder.txtName.setText(postUser.getString(Common.OBJECT_USER_NICK));
+                        ParseFile imgFile = postUser.getParseFile(Common.OBJECT_USER_PROFILE_PIC);
+                        ParseUtils.displayImage(imgFile, holder.imgProfile);
+                    }
+                }
+            });
+        }
+        else {
+            holder.txtName.setText("Fan Fan");
+            holder.imgProfile.setImageBitmap(
+                    BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_account_circle_black_48dp));
+        }
+        holder.txtTitle.setText(mQuestion.getString(Common.OBJECT_POST_CONTENT));
+        holder.btnA.setVoteText(mQuestion.getString(Common.OBJECT_POST_QA));
+        holder.btnB.setVoteText(mQuestion.getString(Common.OBJECT_POST_QB));
         holder.btnA.setVoteNum(voteA);
         holder.btnB.setVoteNum(voteB);
         if(voted.get(objectId) == null) {
