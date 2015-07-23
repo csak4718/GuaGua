@@ -6,8 +6,13 @@
     <com.google.android.gms.maps.MapView
         android:id="@+id/map"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-         />
+        android:layout_height="match_parent"/>
+
+    <EditText android:id="@+id/map_search_bar"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_centerHorizontal="true"
+              android:imeOptions="actionSearch"/>
 
     <Button
         android:id="@+id/next_button"
