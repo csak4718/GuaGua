@@ -118,6 +118,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             return;
         }
         mQuestion.put("A", voteA);
+        mQuestion.put("B", voteB);
         holder.btnA.setVoteNum(voteA);
         holder.btnB.setVoteNum(voteB);
         holder.btnA.setVoted(true);

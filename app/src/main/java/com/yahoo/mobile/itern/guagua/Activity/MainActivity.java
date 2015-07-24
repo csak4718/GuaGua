@@ -16,11 +16,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.parse.ParseObject;
+import com.parse.ParseUser;
+import com.yahoo.mobile.itern.guagua.Event.UserCommunityEvent;
 import com.yahoo.mobile.itern.guagua.Fragment.MainActivityFragment;
 import com.yahoo.mobile.itern.guagua.Fragment.PostFragment;
 import com.yahoo.mobile.itern.guagua.R;
+import com.yahoo.mobile.itern.guagua.Util.Common;
+import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
+import com.yahoo.mobile.itern.guagua.Util.Utils;
+
+import de.greenrobot.event.EventBus;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -29,6 +38,7 @@ public class MainActivity extends ActionBarActivity {
     private MainActivityFragment mainFragment;
     private Handler handler = new Handler();
     private Runnable filterRunnable;
+    private ImageButton mImgBtnBadgeSearch;
 
     private void setupActionBar() {
         View actionBarView = getLayoutInflater().inflate(R.layout.action_bar_main, null);
@@ -44,13 +54,42 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 if(mBannerBadge.getVisibility() == View.GONE) {
+                    ParseUtils.getUserCommunity(ParseUser.getCurrentUser());
                     mBannerBadge.setVisibility(View.VISIBLE);
                 }
                 else {
                     mBannerBadge.setVisibility(View.GONE);
+                    for(int i = mBannerBadge.getChildCount() - 1; i >= 2; i--) {
+                        mBannerBadge.removeViewAt(i);
+                    }
                 }
             }
         });
+        mImgBtnBadgeSearch.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Utils.gotoCommunityActivity(MainActivity.this);
+            }
+        });
+    }
+
+    public void onEvent(UserCommunityEvent event) {
+        Log.d("eventbus", "user community event" + event.communityList.size());
+        for(ParseObject community : event.communityList) {
+            mBannerBadge.addView(Utils.createNewBadge(this, community.getString(Common.OBJECT_COMMUNITY_TITLE)));
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        EventBus.getDefault().register(this);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 
     @Override
@@ -58,6 +97,7 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mBannerBadge = (LinearLayout) findViewById(R.id.banner_badge);
+        mImgBtnBadgeSearch = (ImageButton) findViewById(R.id.img_btn_badge_search);
         setupActionBar();
         mainFragment = new MainActivityFragment();
         getSupportFragmentManager().beginTransaction()
