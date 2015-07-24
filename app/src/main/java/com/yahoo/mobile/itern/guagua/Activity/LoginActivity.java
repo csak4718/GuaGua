@@ -16,7 +16,6 @@ import com.parse.LogInCallback;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 import com.yahoo.mobile.itern.guagua.Event.FbPictureEvent;
-import com.yahoo.mobile.itern.guagua.Event.QuestionEvent;
 import com.yahoo.mobile.itern.guagua.Event.UserProfileEvent;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.FbUtils;
@@ -56,7 +55,7 @@ public class LoginActivity extends ActionBarActivity {
                                 FbUtils.getUserProfile(AccessToken.getCurrentAccessToken());
                             } else {
                                 Log.d("MyApp", "User logged in through Facebook!");
-                                Utils.gotoMainActivity(LoginActivity.this);
+                                Utils.gotoCommunityActivity(LoginActivity.this);
                                 finish();
                             }
 
@@ -140,7 +139,7 @@ public class LoginActivity extends ActionBarActivity {
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Utils.gotoMainActivity(LoginActivity.this);
+                    Utils.gotoCommunityActivity(LoginActivity.this);
                     finish();
                 }
             }, 1000);
