@@ -24,6 +24,7 @@ import com.yahoo.mobile.itern.guagua.Event.FbPictureEvent;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.FbUtils;
 import com.yahoo.mobile.itern.guagua.Util.Common;
+import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
 
 import java.io.ByteArrayOutputStream;
@@ -85,19 +86,7 @@ public class ProfileSettingActivity extends ActionBarActivity {
                 final String nickName = mEdtNickName.getText().toString();
 
                 Bitmap profilePic = ((BitmapDrawable)mImgProfilePic.getDrawable()).getBitmap();
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                profilePic.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                byte[] bytearray= stream.toByteArray();
-                final ParseFile imgFile = new ParseFile(user.getUsername() + "_profile.jpg", bytearray);
-                imgFile.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        user.put(Common.OBJECT_USER_NICK, nickName);
-                        user.put(Common.OBJECT_USER_PROFILE_PIC, imgFile);
-                        user.saveInBackground();
-                    }
-                });
-
+                ParseUtils.updateUserProfile(nickName, profilePic);
                 Utils.gotoMainActivity(ProfileSettingActivity.this);
                 finish();
             }

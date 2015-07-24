@@ -20,6 +20,7 @@ import com.yahoo.mobile.itern.guagua.Event.CommentEvent;
 import com.yahoo.mobile.itern.guagua.Event.CommunityEvent;
 import com.yahoo.mobile.itern.guagua.Event.QuestionEvent;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -33,6 +34,28 @@ public class ParseUtils {
         testObject.put("foo", "bar");
         testObject.saveInBackground();
     }
+
+    static public void updateUserProfile(final String nickName, Bitmap profilePic) {
+        final ParseUser user = ParseUser.getCurrentUser();
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        profilePic.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] bytearray= stream.toByteArray();
+        final ParseFile imgFile = new ParseFile(user.getUsername() + "_profile.jpg", bytearray);
+        imgFile.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                user.put(Common.OBJECT_USER_NICK, nickName);
+                user.put(Common.OBJECT_USER_PROFILE_PIC, imgFile);
+                user.saveInBackground();
+            }
+        });
+
+    }
+    static public void getUserCommunity(ParseUser user) {
+
+    }
+
     static public void getAllQuestions() {
         ParseQuery<ParseObject> query = ParseQuery.getQuery(Common.OBJECT_POST);
         query.orderByDescending("updatedAt");
@@ -72,12 +95,13 @@ public class ParseUtils {
         mPost.put(Common.OBJECT_POST_QA_NUM, 0);
         mPost.put(Common.OBJECT_POST_QB_NUM, 0);
         mPost.put(Common.OBJECT_POST_USER, ParseUser.getCurrentUser());
-        mPost.saveInBackground();
+        mPost.saveEventually();
     }
     static public void postComment(String comment, final String postId, final Boolean refreshList) {
         ParseObject mComment = new ParseObject(Common.OBJECT_COMMENT);
         mComment.put(Common.OBJECT_COMMENT_POSTID, postId);
         mComment.put(Common.OBJECT_COMMENT_MSG, comment);
+        mComment.put(Common.OBJECT_COMMENT_USER, ParseUser.getCurrentUser());
         mComment.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {

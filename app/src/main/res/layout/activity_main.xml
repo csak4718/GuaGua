@@ -4,13 +4,25 @@
     android:orientation="vertical">
     <LinearLayout
         android:id="@+id/banner_badge"
+        android:padding="5dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="55dp"
+        android:orientation="horizontal"
         android:visibility="gone">
+        <ImageButton
+            android:layout_marginRight="5dp"
+            android:id="@+id/img_btn_badge_search"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/badge_search" />
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="fuck"/>
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:textColor="@android:color/white"
+            android:textSize="10sp"
+            android:text="ALL"
+            android:background="@drawable/badge"/>
     </LinearLayout>
     <FrameLayout
         android:id="@+id/content_frame"

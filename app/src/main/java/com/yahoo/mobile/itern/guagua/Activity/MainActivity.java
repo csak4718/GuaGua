@@ -36,6 +36,9 @@ public class MainActivity extends ActionBarActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(R.color.purple));
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setCustomView(actionBarView);
 
         btnActionBarTitle.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,6 +99,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+
 
         if (id == R.id.action_search) {
             return true;
