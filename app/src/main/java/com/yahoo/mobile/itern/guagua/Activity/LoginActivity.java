@@ -55,7 +55,7 @@ public class LoginActivity extends ActionBarActivity {
                                 FbUtils.getUserProfile(AccessToken.getCurrentAccessToken());
                             } else {
                                 Log.d("MyApp", "User logged in through Facebook!");
-                                Utils.gotoCommunityActivity(LoginActivity.this);
+                                Utils.gotoMainActivity(LoginActivity.this);
                                 finish();
                             }
 
@@ -77,11 +77,11 @@ public class LoginActivity extends ActionBarActivity {
         mNickName = event.mNickName;
         mFbId = event.mFbId;
         FbUtils.getFbProfilePicture(mFbId);
-        startActivity(new Intent(this, CommunityActivity.class));
-        finish();
     }
     public void onEvent(final FbPictureEvent event) {
         ParseUtils.updateUserProfile(mNickName, event.mPic);
+        startActivity(new Intent(this, CommunityActivity.class));
+        finish();
     }
 
     @Override
@@ -139,7 +139,7 @@ public class LoginActivity extends ActionBarActivity {
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Utils.gotoCommunityActivity(LoginActivity.this);
+                    Utils.gotoMainActivity(LoginActivity.this);
                     finish();
                 }
             }, 1000);

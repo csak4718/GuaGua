@@ -19,6 +19,7 @@ import com.yahoo.mobile.itern.guagua.Event.CollectionEvent;
 import com.yahoo.mobile.itern.guagua.Event.CommentEvent;
 import com.yahoo.mobile.itern.guagua.Event.CommunityEvent;
 import com.yahoo.mobile.itern.guagua.Event.QuestionEvent;
+import com.yahoo.mobile.itern.guagua.Event.UserCommunityEvent;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
@@ -53,7 +54,15 @@ public class ParseUtils {
 
     }
     static public void getUserCommunity(ParseUser user) {
-
+        ParseRelation<ParseObject> relation = user.getRelation(Common.OBJECT_USER_COMMUNITY_RELATION);
+        relation.getQuery().findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if(e == null) {
+                    EventBus.getDefault().post(new UserCommunityEvent(list));
+                }
+            }
+        });
     }
 
     static public void getAllQuestions() {
