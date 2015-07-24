@@ -12,9 +12,9 @@ import android.graphics.Rect;
 import android.view.inputmethod.InputMethodManager;
 
 import com.parse.ParseUser;
+import com.yahoo.mobile.itern.guagua.Activity.CommunityActivity;
 import com.yahoo.mobile.itern.guagua.Activity.LoginActivity;
 import com.yahoo.mobile.itern.guagua.Activity.MainActivity;
-import com.yahoo.mobile.itern.guagua.Activity.ProfileSettingActivity;
 
 /**
  * Created by cmwang on 7/20/15.
@@ -26,6 +26,10 @@ public class Utils {
     }
     static public void gotoMainActivity(Context context) {
         Intent it = new Intent(context, MainActivity.class);
+        context.startActivity(it);
+    }
+    static public void gotoCommunityActivity(Context context) {
+        Intent it = new Intent(context, CommunityActivity.class);
         context.startActivity(it);
     }
     static public void userLogout(Context context) {

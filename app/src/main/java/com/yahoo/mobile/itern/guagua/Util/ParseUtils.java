@@ -6,11 +6,13 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.yahoo.mobile.itern.guagua.Event.CollectionEvent;
@@ -156,6 +158,20 @@ public class ParseUtils {
                 } else {
                     Log.d("collections", "Error: " + e.getMessage());
                 }
+            }
+        });
+    }
+
+    static public void addCommunityToUser(final String communityObjectId){
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Community");
+        query.getInBackground(communityObjectId, new GetCallback<ParseObject>() {
+            public void done(ParseObject community, ParseException e) {
+
+                ParseUser user = ParseUser.getCurrentUser();
+                ParseRelation<ParseObject> relation = user.getRelation(Common.OBJECT_USER_COMMUNITY_RELATION);
+                relation.add(community);
+                user.saveInBackground();
             }
         });
     }

@@ -6,6 +6,7 @@ package com.yahoo.mobile.itern.guagua.Util;
 public class Common {
     public final static String OBJECT_USER_NICK = "nickname";
     public final static String OBJECT_USER_PROFILE_PIC = "profile_pic";
+    public final static String OBJECT_USER_COMMUNITY_RELATION = "community";
     public final static String OBJECT_POST = "Prayer";
     public final static String OBJECT_POST_USER = "user";
     public final static String OBJECT_POST_CONTENT = "prayer";
@@ -17,5 +18,6 @@ public class Common {
     public final static String OBJECT_COMMENT_MSG = "msg";
     public final static String OBJECT_COMMENT_POSTID = "PostId";
     public final static String OBJECT_COMMENT_USER = "user";
+
 
 }

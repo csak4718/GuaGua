@@ -32,10 +32,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.ParseObject;
-import com.yahoo.mobile.itern.guagua.Activity.CommunityActivity;
 import com.yahoo.mobile.itern.guagua.Event.CommunityEvent;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
+import com.yahoo.mobile.itern.guagua.Util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +64,7 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
     private LocationManager mLocationManager;
     private LocationRequest mLocationRequest;
 
+    private ParseObject mCurCommunity;
     private List<ParseObject> mCommunities = new ArrayList<>();
 
 
@@ -136,7 +137,8 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((CommunityActivity)getActivity()).gotoMainActivity();
+                ParseUtils.addCommunityToUser(mCurCommunity.getObjectId());
+                Utils.gotoMainActivity(getActivity());
             }
         });
 
@@ -255,6 +257,7 @@ public class MapFragment extends Fragment implements GoogleApiClient.ConnectionC
             if(distance < minDistance) {
                 minDistance = distance;
                 belongCommunity = com;
+                mCurCommunity = com;
             }
         }
 

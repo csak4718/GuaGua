@@ -1,6 +1,5 @@
 package com.yahoo.mobile.itern.guagua.Activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
@@ -28,14 +27,4 @@ public class CommunityActivity extends FragmentActivity {
                 .replace(R.id.community_content, new MapFragment())
                 .commit();
     }
-
-    public void gotoMainActivity() {
-        Intent it = new Intent(this, MainActivity.class);
-
-        it.setFlags(it.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
-        it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(it);
-        finish();
-    }
-
 }
