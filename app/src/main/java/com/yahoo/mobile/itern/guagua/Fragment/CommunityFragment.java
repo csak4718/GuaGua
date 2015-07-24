@@ -6,7 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
+import com.parse.ParseObject;
 import com.yahoo.mobile.itern.guagua.Activity.CommunityActivity;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
@@ -19,6 +21,7 @@ import com.yahoo.mobile.itern.guagua.Util.Utils;
 public class CommunityFragment extends Fragment {
     private final String TAG = "CommunityFragment";
 
+    TextView mCommunityTitle;
     Button mYesBtn;
     Button mNoBtn;
 
@@ -30,6 +33,8 @@ public class CommunityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_community, container, false);
+
+        mCommunityTitle = (TextView)rootView.findViewById(R.id.txt_community_title);
         mYesBtn = (Button)rootView.findViewById(R.id.yes_button);
         mNoBtn  = (Button)rootView.findViewById(R.id.no_button);
 
@@ -37,6 +42,7 @@ public class CommunityFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //[TODO] delivery message to MainActivity
+
                 Utils.gotoMainActivity(getActivity());
             }
         });
@@ -44,10 +50,15 @@ public class CommunityFragment extends Fragment {
         mNoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((CommunityActivity)getActivity()).switchToMapFragment();
+                ((CommunityActivity) getActivity()).switchToMapFragment();
             }
         });
 
         return rootView;
+    }
+
+    public void onCommunityChange(ParseObject belongCommunity){
+        if(mCommunityTitle != null && belongCommunity != null)
+            mCommunityTitle.setText(belongCommunity.getString("title"));
     }
 }
