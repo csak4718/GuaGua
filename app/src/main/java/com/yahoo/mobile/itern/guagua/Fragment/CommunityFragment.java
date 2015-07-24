@@ -9,6 +9,7 @@ import android.widget.Button;
 
 import com.yahoo.mobile.itern.guagua.Activity.CommunityActivity;
 import com.yahoo.mobile.itern.guagua.R;
+import com.yahoo.mobile.itern.guagua.Util.Utils;
 
 
 /**
@@ -36,7 +37,7 @@ public class CommunityFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //[TODO] delivery message to MainActivity
-                ((CommunityActivity)getActivity()).gotoMainActivity();
+                Utils.gotoMainActivity(getActivity());
             }
         });
 
