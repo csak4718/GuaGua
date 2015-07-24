@@ -15,10 +15,12 @@ import com.facebook.AccessToken;
 import com.parse.LogInCallback;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
+import com.yahoo.mobile.itern.guagua.Event.FbPictureEvent;
 import com.yahoo.mobile.itern.guagua.Event.QuestionEvent;
 import com.yahoo.mobile.itern.guagua.Event.UserProfileEvent;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.FbUtils;
+import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
 
 import java.util.ArrayList;
@@ -31,6 +33,8 @@ public class LoginActivity extends ActionBarActivity {
     private Button mBtnLoginFacebook;
     private ImageView mImgSplashLogo;
     private Handler mHandler = new Handler();
+    private String mNickName;
+    private String mFbId;
 
     private void setupLoginButton() {
 
@@ -65,12 +69,20 @@ public class LoginActivity extends ActionBarActivity {
 
     public void onEvent(UserProfileEvent event) {
         Log.d("eventbus", "Get userprofile event");
-        Intent it = new Intent(LoginActivity.this, ProfileSettingActivity.class);
-        it.putExtra("classFrom", LoginActivity.class.toString());
-        it.putExtra("id", event.mFbId);
-        it.putExtra("nickname", event.mNickName);
-        startActivity(it);
+//        Intent it = new Intent(LoginActivity.this, ProfileSettingActivity.class);
+//        it.putExtra("classFrom", LoginActivity.class.toString());
+//        it.putExtra("id", event.mFbId);
+//        it.putExtra("nickname", event.mNickName);
+//        startActivity(it);
+//        finish();
+        mNickName = event.mNickName;
+        mFbId = event.mFbId;
+        FbUtils.getFbProfilePicture(mFbId);
+        startActivity(new Intent(this, CommunityActivity.class));
         finish();
+    }
+    public void onEvent(final FbPictureEvent event) {
+        ParseUtils.updateUserProfile(mNickName, event.mPic);
     }
 
     @Override
@@ -114,6 +126,7 @@ public class LoginActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         getSupportActionBar().hide();
         setContentView(R.layout.activity_login);
         mBtnLoginFacebook = (Button) findViewById(R.id.btn_login_facebook);
