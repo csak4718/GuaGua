@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.parse.ParseObject;
 import com.yahoo.mobile.itern.guagua.Activity.CommunityActivity;
 import com.yahoo.mobile.itern.guagua.R;
+import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
 
 
@@ -21,6 +22,7 @@ import com.yahoo.mobile.itern.guagua.Util.Utils;
 public class CommunityFragment extends Fragment {
     private final String TAG = "CommunityFragment";
 
+    CommunityActivity mCommunityActivity;
     TextView mCommunityTitle;
     Button mYesBtn;
     Button mNoBtn;
@@ -28,6 +30,7 @@ public class CommunityFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedBundle){
         super.onCreate(savedBundle);
+        mCommunityActivity = (CommunityActivity)getActivity();
     }
 
     @Override
@@ -41,9 +44,10 @@ public class CommunityFragment extends Fragment {
         mYesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //[TODO] delivery message to MainActivity
-
-                Utils.gotoMainActivity(getActivity());
+                if (mCommunityActivity.getCurCommunity() != null) {
+                    ParseUtils.addCommunityToUser(mCommunityActivity.getCurCommunity().getObjectId());
+                    Utils.gotoMainActivity(getActivity());
+                }
             }
         });
 
