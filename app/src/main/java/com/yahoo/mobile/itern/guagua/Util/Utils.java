@@ -17,6 +17,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.yahoo.mobile.itern.guagua.Activity.CommunityActivity;
 import com.yahoo.mobile.itern.guagua.Activity.LoginActivity;
@@ -44,25 +45,6 @@ public class Utils {
         Intent it = new Intent(context, LoginActivity.class);
         context.startActivity(it);
     }
-    static public Button createNewBadge(Context context, String title) {
-        Button button = new Button(context);
-        button.setBackgroundResource(R.drawable.badge);
-        button.setText(title);
-        button.setTextColor(Color.WHITE);
-        button.setGravity(Gravity.CENTER);
-        button.setPadding(0, 0, 0, 0);
-
-        float scale = context.getResources().getDisplayMetrics().density;
-        int pixels = (int) (70 * scale + 0.5f);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(pixels, pixels);
-        params.gravity = Gravity.CENTER;
-        int marginPixels = (int)(5 * scale + 0.5f);
-        params.setMargins(marginPixels, marginPixels, marginPixels, marginPixels);
-        button.setLayoutParams(params);
-
-        return button;
-    }
-
     static public Bitmap sqr2circle(Bitmap bm){
         Bitmap output = Bitmap.createBitmap(bm.getWidth(), bm.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(output);

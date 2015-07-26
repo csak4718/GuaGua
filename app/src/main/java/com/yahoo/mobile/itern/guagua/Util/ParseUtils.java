@@ -58,7 +58,7 @@ public class ParseUtils {
         relation.getQuery().findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
-                if(e == null) {
+                if (e == null) {
                     EventBus.getDefault().post(new UserCommunityEvent(list));
                 }
             }
@@ -75,6 +75,19 @@ public class ParseUtils {
                     EventBus.getDefault().post(new QuestionEvent(questionList));
                 } else {
                     Log.d("questions", "Error: " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    static public void getCommunityQuestions(ParseObject community) {
+        ParseRelation<ParseObject> relation = community.getRelation(Common.OBJECT_COMMUNITY_POSTS);
+        relation.getQuery().findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e == null) {
+                    Log.d("questions", "Retrieved " + list.size() + " community questions");
+                    EventBus.getDefault().post(new QuestionEvent(list));
                 }
             }
         });
@@ -96,15 +109,24 @@ public class ParseUtils {
             }
         });
     }
-    static public void postQuestions(String question, String optionA, String optionB) {
-        ParseObject mPost = new ParseObject(Common.OBJECT_POST);
+    static public void postQuestions(String question, String optionA, String optionB, final ParseObject community) {
+        final ParseObject mPost = new ParseObject(Common.OBJECT_POST);
         mPost.put(Common.OBJECT_POST_CONTENT, question);
         mPost.put(Common.OBJECT_POST_QA, optionA);
         mPost.put(Common.OBJECT_POST_QB, optionB);
         mPost.put(Common.OBJECT_POST_QA_NUM, 0);
         mPost.put(Common.OBJECT_POST_QB_NUM, 0);
         mPost.put(Common.OBJECT_POST_USER, ParseUser.getCurrentUser());
-        mPost.saveEventually();
+        mPost.saveEventually(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if(community != null) {
+                    ParseRelation<ParseObject> relation = community.getRelation(Common.OBJECT_COMMUNITY_POSTS);
+                    relation.add(mPost);
+                    community.saveInBackground();
+                }
+            }
+        });
     }
     static public void postComment(String comment, final String postId, final Boolean refreshList) {
         ParseObject mComment = new ParseObject(Common.OBJECT_COMMENT);

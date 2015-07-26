@@ -16,7 +16,8 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="呱呱"
         android:textColor="@android:color/white"
-        android:background="@android:color/transparent" />
+        android:background="@android:color/transparent"
+        android:layout_marginRight="8dp"/>
     <TextView
         android:id="@+id/action_bar_indicator"
         android:layout_width="wrap_content"
