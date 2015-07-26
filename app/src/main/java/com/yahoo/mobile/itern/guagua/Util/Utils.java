@@ -48,15 +48,16 @@ public class Utils {
         Button button = new Button(context);
         button.setBackgroundResource(R.drawable.badge);
         button.setText(title);
-        button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
         button.setTextColor(Color.WHITE);
-        button.setGravity(Gravity.CENTER_VERTICAL);
+        button.setGravity(Gravity.CENTER);
+        button.setPadding(0, 0, 0, 0);
 
         float scale = context.getResources().getDisplayMetrics().density;
-        int pixels = (int) (45 * scale + 0.5f);
+        int pixels = (int) (70 * scale + 0.5f);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(pixels, pixels);
-        params.gravity = Gravity.CENTER_VERTICAL;
-        params.rightMargin = (int)(5 * scale + 0.5f);
+        params.gravity = Gravity.CENTER;
+        int marginPixels = (int)(5 * scale + 0.5f);
+        params.setMargins(marginPixels, marginPixels, marginPixels, marginPixels);
         button.setLayoutParams(params);
 
         return button;

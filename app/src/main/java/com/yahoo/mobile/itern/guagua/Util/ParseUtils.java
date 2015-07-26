@@ -173,15 +173,15 @@ public class ParseUtils {
 
     static public void addCommunityToUser(final String communityObjectId){
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Community");
-        query.getInBackground(communityObjectId, new GetCallback<ParseObject>() {
-            public void done(ParseObject community, ParseException e) {
-
-                ParseUser user = ParseUser.getCurrentUser();
-                ParseRelation<ParseObject> relation = user.getRelation(Common.OBJECT_USER_COMMUNITY_RELATION);
-                relation.add(community);
-                user.saveInBackground();
+        ParseUser user = ParseUser.getCurrentUser();
+        ParseRelation<ParseObject> relation = user.getRelation(Common.OBJECT_USER_COMMUNITY_RELATION);
+        relation.add(ParseObject.createWithoutData(Common.OBJECT_COMMUNITY, communityObjectId));
+        user.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                getUserCommunity(ParseUser.getCurrentUser());
             }
         });
+
     }
 }

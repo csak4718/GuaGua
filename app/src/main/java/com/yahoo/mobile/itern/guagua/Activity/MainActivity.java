@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -40,6 +41,7 @@ public class MainActivity extends ActionBarActivity {
     private Handler handler = new Handler();
     private Runnable filterRunnable;
     private ImageButton mImgBtnBadgeSearch;
+    private boolean badgeBannerVisible = false;
 
     private void setupActionBar() {
         final ActionBarTitle actionBarTitle = new ActionBarTitle(this);
@@ -49,21 +51,21 @@ public class MainActivity extends ActionBarActivity {
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setCustomView(actionBarTitle);
+        hideBdgeBanner(0);
+
+        ParseUtils.getUserCommunity(ParseUser.getCurrentUser());
 
         actionBarTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mBannerBadge.getVisibility() == View.GONE) {
+                if(!badgeBannerVisible) {
                     actionBarTitle.animateExpand();
-                    ParseUtils.getUserCommunity(ParseUser.getCurrentUser());
-                    mBannerBadge.setVisibility(View.VISIBLE);
+                    showBdgeBanner(300);
                 }
                 else {
                     actionBarTitle.animateCollapse();
-                    mBannerBadge.setVisibility(View.GONE);
-                    for(int i = mBannerBadge.getChildCount() - 1; i >= 2; i--) {
-                        mBannerBadge.removeViewAt(i);
-                    }
+                    hideBdgeBanner(300);
+
                 }
             }
         });
@@ -75,8 +77,30 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
+    private void hideBdgeBanner(int duration) {
+        float scale = getResources().getDisplayMetrics().density;
+        TranslateAnimation animation = new TranslateAnimation(0, 0, 0, -100 * scale);
+        animation.setDuration(duration);
+        animation.setFillAfter(true);
+        animation.setFillEnabled(true);
+        mBannerBadge.startAnimation(animation);
+        badgeBannerVisible = false;
+    }
+    private void showBdgeBanner(int duration) {
+        float scale = getResources().getDisplayMetrics().density;
+        TranslateAnimation animation = new TranslateAnimation(0, 0, -100 * scale, 0);
+        animation.setDuration(duration);
+        animation.setFillAfter(true);
+        animation.setFillEnabled(true);
+        mBannerBadge.startAnimation(animation);
+        badgeBannerVisible = true;
+    }
+
     public void onEvent(UserCommunityEvent event) {
         Log.d("eventbus", "user community event" + event.communityList.size());
+        for(int i = mBannerBadge.getChildCount() - 1; i >= 2; i--) {
+            mBannerBadge.removeViewAt(i);
+        }
         for(ParseObject community : event.communityList) {
             mBannerBadge.addView(Utils.createNewBadge(this, community.getString(Common.OBJECT_COMMUNITY_TITLE)));
         }
