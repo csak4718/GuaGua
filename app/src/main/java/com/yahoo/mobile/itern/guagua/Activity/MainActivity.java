@@ -28,6 +28,7 @@ import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.Common;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
+import com.yahoo.mobile.itern.guagua.View.ActionBarTitle;
 
 import de.greenrobot.event.EventBus;
 
@@ -41,23 +42,24 @@ public class MainActivity extends ActionBarActivity {
     private ImageButton mImgBtnBadgeSearch;
 
     private void setupActionBar() {
-        View actionBarView = getLayoutInflater().inflate(R.layout.action_bar_main, null);
-        Button btnActionBarTitle = (Button) actionBarView.findViewById(R.id.btn_action_bar_title);
+        final ActionBarTitle actionBarTitle = new ActionBarTitle(this);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(R.color.purple));
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setCustomView(actionBarView);
+        actionBar.setCustomView(actionBarTitle);
 
-        btnActionBarTitle.setOnClickListener(new View.OnClickListener() {
+        actionBarTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(mBannerBadge.getVisibility() == View.GONE) {
+                    actionBarTitle.animateExpand();
                     ParseUtils.getUserCommunity(ParseUser.getCurrentUser());
                     mBannerBadge.setVisibility(View.VISIBLE);
                 }
                 else {
+                    actionBarTitle.animateCollapse();
                     mBannerBadge.setVisibility(View.GONE);
                     for(int i = mBannerBadge.getChildCount() - 1; i >= 2; i--) {
                         mBannerBadge.removeViewAt(i);
