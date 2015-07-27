@@ -18,22 +18,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@android:color/white"
-        android:text="Yahoo!"
+        android:text="Yahoo! Taiwan"
         android:layout_marginBottom="10dp"
         android:layout_above="@+id/img_community_logo"
         android:layout_centerHorizontal="true" />
-
-    <Button
-        android:id="@+id/no_button"
-        android:layout_width="91dp"
-        android:layout_height="90dp"
-        android:text="NO"
-        android:textColor="@drawable/text_color_white_blue"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:background="@drawable/button_circle"
-        android:layout_below="@+id/img_community_logo"
-        android:layout_toRightOf="@+id/txt_community_title"
-        android:layout_toEndOf="@+id/txt_community_title" />
 
     <Button
         android:id="@+id/yes_button"
@@ -43,8 +31,27 @@
         android:textColor="@drawable/text_color_white_blue"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:background="@drawable/button_circle"
-        android:layout_alignTop="@+id/no_button"
-        android:layout_toLeftOf="@+id/txt_community_title"
-        android:layout_toStartOf="@+id/txt_community_title" />
+        android:layout_gravity="left"
+        android:layout_centerHorizont="true"
+        android:layout_toLeftOf="@id/dummyView"
+        android:layout_below="@+id/img_community_logo"
+        />
+    <View
+        android:id="@+id/dummyView"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"/>
+    <Button
+        android:id="@+id/no_button"
+        android:layout_width="91dp"
+        android:layout_height="90dp"
+        android:text="NO"
+        android:textColor="@drawable/text_color_white_blue"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:background="@drawable/button_circle"
+        android:layout_gravity="end"
+        android:layout_toRightOf="@id/dummyView"
+        android:layout_below="@+id/img_community_logo"
+        />
 
 </RelativeLayout>
