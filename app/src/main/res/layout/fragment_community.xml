@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:textColor="@android:color/white"
         android:text="Yahoo! Taiwan"
+        android:gravity="center"
         android:layout_marginBottom="10dp"
         android:layout_above="@+id/img_community_logo"
         android:layout_centerHorizontal="true" />

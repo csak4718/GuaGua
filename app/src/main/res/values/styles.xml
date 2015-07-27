@@ -6,6 +6,7 @@
         <item name="circularImageViewStyle">@color/purple</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="elevation">0dp</item>
+        <item name="actionBarStyle">@style/MyActionBar</item>
     </style>
 
     <!-- the theme applied to the application or activity -->

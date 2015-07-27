@@ -188,6 +188,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         mActionBar = getSupportActionBar();
         mActionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor((R.color.cyan))));
         mActionBar.setDisplayShowTitleEnabled(false);
+        mActionBar.setShowHideAnimationEnabled(false);
         mActionBar.hide();
     }
 
@@ -224,10 +225,10 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     }
 
     public void switchToCommunityFragment(){
+        mActionBar.hide();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.community_content, mCommunityFragement)
                 .commit();
-        mActionBar.hide();
     }
 
 
