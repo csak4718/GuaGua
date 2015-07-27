@@ -58,11 +58,12 @@ public class CommunityFragment extends Fragment {
             }
         });
 
+        onCommunityChange(mCommunityActivity.getCurCommunity());
         return rootView;
     }
 
     public void onCommunityChange(ParseObject belongCommunity){
         if(mCommunityTitle != null && belongCommunity != null)
-            mCommunityTitle.setText(belongCommunity.getString("title"));
+            mCommunityTitle.setText("Do you want to join " + belongCommunity.getString("title") + "?");
     }
 }

@@ -143,7 +143,7 @@ public class CommunityActivity extends FragmentActivity implements GoogleApiClie
         }
 
         mCommunityFragement.onCommunityChange(mCurCommunity);
-        mMapFragment.onCommunityChange(mCurCommunity);
+        //mMapFragment.onCommunityChange(mCurCommunity);
         return ;
     }
 
@@ -177,4 +177,11 @@ public class CommunityActivity extends FragmentActivity implements GoogleApiClie
                 .replace(R.id.community_content, mMapFragment)
                 .commit();
     }
+
+    public void switchToCommunityFragment(){
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.community_content, mCommunityFragement)
+                .commit();
+    }
+
 }
