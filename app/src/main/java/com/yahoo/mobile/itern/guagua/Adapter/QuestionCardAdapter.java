@@ -117,12 +117,16 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         if(voted.get(objectId)) {
             return;
         }
+        int progressA = (int)(voteA * 100.0 / (voteA + voteB));
+        int progressB = (int)(voteB * 100.0 / (voteA + voteB));
         mQuestion.put("A", voteA);
         mQuestion.put("B", voteB);
         holder.btnA.setVoteNum(voteA);
         holder.btnB.setVoteNum(voteB);
-        holder.btnA.setVoted(true);
-        holder.btnB.setVoted(true);
+        holder.btnA.setProgress(progressA);
+        holder.btnB.setProgress(progressB);
+        holder.btnA.setVoted(true, true);
+        holder.btnB.setVoted(true, true);
         holder.imgBtnComment.setVisibility(View.VISIBLE);
         voted.put(objectId, true);
         mQuestion.saveInBackground();
@@ -157,6 +161,10 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.btnB.setVoteText(mQuestion.getString(Common.OBJECT_POST_QB));
         holder.btnA.setVoteNum(voteA);
         holder.btnB.setVoteNum(voteB);
+        int progressA = (int)(voteA * 100.0 / (voteA + voteB));
+        int progressB = (int) (voteB * 100.0 / (voteA + voteB));
+        holder.btnA.setProgress(progressA);
+        holder.btnB.setProgress(progressB);
         if(voted.get(objectId) == null) {
             voted.put(objectId, false);
         }
@@ -166,8 +174,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         else {
             holder.imgBtnComment.setVisibility(View.GONE);
         }
-        holder.btnA.setVoted(voted.get(objectId));
-        holder.btnB.setVoted(voted.get(objectId));
+        holder.btnA.setVoted(voted.get(objectId), false);
+        holder.btnB.setVoted(voted.get(objectId), false);
 
         holder.btnA.setOnClickListener(new View.OnClickListener() {
             @Override
