@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -14,10 +16,12 @@ import com.yahoo.mobile.itern.guagua.R;
  */
 public class OptionButton extends RelativeLayout {
     View mView;
-    RelativeLayout mRoot;
+    FrameLayout mRoot;
+    ProgressBar progressBarVote;
     TextView txtVoteNum;
     TextView txtVoteText;
     Boolean isVoted;
+    int mProgress;
 
     public OptionButton(Context context) {
         super(context);
@@ -37,7 +41,8 @@ public class OptionButton extends RelativeLayout {
     private void initView(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
         mView = inflater.inflate(R.layout.button_option, this);
-        mRoot = (RelativeLayout) mView.findViewById(R.id.layout_root);
+        mRoot = (FrameLayout) mView.findViewById(R.id.layout_root);
+        progressBarVote = (ProgressBar) mView.findViewById(R.id.prg_bar_vote);
         txtVoteNum = (TextView) mView.findViewById(R.id.txtVoteNum);
         txtVoteText = (TextView) mView.findViewById(R.id.txtVoteText);
         txtVoteNum.setVisibility(INVISIBLE);
@@ -45,15 +50,36 @@ public class OptionButton extends RelativeLayout {
         this.setClickable(true);
     }
 
-    public void setVoted(boolean voted) {
+    private void gotoProgress() {
+        new Thread() {
+            @Override
+            public void run() {
+                for(int progress = 1; progress <= mProgress; progress++) {
+                    progressBarVote.setProgress(progress);
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
+    }
+
+    public void setVoted(boolean voted, boolean animation) {
         if(voted) {
             txtVoteNum.setVisibility(VISIBLE);
-            mRoot.setBackgroundResource(R.drawable.button_option_after_pressed);
+            if(animation) {
+                gotoProgress();
+            }
+            else {
+                progressBarVote.setProgress(mProgress);
+            }
             isVoted = true;
         }
         else {
             txtVoteNum.setVisibility(INVISIBLE);
-            mRoot.setBackgroundResource(R.drawable.button_option);
+            progressBarVote.setProgress(0);
             isVoted = false;
         }
     }
@@ -61,7 +87,7 @@ public class OptionButton extends RelativeLayout {
     public void setVoteNumVisibility(int visibility) {
         txtVoteNum.setVisibility(visibility);
     }
-
+    public void setProgress(int progress) {mProgress = progress;}
     public void setVoteNum(int voteNum) {
         txtVoteNum.setText(Integer.toString(voteNum));
     }

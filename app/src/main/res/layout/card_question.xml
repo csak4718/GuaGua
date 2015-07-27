@@ -8,6 +8,8 @@
     android:layout_gravity="center"
     android:layout_marginBottom="5dp"
     android:layout_marginTop="5dp"
+    android:layout_marginLeft="7dp"
+    android:layout_marginRight="7dp"
     card_view:contentPadding="8dp">
 
     <LinearLayout android:layout_width="match_parent"
@@ -47,7 +49,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="10dp"
-            android:background="@drawable/button_option"
             />
         <com.yahoo.mobile.itern.guagua.View.OptionButton
             android:id="@+id/btnB"
@@ -56,21 +57,28 @@
             android:layout_gravity="center"
             android:layout_marginBottom="10dp"
             android:background="@drawable/button_option" />
-        <ImageButton
-            android:id="@+id/shareBtnPost"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:src="@drawable/ic_share_black"
-            android:layout_gravity="left"
-            android:background="@android:color/transparent"
-            android:visibility="gone"/>
-        <ImageButton
-            android:id="@+id/imgBtnComment"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:src="@drawable/ic_comment_black_24dp"
-            android:layout_gravity="end"
-            android:background="@android:color/transparent"
-            android:visibility="gone"/>
+
+        <LinearLayout
+            android:id="@+id/layout_function_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="right"
+            android:visibility="visible">
+            <ImageButton
+                android:id="@+id/shareBtnPost"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_share_black_24dp"
+                android:background="@android:color/transparent"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp" />
+            <ImageButton
+                android:id="@+id/imgBtnComment"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_comment_black_24dp"
+                android:background="@android:color/transparent"/>
+        </LinearLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>
