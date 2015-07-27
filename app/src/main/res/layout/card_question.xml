@@ -63,7 +63,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="right"
-            android:visibility="gone">
+            android:visibility="invisible">
             <ImageButton
                 android:id="@+id/imgBtnComment"
                 android:layout_width="18dp"
