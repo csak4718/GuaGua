@@ -1,5 +1,6 @@
 package com.yahoo.mobile.itern.guagua.Fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -22,7 +23,7 @@ import com.yahoo.mobile.itern.guagua.Util.Utils;
 public class CommunityFragment extends Fragment {
     private final String TAG = "CommunityFragment";
 
-    CommunityActivity mCommunityActivity;
+    Context mContext;
     TextView mCommunityTitle;
     Button mYesBtn;
     Button mNoBtn;
@@ -30,11 +31,12 @@ public class CommunityFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedBundle){
         super.onCreate(savedBundle);
-        mCommunityActivity = (CommunityActivity)getActivity();
+        mContext = getActivity();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         View rootView = inflater.inflate(R.layout.fragment_community, container, false);
 
         mCommunityTitle = (TextView)rootView.findViewById(R.id.txt_community_title);
@@ -44,8 +46,8 @@ public class CommunityFragment extends Fragment {
         mYesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mCommunityActivity.getCurCommunity() != null) {
-                    ParseUtils.addCommunityToUser(mCommunityActivity.getCurCommunity().getObjectId());
+                if (((CommunityActivity)mContext).getCurCommunity() != null) {
+                    ParseUtils.addCommunityToUser(((CommunityActivity) mContext).getCurCommunity().getObjectId());
                     Utils.gotoMainActivity(getActivity());
                 }
             }
@@ -58,12 +60,12 @@ public class CommunityFragment extends Fragment {
             }
         });
 
-        onCommunityChange(mCommunityActivity.getCurCommunity());
+        onCommunityChange(((CommunityActivity) mContext).getCurCommunity());
         return rootView;
     }
 
     public void onCommunityChange(ParseObject belongCommunity){
         if(mCommunityTitle != null && belongCommunity != null)
-            mCommunityTitle.setText("Do you want to join " + belongCommunity.getString("title") + "?");
+            mCommunityTitle.setText("Do you want to join \n" + belongCommunity.getString("title") + "?");
     }
 }
