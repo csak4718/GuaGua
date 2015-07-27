@@ -32,7 +32,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.android.support:design:22.2.0'
     compile 'com.facebook.android:facebook-android-sdk:4.1.0'
-//    compile 'com.facebook.android:facebook-android-sdk:4.4.1'
     compile 'com.google.android.gms:play-services:7.5.0'
     compile 'com.yalantis:phoenix:1.2.1'
     compile 'com.pkmmte.view:circularimageview:1.1'
