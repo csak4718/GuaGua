@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
@@ -40,6 +41,7 @@ import de.greenrobot.event.EventBus;
 
 public class MainActivity extends ActionBarActivity {
 
+    private HorizontalScrollView mScrollBannerBadge;
     private LinearLayout mBannerBadge;
     private MainActivityFragment mainFragment;
     private Handler handler = new Handler();
@@ -57,7 +59,7 @@ public class MainActivity extends ActionBarActivity {
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setCustomView(mActionBarTitle);
-        hideBdgeBanner(0);
+//        hideBdgeBanner(0);
 
         ParseUtils.getUserCommunity(ParseUser.getCurrentUser());
 
@@ -68,7 +70,6 @@ public class MainActivity extends ActionBarActivity {
                     showBdgeBanner(300);
                 } else {
                     hideBdgeBanner(300);
-
                 }
             }
         });
@@ -95,25 +96,27 @@ public class MainActivity extends ActionBarActivity {
     private void hideBdgeBanner(int duration) {
 
         mActionBarTitle.animateCollapse();
+        mScrollBannerBadge.setVisibility(View.GONE);
 
-        float scale = getResources().getDisplayMetrics().density;
-        TranslateAnimation animation = new TranslateAnimation(0, 0, 0, -100 * scale);
-        animation.setDuration(duration);
-        animation.setFillAfter(true);
-        animation.setFillEnabled(true);
-        mBannerBadge.startAnimation(animation);
+//        float scale = getResources().getDisplayMetrics().density;
+//        TranslateAnimation animation = new TranslateAnimation(0, 0, 0, -100 * scale);
+//        animation.setDuration(duration);
+//        animation.setFillAfter(true);
+//        animation.setFillEnabled(true);
+//        mBannerBadge.startAnimation(animation);
         badgeBannerVisible = false;
     }
     private void showBdgeBanner(int duration) {
 
         mActionBarTitle.animateExpand();
+        mScrollBannerBadge.setVisibility(View.VISIBLE);
 
-        float scale = getResources().getDisplayMetrics().density;
-        TranslateAnimation animation = new TranslateAnimation(0, 0, -100 * scale, 0);
-        animation.setDuration(duration);
-        animation.setFillAfter(true);
-        animation.setFillEnabled(true);
-        mBannerBadge.startAnimation(animation);
+//        float scale = getResources().getDisplayMetrics().density;
+//        TranslateAnimation animation = new TranslateAnimation(0, 0, -100 * scale, 0);
+//        animation.setDuration(duration);
+//        animation.setFillAfter(true);
+//        animation.setFillEnabled(true);
+//        mBannerBadge.startAnimation(animation);
         badgeBannerVisible = true;
     }
 
@@ -174,6 +177,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mScrollBannerBadge = (HorizontalScrollView) findViewById(R.id.scroll_banner_badge);
         mBannerBadge = (LinearLayout) findViewById(R.id.banner_badge);
         mImgBtnBadgeSearch = (ImageButton) findViewById(R.id.img_btn_badge_search);
         mBtnBadgeAll = (Button) findViewById(R.id.btn_badge_all);

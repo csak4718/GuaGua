@@ -37,6 +37,7 @@ public class ProfileSettingActivity extends ActionBarActivity {
     Button mBtnLogout;
     Button mBtnSaveProfile;
     EditText mEdtNickName;
+    EditText mEdtFbAccount;
     ImageView mImgProfilePic;
 
     Handler mHandler = new Handler();
@@ -44,18 +45,22 @@ public class ProfileSettingActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         user = ParseUser.getCurrentUser();
 
         setContentView(R.layout.activity_profile_setting);
         mImgProfilePic = (ImageView) findViewById(R.id.img_profile_pic);
         mBtnLogout = (Button) findViewById(R.id.btn_log_out);
-        mBtnSaveProfile = (Button) findViewById(R.id.btn_save_profile);
         mEdtNickName = (EditText) findViewById(R.id.edt_setting_nickname);
+        mEdtFbAccount = (EditText) findViewById(R.id.edt_fb_account);
 
         Intent it = getIntent();
 
         final String classFrom = it.getStringExtra("classFrom");
         String nickName = "";
+        String fbName = "Fan Fan";
 
         if(classFrom != null && classFrom.equals(LoginActivity.class.toString())) {
             nickName = it.getStringExtra("nickname");
@@ -64,6 +69,7 @@ public class ProfileSettingActivity extends ActionBarActivity {
         }
         else {
             nickName = user.getString(Common.OBJECT_USER_NICK);
+            fbName = user.getString(Common.OBJECT_USER_FB_NAME);
             ParseFile imgFile = user.getParseFile(Common.OBJECT_USER_PROFILE_PIC);
             Log.d("parse imgfile url", imgFile.getUrl());
             Uri imgUri = Uri.parse(imgFile.getUrl());
@@ -80,18 +86,7 @@ public class ProfileSettingActivity extends ActionBarActivity {
             }
         });
         mEdtNickName.setText(nickName);
-        mBtnSaveProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final String nickName = mEdtNickName.getText().toString();
-
-                Bitmap profilePic = ((BitmapDrawable)mImgProfilePic.getDrawable()).getBitmap();
-                ParseUtils.updateUserProfile(nickName, profilePic);
-                Utils.gotoMainActivity(ProfileSettingActivity.this);
-                finish();
-            }
-        });
-
+        mEdtFbAccount.setText(fbName);
     }
 
     @Override
@@ -131,7 +126,17 @@ public class ProfileSettingActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_done) {
+            final String nickName = mEdtNickName.getText().toString();
+            Bitmap profilePic = ((BitmapDrawable)mImgProfilePic.getDrawable()).getBitmap();
+            ParseUtils.updateUserProfile(nickName, profilePic);
+            Utils.gotoMainActivity(ProfileSettingActivity.this);
+            finish();
+            return true;
+        }
+        if (id == android.R.id.home) {
+            Utils.gotoMainActivity(ProfileSettingActivity.this);
+            finish();
             return true;
         }
 

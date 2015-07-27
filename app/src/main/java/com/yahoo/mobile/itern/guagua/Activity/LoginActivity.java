@@ -18,6 +18,7 @@ import com.parse.ParseUser;
 import com.yahoo.mobile.itern.guagua.Event.FbPictureEvent;
 import com.yahoo.mobile.itern.guagua.Event.UserProfileEvent;
 import com.yahoo.mobile.itern.guagua.R;
+import com.yahoo.mobile.itern.guagua.Util.Common;
 import com.yahoo.mobile.itern.guagua.Util.FbUtils;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
@@ -79,6 +80,7 @@ public class LoginActivity extends ActionBarActivity {
         FbUtils.getFbProfilePicture(mFbId);
     }
     public void onEvent(final FbPictureEvent event) {
+        ParseUser.getCurrentUser().put(Common.OBJECT_USER_FB_NAME, mNickName);
         ParseUtils.updateUserProfile(mNickName, event.mPic);
         startActivity(new Intent(this, CommunityActivity.class));
         finish();
