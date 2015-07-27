@@ -14,9 +14,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.FacebookSdk;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+
+import com.facebook.share.Sharer;
 import com.facebook.share.model.ShareLinkContent;
-import com.facebook.share.widget.ShareButton;
+
+import com.facebook.share.widget.ShareDialog;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
@@ -27,6 +32,7 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
+import com.yahoo.mobile.itern.guagua.Activity.MainActivity;
 import com.yahoo.mobile.itern.guagua.Fragment.CommentFragment;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.Common;
@@ -51,6 +57,12 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     private Context mContext;
     private LayoutInflater mInflater;
 
+
+
+    CallbackManager callbackManager;
+    ShareDialog shareDialog;
+
+
     public QuestionCardAdapter(Context context, List<ParseObject> list) {
         super();
         mContext = context;
@@ -61,6 +73,15 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         setHasStableIds(true);
 
         voted = new HashMap<>();
+
+        callbackManager = CallbackManager.Factory.create();
+        shareDialog = new ShareDialog((MainActivity)mContext);
+
+        shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
+            public void onSuccess(Sharer.Result results){}
+            public void onCancel(){}
+            public void onError(FacebookException e){}
+        });
     }
 
     public void flushFilter() {
@@ -87,8 +108,11 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         public TextView txtTitle;
         public OptionButton btnA;
         public OptionButton btnB;
-        public ShareButton shareBtnPost;
+        public ImageButton shareBtnPost;
         public ImageButton imgBtnComment;
+
+
+
         public ViewHolder(View v) {
             super(v);
             mView = v;
@@ -97,7 +121,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             txtTitle = (TextView) v.findViewById(R.id.title);
             btnA = (OptionButton) v.findViewById(R.id.btnA);
             btnB = (OptionButton) v.findViewById(R.id.btnB);
-            shareBtnPost = (ShareButton)v.findViewById(R.id.shareBtnPost);
+            shareBtnPost = (ImageButton)v.findViewById(R.id.shareBtnPost);
             imgBtnComment = (ImageButton) v.findViewById(R.id.imgBtnComment);
         }
         @Override
@@ -111,6 +135,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     public QuestionCardAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                    int viewType) {
 //        FacebookSdk.sdkInitialize(parent.getContext());
+
+
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_question, parent, false);
 
@@ -183,7 +209,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                 voteQuestion(mQuestion, holder, voteA + 1, voteB);
             }
         });
-        holder.btnB.setOnClickListener(new View.OnClickListener(){
+        holder.btnB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 voteQuestion(mQuestion, holder, voteA, voteB + 1);
@@ -191,10 +217,20 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         });
 
 
-        ShareLinkContent content = new ShareLinkContent.Builder()
-                .setContentUrl(Uri.parse("https://aqueous-falls-3271.herokuapp.com/guagua/"+objectId+"/results/"))
-                .build();
-        holder.shareBtnPost.setShareContent(content);
+        holder.shareBtnPost.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if (ShareDialog.canShow(ShareLinkContent.class)) {
+                    ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                            .setContentTitle("呱呱 - 投票結果")
+                            .setContentDescription(holder.txtTitle.getText().toString())
+                            .setContentUrl(Uri.parse("https://aqueous-falls-3271.herokuapp.com/guagua/"+objectId+"/results/"))
+                            .build();
+
+                    shareDialog.show(linkContent);
+                }
+            }
+        });
 
 
         holder.imgBtnComment.setOnClickListener(new View.OnClickListener(){
