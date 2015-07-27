@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
@@ -87,6 +88,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         public OptionButton btnA;
         public OptionButton btnB;
         public ImageButton imgBtnComment;
+        public LinearLayout layoutFuncButtons;
         public ViewHolder(View v) {
             super(v);
             mView = v;
@@ -96,6 +98,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             btnA = (OptionButton) v.findViewById(R.id.btnA);
             btnB = (OptionButton) v.findViewById(R.id.btnB);
             imgBtnComment = (ImageButton) v.findViewById(R.id.imgBtnComment);
+            layoutFuncButtons = (LinearLayout) v.findViewById(R.id.layout_function_buttons);
         }
         @Override
         public View getSwipeableContainerView() {
@@ -127,7 +130,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.btnB.setProgress(progressB);
         holder.btnA.setVoted(true, true);
         holder.btnB.setVoted(true, true);
-        holder.imgBtnComment.setVisibility(View.VISIBLE);
+        holder.layoutFuncButtons.setVisibility(View.VISIBLE);
         voted.put(objectId, true);
 
         ParseRelation<ParseUser> relation = mQuestion.getRelation(Common.OBJECT_POST_VOTED_USER);
@@ -158,7 +161,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                 final int voteB = mQuestion.getInt(Common.OBJECT_POST_QB_NUM);
 
                 if(votedUser.contains(ParseUser.getCurrentUser())) {
-                    holder.imgBtnComment.setVisibility(View.VISIBLE);
+                    holder.layoutFuncButtons.setVisibility(View.VISIBLE);
                     holder.btnA.setVoted(true, false);
                     holder.btnB.setVoted(true, false);
                     holder.btnA.setOnClickListener(new View.OnClickListener() {
@@ -171,7 +174,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                     });
                 }
                 else {
-                    holder.imgBtnComment.setVisibility(View.GONE);
+                    holder.layoutFuncButtons.setVisibility(View.GONE);
                     holder.btnA.setVoted(false, false);
                     holder.btnB.setVoted(false, false);
 
