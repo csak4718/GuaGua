@@ -1,18 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/action_bar_main_root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:clickable="true">
 
     <Button
         android:id="@+id/btn_action_bar_title"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="left|center_vertical"
+        android:layout_gravity="left"
+        style="?android:attr/buttonStyleSmall"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="呱呱"
-        android:textColor="#ffffff"
-        android:background="@android:color/transparent" />
+        android:textColor="@android:color/white"
+        android:background="@android:color/transparent"
+        android:layout_marginRight="8dp"/>
+    <TextView
+        android:id="@+id/action_bar_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:textSize="7sp"
+        android:layout_gravity="center_vertical"
+        android:text="\u25B2"/>
 
 </LinearLayout>

@@ -4,11 +4,11 @@
     </string>
     <string name="app_name">呱呱</string>
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_done">Done</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_login">LoginActivity</string>
-    <string name="title_activity_profile_setting">ProfileSettingActivity</string>
-    <string name="title_activity_personal_page">PersonalPage</string>
+    <string name="title_activity_profile_setting">Profile</string>
+    <string name="action_settings">Setting</string>
 </resources>

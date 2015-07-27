@@ -20,6 +20,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import com.parse.ParseObject;
+import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
@@ -58,7 +60,8 @@ public class PostFragment extends Fragment {
                 final String question = edtQuestion.getText().toString();
                 final String optionA = edtOptA.getText().toString();
                 final String optionB = edtOptB.getText().toString();
-                ParseUtils.postQuestions(question, optionA, optionB);
+                final ParseObject community = ((MainApplication) getActivity().getApplication()).currentViewingCommunity;
+                ParseUtils.postQuestions(question, optionA, optionB, community);
                 Utils.hideSoftKeyboard(getActivity());
                 getFragmentManager().popBackStack();
 

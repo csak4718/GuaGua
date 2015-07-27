@@ -8,9 +8,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.Common;
+import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 
 import java.util.List;
 
@@ -52,8 +57,23 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(CommentAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(final CommentAdapter.ViewHolder holder, int position) {
         final ParseObject comment = mCommentList.get(position);
+        final ParseUser user = comment.getParseUser(Common.OBJECT_COMMENT_USER);
+        if(user != null)
+        {
+            user.fetchInBackground(new GetCallback<ParseObject>() {
+                @Override
+                public void done(ParseObject parseObject, ParseException e) {
+                    if(e == null) {
+                        holder.txtCommentName.setText(user.getString(Common.OBJECT_USER_NICK));
+                        ParseFile imgFile = user.getParseFile(Common.OBJECT_USER_PROFILE_PIC);
+                        ParseUtils.displayImage(imgFile, holder.imgCommentProfile);
+                    }
+                }
+            });
+        }
+
         final String commentMsg = comment.getString(Common.OBJECT_COMMENT_MSG);
         holder.txtCommentMsg.setText(commentMsg);
 

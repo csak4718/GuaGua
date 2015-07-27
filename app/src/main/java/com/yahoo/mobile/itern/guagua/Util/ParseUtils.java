@@ -1,5 +1,6 @@
 package com.yahoo.mobile.itern.guagua.Util;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -11,14 +12,18 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.Event.CollectionEvent;
 import com.yahoo.mobile.itern.guagua.Event.CommentEvent;
 import com.yahoo.mobile.itern.guagua.Event.CommunityEvent;
 import com.yahoo.mobile.itern.guagua.Event.MyQuestionsEvent;
 import com.yahoo.mobile.itern.guagua.Event.QuestionEvent;
+import com.yahoo.mobile.itern.guagua.Event.UserCommunityEvent;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -32,6 +37,36 @@ public class ParseUtils {
         testObject.put("foo", "bar");
         testObject.saveInBackground();
     }
+
+    static public void updateUserProfile(final String nickName, Bitmap profilePic) {
+        final ParseUser user = ParseUser.getCurrentUser();
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        profilePic.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] bytearray= stream.toByteArray();
+        final ParseFile imgFile = new ParseFile(user.getUsername() + "_profile.jpg", bytearray);
+        imgFile.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                user.put(Common.OBJECT_USER_NICK, nickName);
+                user.put(Common.OBJECT_USER_PROFILE_PIC, imgFile);
+                user.saveInBackground();
+            }
+        });
+
+    }
+    static public void getUserCommunity(ParseUser user) {
+        ParseRelation<ParseObject> relation = user.getRelation(Common.OBJECT_USER_COMMUNITY_RELATION);
+        relation.getQuery().findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e == null) {
+                    EventBus.getDefault().post(new UserCommunityEvent(list));
+                }
+            }
+        });
+    }
+
     static public void getAllQuestions() {
         ParseQuery<ParseObject> query = ParseQuery.getQuery(Common.OBJECT_POST);
         query.orderByDescending("updatedAt");
@@ -42,6 +77,30 @@ public class ParseUtils {
                     EventBus.getDefault().post(new QuestionEvent(questionList));
                 } else {
                     Log.d("questions", "Error: " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    static public void getCurrentCommunityQuestions(Activity activity) {
+        MainApplication app = (MainApplication) activity.getApplication();
+        getCommunityQuestions(app.currentViewingCommunity);
+    }
+
+    static public void getCommunityQuestions(ParseObject community) {
+
+        if(community == null) {
+            getAllQuestions();
+            return;
+        }
+
+        ParseRelation<ParseObject> relation = community.getRelation(Common.OBJECT_COMMUNITY_POSTS);
+        relation.getQuery().findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e == null) {
+                    Log.d("questions", "Retrieved " + list.size() + " community questions");
+                    EventBus.getDefault().post(new QuestionEvent(list));
                 }
             }
         });
@@ -63,7 +122,8 @@ public class ParseUtils {
             }
         });
     }
-    static public void postQuestions(String question, String optionA, String optionB) {
+
+    static public void postQuestions(String question, String optionA, String optionB, final ParseObject community) {
         final ParseObject mPost = new ParseObject(Common.OBJECT_POST);
         mPost.put(Common.OBJECT_POST_CONTENT, question);
         mPost.put(Common.OBJECT_POST_QA, optionA);
@@ -71,12 +131,15 @@ public class ParseUtils {
         mPost.put(Common.OBJECT_POST_QA_NUM, 0);
         mPost.put(Common.OBJECT_POST_QB_NUM, 0);
         mPost.put(Common.OBJECT_POST_USER, ParseUser.getCurrentUser());
-        mPost.saveInBackground(new SaveCallback() {
+
+        mPost.saveEventually(new SaveCallback() {
             @Override
             public void done(ParseException e) {
-                ParseUser user = ParseUser.getCurrentUser();
-                user.getRelation(Common.OBJECT_POST_MQ).add(mPost);
-                user.saveInBackground();
+                if(community != null) {
+                    ParseRelation<ParseObject> relation = community.getRelation(Common.OBJECT_COMMUNITY_POSTS);
+                    relation.add(mPost);
+                    community.saveInBackground();
+                }
             }
         });
     }
@@ -84,6 +147,7 @@ public class ParseUtils {
         ParseObject mComment = new ParseObject(Common.OBJECT_COMMENT);
         mComment.put(Common.OBJECT_COMMENT_POSTID, postId);
         mComment.put(Common.OBJECT_COMMENT_MSG, comment);
+        mComment.put(Common.OBJECT_COMMENT_USER, ParseUser.getCurrentUser());
         mComment.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -143,6 +207,7 @@ public class ParseUtils {
             }
         });
     }
+
     static public void getMyQuestions(ParseUser user) {
         ParseQuery<ParseObject> query = user.getRelation(Common.OBJECT_POST_MQ).getQuery();
         //ParseQuery<ParseObject> query = ParseQuery.getQuery("Colleciton");
@@ -161,4 +226,17 @@ public class ParseUtils {
         });
     }
 
+    static public void addCommunityToUser(final String communityObjectId){
+
+        ParseUser user = ParseUser.getCurrentUser();
+        ParseRelation<ParseObject> relation = user.getRelation(Common.OBJECT_USER_COMMUNITY_RELATION);
+        relation.add(ParseObject.createWithoutData(Common.OBJECT_COMMUNITY, communityObjectId));
+        user.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                getUserCommunity(ParseUser.getCurrentUser());
+            }
+        });
+
+    }
 }

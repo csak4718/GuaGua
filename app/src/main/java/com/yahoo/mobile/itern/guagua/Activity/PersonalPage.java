@@ -1,5 +1,6 @@
 package com.yahoo.mobile.itern.guagua.Activity;
 
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -49,6 +50,7 @@ public class PersonalPage extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startActivity(new Intent(this, ProfileSettingActivity.class));
             return true;
         }
 

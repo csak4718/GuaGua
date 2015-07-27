@@ -6,39 +6,45 @@
 
     <ImageView
         android:id="@+id/img_community_logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/splash_logo"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/badge_icon"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"/>
 
     <TextView
-        android:textSize="36sp"
+        android:textSize="37sp"
         android:id="@+id/txt_community_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="title"
+        android:textColor="@android:color/white"
+        android:text="Yahoo!"
+        android:layout_marginBottom="10dp"
         android:layout_above="@+id/img_community_logo"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:id="@+id/no_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="91dp"
+        android:layout_height="90dp"
         android:text="NO"
-
-        android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/img_community_logo"
-        android:layout_toEndOf="@+id/img_community_logo"/>
+        android:textColor="@drawable/text_color_white_blue"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:background="@drawable/button_circle"
+        android:layout_below="@+id/img_community_logo"
+        android:layout_toRightOf="@+id/txt_community_title"
+        android:layout_toEndOf="@+id/txt_community_title" />
 
     <Button
         android:id="@+id/yes_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="91dp"
+        android:layout_height="90dp"
         android:text="YES"
-
-        android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/img_community_logo"
-        android:layout_toStartOf="@+id/img_community_logo"/>
+        android:textColor="@drawable/text_color_white_blue"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:background="@drawable/button_circle"
+        android:layout_alignTop="@+id/no_button"
+        android:layout_toLeftOf="@+id/txt_community_title"
+        android:layout_toStartOf="@+id/txt_community_title" />
 
 </RelativeLayout>
