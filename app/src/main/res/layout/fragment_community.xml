@@ -32,8 +32,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:background="@drawable/button_circle"
         android:layout_below="@+id/img_community_logo"
-        android:layout_toRightOf="@+id/txt_community_title"
-        android:layout_toEndOf="@+id/txt_community_title" />
+        android:layout_alignRight="@+id/img_community_logo"/>
 
     <Button
         android:id="@+id/yes_button"
@@ -43,8 +42,7 @@
         android:textColor="@drawable/text_color_white_blue"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:background="@drawable/button_circle"
-        android:layout_alignTop="@+id/no_button"
-        android:layout_toLeftOf="@+id/txt_community_title"
-        android:layout_toStartOf="@+id/txt_community_title" />
+        android:layout_below="@+id/img_community_logo"
+        android:layout_alignLeft="@+id/img_community_logo"/>
 
 </RelativeLayout>
