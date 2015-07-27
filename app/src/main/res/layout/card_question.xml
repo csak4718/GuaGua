@@ -64,7 +64,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="right"
-            android:visibility="visible">
+            android:visibility="invisible">
             <ImageButton
                 android:id="@+id/shareBtnPost"
                 android:layout_width="24dp"
@@ -73,6 +73,7 @@
                 android:background="@android:color/transparent"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp" />
+
             <ImageButton
                 android:id="@+id/imgBtnComment"
                 android:layout_width="24dp"

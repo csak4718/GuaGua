@@ -1,6 +1,7 @@
 package com.yahoo.mobile.itern.guagua.Adapter;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +48,13 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         }
     }
 
+    private void resetHolder(CommentAdapter.ViewHolder holder) {
+        holder.imgCommentProfile.setImageBitmap(
+                BitmapFactory.decodeResource(mContext.getResources(),
+                        R.drawable.ic_account_circle_black_48dp));
+        holder.txtCommentName.setText("Fan Fan");
+    }
+
     @Override
     public CommentAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
@@ -58,6 +66,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(final CommentAdapter.ViewHolder holder, int position) {
+
         final ParseObject comment = mCommentList.get(position);
         final ParseUser user = comment.getParseUser(Common.OBJECT_COMMENT_USER);
         if(user != null)
@@ -72,6 +81,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                     }
                 }
             });
+        }
+        else {
+            resetHolder(holder);
         }
 
         final String commentMsg = comment.getString(Common.OBJECT_COMMENT_MSG);

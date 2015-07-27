@@ -60,11 +60,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     private Context mContext;
     private LayoutInflater mInflater;
 
-
-
     CallbackManager callbackManager;
     ShareDialog shareDialog;
-
 
     public QuestionCardAdapter(Context context, List<ParseObject> list) {
         super();
@@ -258,34 +255,6 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.btnA.setVoteNum(voteA);
         holder.btnB.setVoteNum(voteB);
 
-//        if(voted.get(objectId) == null) {
-//            voted.put(objectId, false);
-//        }
-//        if(voted.get(objectId)) {
-//            holder.shareBtnPost.setVisibility(View.VISIBLE);
-//            holder.imgBtnComment.setVisibility(View.VISIBLE);
-//        }
-//        else {
-//            holder.shareBtnPost.setVisibility(View.GONE);
-//            holder.imgBtnComment.setVisibility(View.GONE);
-//        }
-//        holder.btnA.setVoted(voted.get(objectId));
-//        holder.btnB.setVoted(voted.get(objectId));
-//
-//        holder.btnA.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                voteQuestion(mQuestion, holder, voteA + 1, voteB);
-//            }
-//        });
-//        holder.btnB.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                voteQuestion(mQuestion, holder, voteA, voteB + 1);
-//            }
-//        });
-
-
         holder.shareBtnPost.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -300,8 +269,6 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                 }
             }
         });
-
-
 
 
         int progressA = (int)(voteA * 100.0 / (voteA + voteB));
