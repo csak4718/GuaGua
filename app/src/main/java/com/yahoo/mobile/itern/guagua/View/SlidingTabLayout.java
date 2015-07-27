@@ -22,6 +22,7 @@ import android.os.Build;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -76,6 +77,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
     private ViewPager mViewPager;
     private ViewPager.OnPageChangeListener mViewPagerPageChangeListener;
+    private Context mContext;
 
     private final SlidingTabStrip mTabStrip;
 
@@ -99,6 +101,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
         mTabStrip = new SlidingTabStrip(context);
         addView(mTabStrip, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        mContext = context;
     }
 
     /**
@@ -173,6 +176,8 @@ public class SlidingTabLayout extends HorizontalScrollView {
         textView.setGravity(Gravity.CENTER);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, TAB_VIEW_TEXT_SIZE_SP);
         textView.setTypeface(Typeface.DEFAULT_BOLD);
+        //LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        //textView.setLayoutParams(lp);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             // If we're running on Honeycomb or newer, then we can use the Theme's
@@ -197,7 +202,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
     private void populateTabStrip() {
         final PagerAdapter adapter = mViewPager.getAdapter();
         final OnClickListener tabClickListener = new TabClickListener();
-
+        Log.d("GET Count", String.valueOf(adapter.getCount()));
         for (int i = 0; i < adapter.getCount(); i++) {
             View tabView = null;
             TextView tabTitleView = null;
@@ -219,7 +224,11 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
             tabTitleView.setText(adapter.getPageTitle(i));
             tabView.setOnClickListener(tabClickListener);
-
+            // Try to scale to screen
+            //Display display = mContext.getgetWindowManager().getDefaultDisplay();
+            int width = getResources().getDisplayMetrics().widthPixels;  // deprecated
+            Log.d("Get root view",String.valueOf(width/2));
+            tabView.setMinimumWidth(width/2);
             mTabStrip.addView(tabView);
         }
     }

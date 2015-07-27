@@ -1,12 +1,9 @@
 package com.yahoo.mobile.itern.guagua.Adapter;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.content.Context;
+import android.graphics.BitmapFactory;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,17 +15,15 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeMana
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
 import com.parse.GetCallback;
-import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseRelation;
 import com.parse.ParseUser;
-import com.squareup.picasso.Picasso;
 import com.yahoo.mobile.itern.guagua.Fragment.CommentFragment;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.Common;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
-import com.yahoo.mobile.itern.guagua.Util.Utils;
 import com.yahoo.mobile.itern.guagua.View.OptionButton;
 
 import java.util.ArrayList;
@@ -85,6 +80,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         public OptionButton btnA;
         public OptionButton btnB;
         public ImageButton imgBtnComment;
+        public ImageButton imgBtnLike;
+        public ImageButton imgBtnShare;
         public ViewHolder(View v) {
             super(v);
             mView = v;
@@ -94,6 +91,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             btnA = (OptionButton) v.findViewById(R.id.btnA);
             btnB = (OptionButton) v.findViewById(R.id.btnB);
             imgBtnComment = (ImageButton) v.findViewById(R.id.imgBtnComment);
+            imgBtnShare = (ImageButton) v.findViewById(R.id.imgBtnShare);
+            imgBtnLike = (ImageButton) v.findViewById(R.id.imgBtnLike);
         }
         @Override
         public View getSwipeableContainerView() {
@@ -118,11 +117,14 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             return;
         }
         mQuestion.put("A", voteA);
+        mQuestion.put("B", voteA);
         holder.btnA.setVoteNum(voteA);
         holder.btnB.setVoteNum(voteB);
         holder.btnA.setVoted(true);
         holder.btnB.setVoted(true);
         holder.imgBtnComment.setVisibility(View.VISIBLE);
+        holder.imgBtnLike.setVisibility(View.VISIBLE);
+        holder.imgBtnShare.setVisibility(View.VISIBLE);
         voted.put(objectId, true);
         mQuestion.saveInBackground();
     }
@@ -190,6 +192,23 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                         .commit();
             }
         });
+        holder.imgBtnLike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParseUser currentUser = ParseUser.getCurrentUser();
+                if (currentUser != null) {
+                    // do stuff with the user
+                    currentUser.getRelation("likes");
+                    ParseRelation<ParseObject> relation = currentUser.getRelation(Common.OBJECT_POST_LIKES);
+                    relation.add(mQuestion);
+                    currentUser.saveInBackground();
+                    holder.imgBtnLike.setBackground(mContext.getDrawable(R.drawable.ic_favorite_black_24dp));
+                } else {
+                    // show the signup or login screen
+                }
+            }
+        });
+        //holder.imgBtn
     }
 
     @Override

@@ -56,8 +56,17 @@ public class MyFavoriteFragment extends Fragment {
          */
         Fragment createFragment() {
             //return PostFragment.newInstance(mTitle, mIndicatorColor, mDividerColor);
-            Log.d("MFF","Creating PostFragment");
-            return new CollectionFragment();
+
+            Log.d("MFF", "Creating PostFragment");
+            if (getTitle().equals("我的收藏")){
+                Log.d("MFF", "collection");
+                return new CollectionFragment();
+            }else if (getTitle().equals("我的發問")){
+                Log.d("MFF", "myquestion");
+                return new MyQuestionFragment();
+            }else{
+                return new PostFragment();
+            }
         }
 
         /**
@@ -190,6 +199,7 @@ public class MyFavoriteFragment extends Fragment {
 
         @Override
         public Fragment getItem(int i) {
+            Log.d("layout","here");
             return mTabs.get(i).createFragment();
         }
 

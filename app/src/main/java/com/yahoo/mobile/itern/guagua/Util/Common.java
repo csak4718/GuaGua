@@ -16,5 +16,6 @@ public class Common {
     public final static String OBJECT_COMMENT = "Comments";
     public final static String OBJECT_COMMENT_MSG = "msg";
     public final static String OBJECT_COMMENT_POSTID = "PostId";
-
+    public final static String OBJECT_POST_LIKES = "likes";
+    public final static String OBJECT_POST_MQ = "myQuestions";
 }

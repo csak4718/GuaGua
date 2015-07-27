@@ -16,6 +16,7 @@ import com.parse.SaveCallback;
 import com.yahoo.mobile.itern.guagua.Event.CollectionEvent;
 import com.yahoo.mobile.itern.guagua.Event.CommentEvent;
 import com.yahoo.mobile.itern.guagua.Event.CommunityEvent;
+import com.yahoo.mobile.itern.guagua.Event.MyQuestionsEvent;
 import com.yahoo.mobile.itern.guagua.Event.QuestionEvent;
 
 import java.util.List;
@@ -63,14 +64,21 @@ public class ParseUtils {
         });
     }
     static public void postQuestions(String question, String optionA, String optionB) {
-        ParseObject mPost = new ParseObject(Common.OBJECT_POST);
+        final ParseObject mPost = new ParseObject(Common.OBJECT_POST);
         mPost.put(Common.OBJECT_POST_CONTENT, question);
         mPost.put(Common.OBJECT_POST_QA, optionA);
         mPost.put(Common.OBJECT_POST_QB, optionB);
         mPost.put(Common.OBJECT_POST_QA_NUM, 0);
         mPost.put(Common.OBJECT_POST_QB_NUM, 0);
         mPost.put(Common.OBJECT_POST_USER, ParseUser.getCurrentUser());
-        mPost.saveInBackground();
+        mPost.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                ParseUser user = ParseUser.getCurrentUser();
+                user.getRelation(Common.OBJECT_POST_MQ).add(mPost);
+                user.saveInBackground();
+            }
+        });
     }
     static public void postComment(String comment, final String postId, final Boolean refreshList) {
         ParseObject mComment = new ParseObject(Common.OBJECT_COMMENT);
@@ -118,8 +126,8 @@ public class ParseUtils {
             }
         });
     }
-    static public void getAllCollections(String uid) {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Prayer");
+    static public void getAllCollections(ParseUser user) {
+        ParseQuery<ParseObject> query = user.getRelation(Common.OBJECT_POST_LIKES).getQuery();
         //ParseQuery<ParseObject> query = ParseQuery.getQuery("Colleciton");
 
         query.orderByDescending("updatedAt");
@@ -135,4 +143,22 @@ public class ParseUtils {
             }
         });
     }
+    static public void getMyQuestions(ParseUser user) {
+        ParseQuery<ParseObject> query = user.getRelation(Common.OBJECT_POST_MQ).getQuery();
+        //ParseQuery<ParseObject> query = ParseQuery.getQuery("Colleciton");
+
+        query.orderByDescending("updatedAt");
+        //query.whereEqualTo("uid",uid);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> myQuestionsList, ParseException e) {
+                if (e == null) {
+                    Log.d("myQuesions", "Retrieved " + myQuestionsList.size() + " collections");
+                    EventBus.getDefault().post(new MyQuestionsEvent(myQuestionsList));
+                } else {
+                    Log.d("myQuesions", "Error: " + e.getMessage());
+                }
+            }
+        });
+    }
+
 }
