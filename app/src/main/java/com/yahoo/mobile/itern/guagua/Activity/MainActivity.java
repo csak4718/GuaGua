@@ -55,9 +55,10 @@ public class MainActivity extends ActionBarActivity {
         mActionBarTitle = new ActionBarTitle(this);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setBackgroundDrawable(new ColorDrawable(R.color.purple));
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#5AD3D2")));
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setElevation(0);
         actionBar.setCustomView(mActionBarTitle);
 //        hideBdgeBanner(0);
 

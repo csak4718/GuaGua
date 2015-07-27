@@ -40,34 +40,15 @@
             android:padding="5dp"
             android:text="Fan Fan"
             android:hint="" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|left"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_marginBottom="10dp"
-            android:text="Facebook Account" />
-        <EditText
-            android:id="@+id/edt_fb_account"
+        <Button
+            android:id="@+id/btn_log_out"
+            android:text="Log out"
+            android:textColor="@android:color/white"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@android:color/white"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="20dp"
-            android:enabled="false"
-            android:padding="5dp"
-            android:text="Fan Fan"
-            android:hint="" />
+            android:layout_height="wrap_content"
+            android:background="#44609D" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_log_out"
-        android:text="Log out"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="51dp"
-        android:layout_below="@+id/edt_setting_nickname"
-        android:layout_toRightOf="@+id/textView"
-        android:layout_toEndOf="@+id/textView" />
+
 
 </LinearLayout>
