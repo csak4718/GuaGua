@@ -56,6 +56,14 @@
             android:layout_gravity="center"
             android:layout_marginBottom="10dp"
             android:background="@drawable/button_option" />
+        <com.facebook.share.widget.ShareButton
+            android:id="@+id/shareBtnPost"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:src="@drawable/ic_share_black"
+            android:layout_gravity="left"
+            android:background="@android:color/transparent"
+            android:visibility="visible"/>
         <ImageButton
             android:id="@+id/imgBtnComment"
             android:layout_width="18dp"

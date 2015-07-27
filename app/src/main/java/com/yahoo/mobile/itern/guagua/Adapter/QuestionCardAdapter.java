@@ -14,6 +14,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.FacebookSdk;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareButton;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
@@ -84,6 +87,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         public TextView txtTitle;
         public OptionButton btnA;
         public OptionButton btnB;
+        public ShareButton shareBtnPost;
         public ImageButton imgBtnComment;
         public ViewHolder(View v) {
             super(v);
@@ -93,6 +97,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             txtTitle = (TextView) v.findViewById(R.id.title);
             btnA = (OptionButton) v.findViewById(R.id.btnA);
             btnB = (OptionButton) v.findViewById(R.id.btnB);
+            shareBtnPost = (ShareButton)v.findViewById(R.id.shareBtnPost);
             imgBtnComment = (ImageButton) v.findViewById(R.id.imgBtnComment);
         }
         @Override
@@ -105,6 +110,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     @Override
     public QuestionCardAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                    int viewType) {
+//        FacebookSdk.sdkInitialize(parent.getContext());
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_question, parent, false);
 
@@ -122,6 +128,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.btnB.setVoteNum(voteB);
         holder.btnA.setVoted(true);
         holder.btnB.setVoted(true);
+        holder.shareBtnPost.setVisibility(View.VISIBLE);
         holder.imgBtnComment.setVisibility(View.VISIBLE);
         voted.put(objectId, true);
         mQuestion.saveInBackground();
@@ -160,9 +167,11 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             voted.put(objectId, false);
         }
         if(voted.get(objectId)) {
+            holder.shareBtnPost.setVisibility(View.VISIBLE);
             holder.imgBtnComment.setVisibility(View.VISIBLE);
         }
         else {
+            holder.shareBtnPost.setVisibility(View.GONE);
             holder.imgBtnComment.setVisibility(View.GONE);
         }
         holder.btnA.setVoted(voted.get(objectId));
@@ -180,6 +189,14 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                 voteQuestion(mQuestion, holder, voteA, voteB + 1);
             }
         });
+
+
+        ShareLinkContent content = new ShareLinkContent.Builder()
+                .setContentUrl(Uri.parse("https://aqueous-falls-3271.herokuapp.com/guagua/"+objectId+"/results/"))
+                .build();
+        holder.shareBtnPost.setShareContent(content);
+
+
         holder.imgBtnComment.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
