@@ -17,11 +17,13 @@ import android.widget.TextView;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
+import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 import com.yahoo.mobile.itern.guagua.Fragment.CommentFragment;
@@ -114,9 +116,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
     private void voteQuestion(ParseObject mQuestion, ViewHolder holder, int voteA, int voteB) {
         final String objectId = mQuestion.getObjectId();
-        if(voted.get(objectId)) {
-            return;
-        }
+
         int progressA = (int)(voteA * 100.0 / (voteA + voteB));
         int progressB = (int)(voteB * 100.0 / (voteA + voteB));
         mQuestion.put("A", voteA);
@@ -129,12 +129,76 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.btnB.setVoted(true, true);
         holder.imgBtnComment.setVisibility(View.VISIBLE);
         voted.put(objectId, true);
+
+        ParseRelation<ParseUser> relation = mQuestion.getRelation(Common.OBJECT_POST_VOTED_USER);
+        relation.add(ParseUser.getCurrentUser());
+
         mQuestion.saveInBackground();
+    }
+
+    private void resetCard(final ViewHolder holder) {
+        holder.btnA.setVoted(false, false);
+        holder.btnB.setVoted(false, false);
+        holder.btnA.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {}
+        });
+        holder.btnB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {}
+        });
+    }
+
+    private void setCardVoted(final ViewHolder holder, final ParseObject mQuestion, final ParseRelation<ParseUser> relation) {
+        relation.getQuery().findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(List<ParseUser> votedUser, ParseException e) {
+
+                final int voteA = mQuestion.getInt(Common.OBJECT_POST_QA_NUM);
+                final int voteB = mQuestion.getInt(Common.OBJECT_POST_QB_NUM);
+
+                if(votedUser.contains(ParseUser.getCurrentUser())) {
+                    holder.imgBtnComment.setVisibility(View.VISIBLE);
+                    holder.btnA.setVoted(true, false);
+                    holder.btnB.setVoted(true, false);
+                    holder.btnA.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {}
+                    });
+                    holder.btnB.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {}
+                    });
+                }
+                else {
+                    holder.imgBtnComment.setVisibility(View.GONE);
+                    holder.btnA.setVoted(false, false);
+                    holder.btnB.setVoted(false, false);
+
+                    holder.btnA.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            voteQuestion(mQuestion, holder, voteA + 1, voteB);
+                        }
+                    });
+                    holder.btnB.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            voteQuestion(mQuestion, holder, voteA, voteB + 1);
+                        }
+                    });
+                }
+            }
+        });
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
+
+        resetCard(holder);
+
         final ParseObject mQuestion = mVisibleQuestionList.get(position);
+        final ParseRelation<ParseUser> relation = mQuestion.getRelation(Common.OBJECT_POST_VOTED_USER);
         final ParseUser postUser = mQuestion.getParseUser(Common.OBJECT_POST_USER);
         final String objectId = mQuestion.getObjectId();
         final int voteA = mQuestion.getInt(Common.OBJECT_POST_QA_NUM);
@@ -165,31 +229,9 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         int progressB = (int) (voteB * 100.0 / (voteA + voteB));
         holder.btnA.setProgress(progressA);
         holder.btnB.setProgress(progressB);
-        if(voted.get(objectId) == null) {
-            voted.put(objectId, false);
-        }
-        if(voted.get(objectId)) {
-            holder.imgBtnComment.setVisibility(View.VISIBLE);
-        }
-        else {
-            holder.imgBtnComment.setVisibility(View.GONE);
-        }
-        holder.btnA.setVoted(voted.get(objectId), false);
-        holder.btnB.setVoted(voted.get(objectId), false);
 
-        holder.btnA.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                voteQuestion(mQuestion, holder, voteA + 1, voteB);
-            }
-        });
-        holder.btnB.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                voteQuestion(mQuestion, holder, voteA, voteB + 1);
-            }
-        });
-        holder.imgBtnComment.setOnClickListener(new View.OnClickListener(){
+
+        holder.imgBtnComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ((AppCompatActivity) mContext).getSupportFragmentManager()
@@ -199,6 +241,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                         .commit();
             }
         });
+
+        setCardVoted(holder, mQuestion, relation);
     }
 
     @Override

@@ -3,23 +3,18 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:animateLayoutChanges="true">
-    <FrameLayout
-        android:animateLayoutChanges="true"
+    <HorizontalScrollView
+        android:id="@+id/scroll_banner_badge"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <FrameLayout
-            android:id="@+id/content_frame"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="?android:attr/colorBackground" />
+        android:layout_height="wrap_content"
+        android:background="#A6000000"
+        android:visibility="gone">
         <LinearLayout
             android:id="@+id/banner_badge"
             android:padding="5dp"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:visibility="visible"
-            android:background="#A6000000"
             android:animateLayoutChanges="true">
             <ImageButton
                 android:layout_marginRight="5dp"
@@ -41,5 +36,10 @@
                 android:layout_gravity="top"
                 android:background="@drawable/badge"/>
         </LinearLayout>
-    </FrameLayout>
+    </HorizontalScrollView>
+    <FrameLayout
+        android:id="@+id/content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:attr/colorBackground" />
 </LinearLayout>

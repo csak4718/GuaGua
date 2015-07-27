@@ -1,5 +1,6 @@
 package com.yahoo.mobile.itern.guagua.Util;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -15,6 +16,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.Event.CollectionEvent;
 import com.yahoo.mobile.itern.guagua.Event.CommentEvent;
 import com.yahoo.mobile.itern.guagua.Event.CommunityEvent;
@@ -80,7 +82,18 @@ public class ParseUtils {
         });
     }
 
+    static public void getCurrentCommunityQuestions(Activity activity) {
+        MainApplication app = (MainApplication) activity.getApplication();
+        getCommunityQuestions(app.currentViewingCommunity);
+    }
+
     static public void getCommunityQuestions(ParseObject community) {
+
+        if(community == null) {
+            getAllQuestions();
+            return;
+        }
+
         ParseRelation<ParseObject> relation = community.getRelation(Common.OBJECT_COMMUNITY_POSTS);
         relation.getQuery().findInBackground(new FindCallback<ParseObject>() {
             @Override

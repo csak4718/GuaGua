@@ -19,7 +19,9 @@ import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimat
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.parse.ParseObject;
+import com.yahoo.mobile.itern.guagua.Activity.MainActivity;
 import com.yahoo.mobile.itern.guagua.Adapter.QuestionCardAdapter;
+import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.Event.QuestionEvent;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
@@ -134,7 +136,12 @@ public class MainActivityFragment extends Fragment {
                 mPullToRefreshView.post(new Runnable() {
                     @Override
                     public void run() {
-                        ParseUtils.getAllQuestions();
+                        MainApplication app = (MainApplication) getActivity().getApplication();
+                        if (app.currentViewingCommunity == null) {
+                            ParseUtils.getAllQuestions();
+                        } else {
+                            ParseUtils.getCommunityQuestions(app.currentViewingCommunity);
+                        }
                     }
                 });
             }
@@ -149,6 +156,6 @@ public class MainActivityFragment extends Fragment {
             }
         });
 
-        ParseUtils.getAllQuestions();
+        ParseUtils.getCurrentCommunityQuestions(getActivity());
     }
 }
