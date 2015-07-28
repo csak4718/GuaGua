@@ -82,7 +82,6 @@ public class Utils {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface d, int id) {
                                 activity.startActivity(new Intent(action));
-                                ((CommunityActivity)activity).onResume();
                                 d.dismiss();
                             }
                         })
@@ -90,6 +89,7 @@ public class Utils {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface d, int id) {
                                 gotoMainActivity(activity);
+                                activity.finish();
                                 d.cancel();
                             }
                         });
