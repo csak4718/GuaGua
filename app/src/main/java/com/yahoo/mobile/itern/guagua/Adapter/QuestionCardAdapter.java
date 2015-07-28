@@ -4,11 +4,13 @@ import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
@@ -39,7 +41,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         implements SwipeableItemAdapter<QuestionCardAdapter.ViewHolder> {
 
 
-    private List<ParseObject> mAllQuestionList, mVisibleQuestionList;
+    private List<ParseObject> mAllQuestionList, mVisibleQuestionList, mFavoriteList;
     private Map<String, Boolean> voted;
     private Context mContext;
     private LayoutInflater mInflater;
@@ -49,10 +51,30 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         mContext = context;
         mAllQuestionList = list;
         mVisibleQuestionList = new ArrayList<>();
+        mFavoriteList = new ArrayList<>();
         mVisibleQuestionList.addAll(mAllQuestionList);
         mInflater = LayoutInflater.from(context);
         setHasStableIds(true);
 
+
+        try {
+            mFavoriteList = ParseUser.getCurrentUser().getRelation(Common.OBJECT_POST_LIKES).getQuery().find();
+            Log.d("Get Likes", String.valueOf(mFavoriteList.size()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        /*
+        ParseUser.getCurrentUser().getRelation(Common.OBJECT_POST_LIKES).getQuery().findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e==null){
+                    Log.d("Get Likes","done");
+                    mFavoriteList = list;
+                }else{
+
+                }
+            }
+        });*/
         voted = new HashMap<>();
     }
 
@@ -83,8 +105,12 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         public ImageButton imgBtnComment;
         public ImageButton imgBtnLike;
         public ImageButton imgBtnShare;
+        public LinearLayout layoutFuncButtons;
+        public Boolean liked = false;
+
         public ViewHolder(View v) {
             super(v);
+            Log.d("QDA", "Create viewhoder");
             mView = v;
             imgProfile = (ImageView) v.findViewById(R.id.imgProfile);
             txtName = (TextView) v.findViewById(R.id.txtName);
@@ -94,6 +120,9 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             imgBtnComment = (ImageButton) v.findViewById(R.id.imgBtnComment);
             imgBtnShare = (ImageButton) v.findViewById(R.id.imgBtnShare);
             imgBtnLike = (ImageButton) v.findViewById(R.id.imgBtnLike);
+
+            layoutFuncButtons = (LinearLayout) v.findViewById(R.id.layout_function_buttons);
+
         }
         @Override
         public View getSwipeableContainerView() {
@@ -125,9 +154,9 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.btnB.setProgress(progressB);
         holder.btnA.setVoted(true, true);
         holder.btnB.setVoted(true, true);
-        holder.imgBtnComment.setVisibility(View.VISIBLE);
-        holder.imgBtnLike.setVisibility(View.VISIBLE);
-        holder.imgBtnShare.setVisibility(View.VISIBLE);
+
+        holder.layoutFuncButtons.setVisibility(View.VISIBLE);
+
         voted.put(objectId, true);
 
         ParseRelation<ParseUser> relation = mQuestion.getRelation(Common.OBJECT_POST_VOTED_USER);
@@ -158,7 +187,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                 final int voteB = mQuestion.getInt(Common.OBJECT_POST_QB_NUM);
 
                 if(votedUser.contains(ParseUser.getCurrentUser())) {
-                    holder.imgBtnComment.setVisibility(View.VISIBLE);
+                    holder.layoutFuncButtons.setVisibility(View.VISIBLE);
                     holder.btnA.setVoted(true, false);
                     holder.btnB.setVoted(true, false);
                     holder.btnA.setOnClickListener(new View.OnClickListener() {
@@ -171,7 +200,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                     });
                 }
                 else {
-                    holder.imgBtnComment.setVisibility(View.GONE);
+                    holder.layoutFuncButtons.setVisibility(View.GONE);
                     holder.btnA.setVoted(false, false);
                     holder.btnB.setVoted(false, false);
 
@@ -194,7 +223,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-
+        Log.d("Rendering", "viewholder");
         resetCard(holder);
 
         final ParseObject mQuestion = mVisibleQuestionList.get(position);
@@ -241,6 +270,14 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                         .commit();
             }
         });
+        //render BtnLike
+        holder.liked = mFavoriteList.contains(mQuestion);
+        if (holder.liked){
+            holder.imgBtnLike.setImageResource(R.drawable.ic_favorite_black_24dp);
+        }else{
+            holder.imgBtnLike.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+        }
+
         holder.imgBtnLike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -249,15 +286,29 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                     // do stuff with the user
                     currentUser.getRelation("likes");
                     ParseRelation<ParseObject> relation = currentUser.getRelation(Common.OBJECT_POST_LIKES);
-                    relation.add(mQuestion);
-                    currentUser.saveInBackground();
-                    holder.imgBtnLike.setBackground(mContext.getDrawable(R.drawable.ic_favorite_black_24dp));
+                    if (holder.liked == false){
+                        Log.d("On click","get like");
+                        relation.add(mQuestion);
+                        currentUser.saveInBackground();
+                        mFavoriteList.add(mQuestion);
+                        holder.imgBtnLike.setImageResource(R.drawable.ic_favorite_black_24dp);
+                        holder.liked = true;
+                    }else{
+                        Log.d("On click","get dislike");
+                        relation.remove(mQuestion);
+                        currentUser.saveInBackground();
+                        mFavoriteList.remove(mQuestion);
+                        holder.imgBtnLike.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+                        holder.liked = false;
+                    }
+
+
                 } else {
                     // show the signup or login screen
                 }
             }
         });
-        //holder.imgBtn
+
 
         setCardVoted(holder, mQuestion, relation);
     }
