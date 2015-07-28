@@ -11,7 +11,7 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_profile_setting">Profile</string>
     <string name="action_settings">Setting</string>
-    <string name="my_favorite_tag">Favorites</string>
+    <string name="my_favorite_tag">Following</string>
     <string name="my_question_tag">My Questions</string>
     <string name="title_activity_comment">Comment</string>
 </resources>

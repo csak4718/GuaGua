@@ -124,7 +124,7 @@ public class MyFavoriteFragment extends Fragment {
          */
         mTabs.add(new SamplePagerItem(
                 getString(R.string.my_favorite_tag), // Title
-                getResources().getColor(R.color.bg1), // Indicator color
+                getResources().getColor(R.color.action_bar_background), // Indicator color
                 Color.TRANSPARENT, // Divider color
                 getString(R.string.my_favorite_tag),
                 getString(R.string.my_question_tag)
@@ -132,7 +132,7 @@ public class MyFavoriteFragment extends Fragment {
 
         mTabs.add(new SamplePagerItem(
                 getString(R.string.my_question_tag), // Title
-                getResources().getColor(R.color.bg1), // Indicator color
+                getResources().getColor(R.color.action_bar_background), // Indicator color
                 Color.TRANSPARENT, // Divider color
                 getString(R.string.my_favorite_tag),
                 getString(R.string.my_question_tag)
