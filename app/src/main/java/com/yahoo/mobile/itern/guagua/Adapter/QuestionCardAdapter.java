@@ -217,7 +217,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     }
     private void setCardNotVoted(final ViewHolder holder, final ParseObject mQuestion, final int voteA, final int voteB,
                                  final Map<String, Object> cache) {
-        holder.layoutFuncButtons.setVisibility(View.GONE);
+        holder.layoutFuncButtons.setVisibility(View.INVISIBLE);
         holder.btnA.setVoted(false, false);
         holder.btnB.setVoted(false, false);
 
