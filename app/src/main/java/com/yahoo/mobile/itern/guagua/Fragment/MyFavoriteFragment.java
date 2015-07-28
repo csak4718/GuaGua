@@ -44,11 +44,15 @@ public class MyFavoriteFragment extends Fragment {
         private final CharSequence mTitle;
         private final int mIndicatorColor;
         private final int mDividerColor;
+        private final String tab1;
+        private final String tab2;
 
-        SamplePagerItem(CharSequence title, int indicatorColor, int dividerColor) {
+        SamplePagerItem(CharSequence title, int indicatorColor, int dividerColor, String text1, String text2) {
             mTitle = title;
             mIndicatorColor = indicatorColor;
             mDividerColor = dividerColor;
+            tab1 = text1;
+            tab2 = text2;
         }
 
         /**
@@ -56,12 +60,11 @@ public class MyFavoriteFragment extends Fragment {
          */
         Fragment createFragment() {
             //return PostFragment.newInstance(mTitle, mIndicatorColor, mDividerColor);
-
             Log.d("MFF", "Creating PostFragment");
-            if (getTitle().equals("我的收藏")){
+            if (getTitle().equals(tab1)){
                 Log.d("MFF", "collection");
                 return new CollectionFragment();
-            }else if (getTitle().equals("我的發問")){
+            }else if (getTitle().equals(tab2)){
                 Log.d("MFF", "myquestion");
                 return new MyQuestionFragment();
             }else{
@@ -120,15 +123,19 @@ public class MyFavoriteFragment extends Fragment {
          * color, which are used by {@link SlidingTabLayout}.
          */
         mTabs.add(new SamplePagerItem(
-                "我的收藏", // Title
-                Color.BLUE, // Indicator color
-                Color.GRAY // Divider color
+                getString(R.string.my_favorite_tag), // Title
+                getResources().getColor(R.color.bg1), // Indicator color
+                Color.TRANSPARENT, // Divider color
+                getString(R.string.my_favorite_tag),
+                getString(R.string.my_question_tag)
         ));
 
         mTabs.add(new SamplePagerItem(
-                "我的發問", // Title
-                Color.RED, // Indicator color
-                Color.GRAY // Divider color
+                getString(R.string.my_question_tag), // Title
+                getResources().getColor(R.color.bg1), // Indicator color
+                Color.TRANSPARENT, // Divider color
+                getString(R.string.my_favorite_tag),
+                getString(R.string.my_question_tag)
         ));
         // END_INCLUDE (populate_tabs)
     }

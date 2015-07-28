@@ -16,7 +16,7 @@ public class PersonalPage extends ActionBarActivity {
 
     private void setupActionBar() {
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setBackgroundDrawable(new ColorDrawable(R.color.purple));
+        actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.action_bar_background)));
         //actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
