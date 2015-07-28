@@ -2,6 +2,7 @@ package com.yahoo.mobile.itern.guagua.Adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
@@ -25,6 +26,7 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -32,7 +34,6 @@ import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.Common;
-import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
 import com.yahoo.mobile.itern.guagua.View.OptionButton;
 
@@ -49,15 +50,24 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
 
     private List<ParseObject> mAllQuestionList, mVisibleQuestionList, mFavoriteList;
-    private Map<String, Boolean> voted;
     private Context mContext;
     private LayoutInflater mInflater;
+
+    private Map<String, Map<String, Object>> cachedQuestion;
 
     CallbackManager callbackManager;
     ShareDialog shareDialog;
 
+    public void notifyDataSetChangedWithCache() {
+        cachedQuestion = new HashMap<>();
+        notifyDataSetChanged();
+    }
+
     public QuestionCardAdapter(Context context, List<ParseObject> list) {
         super();
+
+        cachedQuestion = new HashMap<>();
+
         mContext = context;
         mAllQuestionList = list;
         mVisibleQuestionList = new ArrayList<>();
@@ -73,19 +83,6 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        /*
-        ParseUser.getCurrentUser().getRelation(Common.OBJECT_POST_LIKES).getQuery().findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> list, ParseException e) {
-                if (e==null){
-                    Log.d("Get Likes","done");
-                    mFavoriteList = list;
-                }else{
-
-                }
-            }
-        });*/
-        voted = new HashMap<>();
 
         callbackManager = CallbackManager.Factory.create();
         shareDialog = new ShareDialog((Activity)mContext);
@@ -113,6 +110,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         }
         notifyDataSetChanged();
     }
+
+
 
     public static class ViewHolder extends AbstractSwipeableItemViewHolder {
         public View mView;
@@ -160,7 +159,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         return vh;
     }
 
-    private void voteQuestion(ParseObject mQuestion, ViewHolder holder, int voteA, int voteB) {
+    private void voteQuestion(ParseObject mQuestion, ViewHolder holder, int voteA, int voteB, Map<String, Object> cache) {
         final String objectId = mQuestion.getObjectId();
 
         int progressA = (int)(voteA * 100.0 / (voteA + voteB));
@@ -177,12 +176,14 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
         holder.layoutFuncButtons.setVisibility(View.VISIBLE);
 
-        voted.put(objectId, true);
-
         ParseRelation<ParseUser> relation = mQuestion.getRelation(Common.OBJECT_POST_VOTED_USER);
         relation.add(ParseUser.getCurrentUser());
 
         mQuestion.saveInBackground();
+
+        cache.put(Common.QUESTION_CARD_IS_VOTED, true);
+        cache.put(Common.QUESTION_CARD_QA_NUM, voteA);
+        cache.put(Common.QUESTION_CARD_QB_NUM, voteB);
     }
 
     private void resetCard(final ViewHolder holder) {
@@ -198,7 +199,45 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         });
     }
 
-    private void setCardVoted(final ViewHolder holder, final ParseObject mQuestion, final ParseRelation<ParseUser> relation) {
+    private void setCardVoted(final ViewHolder holder) {
+        holder.layoutFuncButtons.setVisibility(View.VISIBLE);
+        holder.btnA.setVoted(true, false);
+        holder.btnB.setVoted(true, false);
+        holder.btnA.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
+        holder.btnB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
+
+    }
+    private void setCardNotVoted(final ViewHolder holder, final ParseObject mQuestion, final int voteA, final int voteB,
+                                 final Map<String, Object> cache) {
+        holder.layoutFuncButtons.setVisibility(View.GONE);
+        holder.btnA.setVoted(false, false);
+        holder.btnB.setVoted(false, false);
+
+        holder.btnA.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                voteQuestion(mQuestion, holder, voteA + 1, voteB, cache);
+            }
+        });
+        holder.btnB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                voteQuestion(mQuestion, holder, voteA, voteB + 1, cache);
+            }
+        });
+        cache.put(Common.QUESTION_CARD_IS_VOTED, false);
+    }
+
+    private void setupCardVotedAction(final ViewHolder holder, final ParseObject mQuestion, final ParseRelation<ParseUser> relation,
+                                      final Map<String, Object> cache) {
         relation.getQuery().findInBackground(new FindCallback<ParseUser>() {
             @Override
             public void done(List<ParseUser> votedUser, ParseException e) {
@@ -206,104 +245,34 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                 final int voteA = mQuestion.getInt(Common.OBJECT_POST_QA_NUM);
                 final int voteB = mQuestion.getInt(Common.OBJECT_POST_QB_NUM);
 
-                if(votedUser.contains(ParseUser.getCurrentUser())) {
-                    holder.layoutFuncButtons.setVisibility(View.VISIBLE);
-                    holder.btnA.setVoted(true, false);
-                    holder.btnB.setVoted(true, false);
-                    holder.btnA.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {}
-                    });
-                    holder.btnB.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {}
-                    });
-                }
-                else {
-                    holder.layoutFuncButtons.setVisibility(View.GONE);
-                    holder.btnA.setVoted(false, false);
-                    holder.btnB.setVoted(false, false);
-
-                    holder.btnA.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            voteQuestion(mQuestion, holder, voteA + 1, voteB);
-                        }
-                    });
-                    holder.btnB.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            voteQuestion(mQuestion, holder, voteA, voteB + 1);
-                        }
-                    });
+                if (votedUser.contains(ParseUser.getCurrentUser())) {
+                    setCardVoted(holder);
+                    cache.put(Common.QUESTION_CARD_IS_VOTED, true);
+                } else {
+                    setCardNotVoted(holder, mQuestion, voteA, voteB, cache);
+                    cache.put(Common.QUESTION_CARD_IS_VOTED, false);
                 }
             }
         });
     }
 
-    @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-        Log.d("Rendering", "viewholder");
-        resetCard(holder);
-
-        final ParseObject mQuestion = mVisibleQuestionList.get(position);
-        final ParseRelation<ParseUser> relation = mQuestion.getRelation(Common.OBJECT_POST_VOTED_USER);
-        final ParseUser postUser = mQuestion.getParseUser(Common.OBJECT_POST_USER);
-        final String objectId = mQuestion.getObjectId();
-        final int voteA = mQuestion.getInt(Common.OBJECT_POST_QA_NUM);
-        final int voteB = mQuestion.getInt(Common.OBJECT_POST_QB_NUM);
-        if(postUser != null) {
-            postUser.fetchInBackground(new GetCallback<ParseObject>() {
-                @Override
-                public void done(ParseObject parseObject, ParseException e) {
-                    if(e == null) {
-                        holder.txtName.setText(postUser.getString(Common.OBJECT_USER_NICK));
-                        ParseFile imgFile = postUser.getParseFile(Common.OBJECT_USER_PROFILE_PIC);
-                        ParseUtils.displayImage(imgFile, holder.imgProfile);
+    private void displayImage(ParseFile img, final ImageView imgView, final Map<String, Object> cache) {
+        img.getDataInBackground(new GetDataCallback() {
+            @Override
+            public void done(byte[] bytes, ParseException e) {
+                if (e == null) {
+                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0,
+                            bytes.length);
+                    if (bmp != null) {
+                        imgView.setImageBitmap(bmp);
+                        cache.put(Common.QUESTION_CARD_PROFILE_IMG, bmp);
                     }
                 }
-            });
-        }
-        else {
-            holder.txtName.setText("Fan Fan");
-            holder.imgProfile.setImageBitmap(
-                    BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_account_circle_black_48dp));
-        }
-        holder.txtTitle.setText(mQuestion.getString(Common.OBJECT_POST_CONTENT));
-        holder.btnA.setVoteText(mQuestion.getString(Common.OBJECT_POST_QA));
-        holder.btnB.setVoteText(mQuestion.getString(Common.OBJECT_POST_QB));
-        holder.btnA.setVoteNum(voteA);
-        holder.btnB.setVoteNum(voteB);
-
-        holder.shareBtnPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (ShareDialog.canShow(ShareLinkContent.class)) {
-                    ShareLinkContent linkContent = new ShareLinkContent.Builder()
-                            .setContentTitle("呱呱 - 投票結果")
-                            .setContentDescription(holder.txtTitle.getText().toString())
-                            .setContentUrl(Uri.parse("https://aqueous-falls-3271.herokuapp" +
-                                    ".com/guagua/" + objectId + "/results/"))
-                            .build();
-
-                    shareDialog.show(linkContent);
-                }
             }
         });
+    }
 
-
-        int progressA = (int)(voteA * 100.0 / (voteA + voteB));
-        int progressB = (int) (voteB * 100.0 / (voteA + voteB));
-        holder.btnA.setProgress(progressA);
-        holder.btnB.setProgress(progressB);
-
-
-        holder.imgBtnComment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.gotoCommentActivity(mContext, objectId);
-            }
-        });
+    private void setupLikeButton(final ParseObject mQuestion, final ViewHolder holder) {
         //render BtnLike
         holder.liked = mFavoriteList.contains(mQuestion);
         if (holder.liked){
@@ -342,9 +311,144 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                 }
             }
         });
+    }
+
+    private void loadFromParse(final ParseObject mQuestion, final ViewHolder holder, final Map<String, Object> cache) {
+
+        resetCard(holder);
+
+        final String objectId = mQuestion.getObjectId();
+        final ParseRelation<ParseUser> relation = mQuestion.getRelation(Common.OBJECT_POST_VOTED_USER);
+        final ParseUser postUser = mQuestion.getParseUser(Common.OBJECT_POST_USER);
+        final String questionContent = mQuestion.getString(Common.OBJECT_POST_CONTENT);
+        final String optionA = mQuestion.getString(Common.OBJECT_POST_QA);
+        final String optionB = mQuestion.getString(Common.OBJECT_POST_QB);
+        final int voteA = mQuestion.getInt(Common.OBJECT_POST_QA_NUM);
+        final int voteB = mQuestion.getInt(Common.OBJECT_POST_QB_NUM);
+
+        if(postUser != null) {
+            postUser.fetchInBackground(new GetCallback<ParseObject>() {
+                @Override
+                public void done(ParseObject parseObject, ParseException e) {
+                    if(e == null) {
+                        holder.txtName.setText(postUser.getString(Common.OBJECT_USER_NICK));
+                        ParseFile imgFile = postUser.getParseFile(Common.OBJECT_USER_PROFILE_PIC);
+                        displayImage(imgFile, holder.imgProfile, cache);
+
+                        cache.put(Common.QUESTION_CARD_NICK, postUser.getString(Common.OBJECT_USER_NICK));
+
+                    }
+                }
+            });
+        }
+        else {
+
+            final Bitmap bmp = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_account_circle_black_48dp);
+
+            holder.txtName.setText("Fan Fan");
+            holder.imgProfile.setImageBitmap(bmp);
+            cache.put(Common.QUESTION_CARD_NICK, "Fan Fan");
+            cache.put(Common.QUESTION_CARD_PROFILE_IMG, bmp);
+        }
+        holder.txtTitle.setText(questionContent);
+        holder.btnA.setVoteText(optionA);
+        holder.btnB.setVoteText(optionB);
+        holder.btnA.setVoteNum(voteA);
+        holder.btnB.setVoteNum(voteB);
+
+        cache.put(Common.QUESTION_CARD_CONTENT, questionContent);
+        cache.put(Common.QUESTION_CARD_QA, optionA);
+        cache.put(Common.QUESTION_CARD_QB, optionB);
+        cache.put(Common.QUESTION_CARD_QA_NUM, voteA);
+        cache.put(Common.QUESTION_CARD_QB_NUM, voteB);
+
+        holder.shareBtnPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ShareDialog.canShow(ShareLinkContent.class)) {
+                    ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                            .setContentTitle("呱呱 - 投票結果")
+                            .setContentDescription(holder.txtTitle.getText().toString())
+                            .setContentUrl(Uri.parse("https://aqueous-falls-3271.herokuapp" +
+                                    ".com/guagua/" + objectId + "/results/"))
+                            .build();
+
+                    shareDialog.show(linkContent);
+                }
+            }
+        });
 
 
-        setCardVoted(holder, mQuestion, relation);
+        int progressA = (int)(voteA * 100.0 / (voteA + voteB));
+        int progressB = (int) (voteB * 100.0 / (voteA + voteB));
+        holder.btnA.setProgress(progressA);
+        holder.btnB.setProgress(progressB);
+
+
+        holder.imgBtnComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.gotoCommentActivity(mContext, objectId);
+            }
+        });
+
+        setupLikeButton(mQuestion, holder);
+        setupCardVotedAction(holder, mQuestion, relation, cache);
+    }
+
+    private void loadFromCache(Map<String, Object> cache, final ViewHolder holder, final ParseObject mQuestion) {
+        final String nickName = (String) cache.get(Common.QUESTION_CARD_NICK);
+        final Bitmap profileImg = (Bitmap) cache.get(Common.QUESTION_CARD_PROFILE_IMG);
+        final String questionContent = (String) cache.get(Common.QUESTION_CARD_CONTENT);
+        final String optionA = (String) cache.get(Common.QUESTION_CARD_QA);
+        final String optionB = (String) cache.get(Common.QUESTION_CARD_QB);
+        final int voteA = (int) cache.get(Common.QUESTION_CARD_QA_NUM);
+        final int voteB = (int) cache.get(Common.QUESTION_CARD_QB_NUM);
+        final Boolean isVoted = (Boolean) cache.get(Common.QUESTION_CARD_IS_VOTED);
+
+        holder.txtName.setText(nickName);
+        if(profileImg != null) {
+            holder.imgProfile.setImageBitmap(profileImg);
+        }
+        else {
+            holder.imgProfile.setImageBitmap(
+                    BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_account_circle_black_48dp));
+        }
+        holder.txtTitle.setText(questionContent);
+        holder.btnA.setVoteText(optionA);
+        holder.btnB.setVoteText(optionB);
+        holder.btnA.setVoteNum(voteA);
+        holder.btnB.setVoteNum(voteB);
+
+        int progressA = (int)(voteA * 100.0 / (voteA + voteB));
+        int progressB = (int) (voteB * 100.0 / (voteA + voteB));
+        holder.btnA.setProgress(progressA);
+        holder.btnB.setProgress(progressB);
+
+        if(isVoted) {
+            setCardVoted(holder);
+        }
+        else {
+            setCardNotVoted(holder, mQuestion, voteA, voteB, cache);
+        }
+
+        setupLikeButton(mQuestion, holder);
+    }
+
+    @Override
+    public void onBindViewHolder(final ViewHolder holder, int position) {
+
+        final ParseObject mQuestion = mVisibleQuestionList.get(position);
+        final String objectId = mQuestion.getObjectId();
+
+        if(cachedQuestion.get(objectId) == null) {
+            Map<String, Object> cache = new HashMap<>();
+            cachedQuestion.put(objectId, cache);
+            loadFromParse(mQuestion, holder, cache);
+        }
+        else {
+            loadFromCache(cachedQuestion.get(objectId), holder, mQuestion);
+        }
     }
 
     @Override

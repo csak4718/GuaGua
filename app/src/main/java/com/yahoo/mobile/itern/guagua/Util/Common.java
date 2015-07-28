@@ -27,6 +27,16 @@ public class Common {
     public final static String OBJECT_COMMUNITY = "Community";
     public final static String OBJECT_COMMUNITY_TITLE = "title";
     public final static String OBJECT_COMMUNITY_POSTS = "posts";
+
     public final static String EXTRA_COMMENT_POSTID = "postId";
 
+
+    public final static String QUESTION_CARD_NICK = "nickname";
+    public final static String QUESTION_CARD_PROFILE_IMG = "profileImg";
+    public final static String QUESTION_CARD_CONTENT = "content";
+    public final static String QUESTION_CARD_QA = "QA";
+    public final static String QUESTION_CARD_QB = "QB";
+    public final static String QUESTION_CARD_QA_NUM = "voteA";
+    public final static String QUESTION_CARD_QB_NUM = "voteB";
+    public final static String QUESTION_CARD_IS_VOTED = "isVoted";
 }

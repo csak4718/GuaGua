@@ -181,6 +181,7 @@ public class ParseUtils {
             }
         });
     }
+
     static public void displayImage(ParseFile img, final ImageView imgView) {
         img.getDataInBackground(new GetDataCallback() {
             @Override
