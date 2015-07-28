@@ -14,11 +14,13 @@ import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.view.inputmethod.InputMethodManager;
 
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.yahoo.mobile.itern.guagua.Activity.CommentActivity;
 import com.yahoo.mobile.itern.guagua.Activity.CommunityActivity;
 import com.yahoo.mobile.itern.guagua.Activity.LoginActivity;
 import com.yahoo.mobile.itern.guagua.Activity.MainActivity;
+import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 
 /**
  * Created by cmwang on 7/20/15.
@@ -40,6 +42,13 @@ public class Utils {
         Intent it = new Intent(context, CommentActivity.class);
         it.putExtra(Common.EXTRA_COMMENT_POSTID, postId);
         context.startActivity(it);
+    }
+    static public boolean isBrowsingAllCommunity(Activity activity) {
+        return getCurrentViewingCommunity(activity) == null;
+    }
+    static public ParseObject getCurrentViewingCommunity(Activity activity) {
+        MainApplication app = (MainApplication) activity.getApplication();
+        return app.currentViewingCommunity;
     }
     static public void userLogout(Context context) {
         ParseUser.logOut();

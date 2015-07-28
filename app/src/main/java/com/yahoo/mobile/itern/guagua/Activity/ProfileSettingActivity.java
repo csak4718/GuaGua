@@ -129,7 +129,6 @@ public class ProfileSettingActivity extends ActionBarActivity {
             return true;
         }
         if (id == android.R.id.home) {
-            Utils.gotoMainActivity(ProfileSettingActivity.this);
             finish();
             return true;
         }

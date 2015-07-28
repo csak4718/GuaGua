@@ -8,6 +8,7 @@ public class Common {
     public final static String OBJECT_USER_PROFILE_PIC = "profile_pic";
     public final static String OBJECT_USER_COMMUNITY_RELATION = "community";
     public final static String OBJECT_USER_FB_NAME = "fbName";
+    public final static String OBJECT_USER_LAST_VIEWING_COMMUNITY = "lastViewingCommunity";
     public final static String OBJECT_POST = "Prayer";
     public final static String OBJECT_POST_USER = "user";
     public final static String OBJECT_POST_CONTENT = "prayer";
