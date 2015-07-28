@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 
 import com.parse.ParseObject;
 import com.parse.ParseUser;
+import com.yahoo.mobile.itern.guagua.Activity.AddPostActivity;
 import com.yahoo.mobile.itern.guagua.Activity.CommunityActivity;
 import com.yahoo.mobile.itern.guagua.Activity.LoginActivity;
 import com.yahoo.mobile.itern.guagua.Activity.MainActivity;
@@ -38,6 +39,10 @@ public class Utils {
     }
     static public void gotoCommunityActivity(Context context) {
         Intent it = new Intent(context, CommunityActivity.class);
+        context.startActivity(it);
+    }
+    static public void gotoAddPostActivity(Context context) {
+        Intent it = new Intent(context, AddPostActivity.class);
         context.startActivity(it);
     }
     static public void userLogout(Context context) {

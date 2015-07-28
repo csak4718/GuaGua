@@ -1,0 +1,186 @@
+<!--
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.yahoo.mobile.itern.guagua.Fragment.AddPostActivityFragment">
+
+</RelativeLayout>
+-->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:divider="?android:dividerHorizontal"
+    tools:context="com.yahoo.mobile.itern.guagua.Fragment.AddPostActivityFragment">
+
+
+    <RelativeLayout style="?android:buttonBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/top_buttons">
+        <Button style = "?android:buttonBarButtonStyle"
+            android:id="@+id/btn_cancel"
+            android:text = "Cancel"
+            android:layout_alignParentLeft = "true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <Button style = "?android:buttonBarButtonStyle"
+            android:id="@+id/btn_post_question"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight = "true"
+            android:text="Post"/>
+
+    </RelativeLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="20px"
+        android:background= "#cccccc" />
+    <EditText
+        android:id="@+id/edt_question"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:minLines="6"
+        android:hint="Ask something ......"
+        android:gravity="top"
+        android:background = "@null"
+        android:paddingTop="10dp"
+        android:paddingLeft="10dp"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5px"
+        android:background= "#cccccc" />
+
+    <LinearLayout
+        android:id="@+id/ab_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/edt_optA"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="選項1"
+                android:background="@null"
+                android:paddingTop="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="10dp"/>
+            <ImageButton
+                android:id="@+id/btn_cameraB"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:paddingRight="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="haha"
+                android:background="@android:color/transparent"/>
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5px"
+            android:background= "#cccccc" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/edt_optB"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="選項2"
+                android:background="@null"
+                android:paddingTop="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="10dp"/>
+            <ImageButton
+                android:id="@+id/btn_cameraA"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:paddingRight="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="haha"
+                android:background="@android:color/transparent"/>
+            <!--android:background="@drawable/ic_local_see_black_48dp"-->
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="20px"
+            android:background= "#cccccc" />
+
+    </LinearLayout>
+
+    <HorizontalScrollView
+        android:id="@+id/scroll_banner_badge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#A6000000"
+        android:visibility="visible">
+        <LinearLayout
+            android:id="@+id/banner_badge"
+            android:padding="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:animateLayoutChanges="true">
+            <ImageButton
+                android:layout_marginRight="5dp"
+                android:id="@+id/img_btn_badge_search"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_margin="5dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/badge_search" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/fb_imageView"
+            android:src="@drawable/ic_facebook_24dp" />
+        <TextView
+            android:id="@+id/share_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Share to Facebook"
+            android:paddingTop="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp"/>
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/share_switch" />
+
+
+    </LinearLayout>
+
+</LinearLayout>
