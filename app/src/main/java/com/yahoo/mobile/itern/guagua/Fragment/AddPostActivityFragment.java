@@ -135,7 +135,6 @@ public class AddPostActivityFragment extends Fragment {
                 final ParseObject community = ((MainApplication) getActivity().getApplication()).currentViewingCommunity;
                 ParseUtils.postQuestions(question, optionA, optionB, community);
                 Utils.hideSoftKeyboard(getActivity());
-//                getFragmentManager().popBackStack();
                 getActivity().finish();
 
             }
@@ -144,7 +143,6 @@ public class AddPostActivityFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Utils.hideSoftKeyboard(getActivity());
-//                getFragmentManager().popBackStack();
                 getActivity().finish();
             }
         });
