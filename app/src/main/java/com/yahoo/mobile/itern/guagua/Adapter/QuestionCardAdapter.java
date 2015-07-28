@@ -1,10 +1,9 @@
 package com.yahoo.mobile.itern.guagua.Adapter;
 
-import android.graphics.Bitmap;
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,25 +17,19 @@ import android.widget.TextView;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-
 import com.facebook.share.Sharer;
 import com.facebook.share.model.ShareLinkContent;
-
 import com.facebook.share.widget.ShareDialog;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
-import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
-import com.squareup.picasso.Picasso;
-import com.yahoo.mobile.itern.guagua.Activity.MainActivity;
-import com.yahoo.mobile.itern.guagua.Fragment.CommentFragment;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.Common;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
@@ -55,7 +48,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         implements SwipeableItemAdapter<QuestionCardAdapter.ViewHolder> {
 
 
-    private List<ParseObject> mAllQuestionList, mVisibleQuestionList;
+    private List<ParseObject> mAllQuestionList, mVisibleQuestionList, mFavoriteList;
     private Map<String, Boolean> voted;
     private Context mContext;
     private LayoutInflater mInflater;
@@ -68,14 +61,34 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         mContext = context;
         mAllQuestionList = list;
         mVisibleQuestionList = new ArrayList<>();
+        mFavoriteList = new ArrayList<>();
         mVisibleQuestionList.addAll(mAllQuestionList);
         mInflater = LayoutInflater.from(context);
         setHasStableIds(true);
 
+
+        try {
+            mFavoriteList = ParseUser.getCurrentUser().getRelation(Common.OBJECT_POST_LIKES).getQuery().find();
+            Log.d("Get Likes", String.valueOf(mFavoriteList.size()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        /*
+        ParseUser.getCurrentUser().getRelation(Common.OBJECT_POST_LIKES).getQuery().findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e==null){
+                    Log.d("Get Likes","done");
+                    mFavoriteList = list;
+                }else{
+
+                }
+            }
+        });*/
         voted = new HashMap<>();
 
         callbackManager = CallbackManager.Factory.create();
-        shareDialog = new ShareDialog((MainActivity)mContext);
+        shareDialog = new ShareDialog((Activity)mContext);
 
         shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
             public void onSuccess(Sharer.Result results){}
@@ -110,10 +123,13 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         public OptionButton btnB;
         public ImageButton shareBtnPost;
         public ImageButton imgBtnComment;
+        public ImageButton imgBtnLike;
         public LinearLayout layoutFuncButtons;
+        public Boolean liked = false;
 
         public ViewHolder(View v) {
             super(v);
+            Log.d("QDA", "Create viewhoder");
             mView = v;
             imgProfile = (ImageView) v.findViewById(R.id.imgProfile);
             txtName = (TextView) v.findViewById(R.id.txtName);
@@ -122,7 +138,10 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             btnB = (OptionButton) v.findViewById(R.id.btnB);
             shareBtnPost = (ImageButton)v.findViewById(R.id.shareBtnPost);
             imgBtnComment = (ImageButton) v.findViewById(R.id.imgBtnComment);
+            imgBtnLike = (ImageButton) v.findViewById(R.id.imgBtnLike);
+
             layoutFuncButtons = (LinearLayout) v.findViewById(R.id.layout_function_buttons);
+
         }
         @Override
         public View getSwipeableContainerView() {
@@ -155,6 +174,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.btnB.setProgress(progressB);
         holder.btnA.setVoted(true, true);
         holder.btnB.setVoted(true, true);
+
         holder.layoutFuncButtons.setVisibility(View.VISIBLE);
 
         voted.put(objectId, true);
@@ -223,7 +243,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-
+        Log.d("Rendering", "viewholder");
         resetCard(holder);
 
         final ParseObject mQuestion = mVisibleQuestionList.get(position);
@@ -255,14 +275,15 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.btnA.setVoteNum(voteA);
         holder.btnB.setVoteNum(voteB);
 
-        holder.shareBtnPost.setOnClickListener(new View.OnClickListener(){
+        holder.shareBtnPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (ShareDialog.canShow(ShareLinkContent.class)) {
                     ShareLinkContent linkContent = new ShareLinkContent.Builder()
                             .setContentTitle("呱呱 - 投票結果")
                             .setContentDescription(holder.txtTitle.getText().toString())
-                            .setContentUrl(Uri.parse("https://aqueous-falls-3271.herokuapp.com/guagua/"+objectId+"/results/"))
+                            .setContentUrl(Uri.parse("https://aqueous-falls-3271.herokuapp" +
+                                    ".com/guagua/" + objectId + "/results/"))
                             .build();
 
                     shareDialog.show(linkContent);
@@ -283,6 +304,45 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                 Utils.gotoCommentActivity(mContext, objectId);
             }
         });
+        //render BtnLike
+        holder.liked = mFavoriteList.contains(mQuestion);
+        if (holder.liked){
+            holder.imgBtnLike.setImageResource(R.drawable.ic_favorite_black_24dp);
+        }else{
+            holder.imgBtnLike.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+        }
+
+        holder.imgBtnLike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParseUser currentUser = ParseUser.getCurrentUser();
+                if (currentUser != null) {
+                    // do stuff with the user
+                    currentUser.getRelation("likes");
+                    ParseRelation<ParseObject> relation = currentUser.getRelation(Common.OBJECT_POST_LIKES);
+                    if (holder.liked == false){
+                        Log.d("On click","get like");
+                        relation.add(mQuestion);
+                        currentUser.saveInBackground();
+                        mFavoriteList.add(mQuestion);
+                        holder.imgBtnLike.setImageResource(R.drawable.ic_favorite_black_24dp);
+                        holder.liked = true;
+                    }else{
+                        Log.d("On click","get dislike");
+                        relation.remove(mQuestion);
+                        currentUser.saveInBackground();
+                        mFavoriteList.remove(mQuestion);
+                        holder.imgBtnLike.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+                        holder.liked = false;
+                    }
+
+
+                } else {
+                    // show the signup or login screen
+                }
+            }
+        });
+
 
         setCardVoted(holder, mQuestion, relation);
     }
