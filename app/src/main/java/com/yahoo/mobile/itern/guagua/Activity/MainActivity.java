@@ -24,6 +24,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.yahoo.mobile.itern.guagua.Application.MainApplication;
@@ -124,6 +125,10 @@ public class MainActivity extends ActionBarActivity {
 //        animation.setFillEnabled(true);
 //        mBannerBadge.startAnimation(animation);
         badgeBannerVisible = true;
+    }
+
+    private void setBadgeBackground(Button button, ParseObject community) {
+        
     }
 
     private Button createNewBadge(final ParseObject community) {
