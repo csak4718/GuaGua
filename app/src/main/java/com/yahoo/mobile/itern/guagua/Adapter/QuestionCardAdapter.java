@@ -77,20 +77,28 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         setHasStableIds(true);
 
 
-        try {
-            mFavoriteList = ParseUser.getCurrentUser().getRelation(Common.OBJECT_POST_LIKES).getQuery().find();
-            Log.d("Get Likes", String.valueOf(mFavoriteList.size()));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        ParseUser.getCurrentUser().getRelation(Common.OBJECT_POST_LIKES).getQuery().findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e == null && list != null) {
+                    mFavoriteList.addAll(list);
+                    Log.d("Get Likes", String.valueOf(list.size()));
+                }
+            }
+        });
 
         callbackManager = CallbackManager.Factory.create();
         shareDialog = new ShareDialog((Activity)mContext);
 
         shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
-            public void onSuccess(Sharer.Result results){}
-            public void onCancel(){}
-            public void onError(FacebookException e){}
+            public void onSuccess(Sharer.Result results) {
+            }
+
+            public void onCancel() {
+            }
+
+            public void onError(FacebookException e) {
+            }
         });
     }
 

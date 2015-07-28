@@ -38,10 +38,12 @@ public class CollectionFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //mUserId = getArguments().getString("objectId");
-        mUser = ParseUser.getCurrentUser();
-        ParseUtils.getAllCollections(mUser);
+
         mCollection = new ArrayList<>();
         mAdapter = new QuestionCardAdapter(getActivity(), mCollection);
+
+        mUser = ParseUser.getCurrentUser();
+        ParseUtils.getAllCollections(mUser);
     }
 
     @Override
@@ -83,6 +85,6 @@ public class CollectionFragment extends Fragment {
         mCollection.clear();
         mCollection.addAll(list);
         mAdapter.flushFilter();
-        mAdapter.notifyDataSetChanged();
+        mAdapter.notifyDataSetChangedWithCache();
     }
 }
