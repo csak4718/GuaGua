@@ -173,6 +173,7 @@ public class ParseUtils {
 
     static public void getAllCommunities() {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Community");
+        query.whereNotEqualTo("objectId", "wtgxgSpmNH");
         query.orderByDescending("updatedAt");
         query.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> communityList, ParseException e) {

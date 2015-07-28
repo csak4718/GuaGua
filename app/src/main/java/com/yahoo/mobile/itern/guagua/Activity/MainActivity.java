@@ -21,10 +21,12 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.parse.GetCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.Event.UserCommunityEvent;
@@ -46,7 +48,7 @@ public class MainActivity extends ActionBarActivity {
     private MainActivityFragment mainFragment;
     private Handler handler = new Handler();
     private Runnable filterRunnable;
-    private ImageButton mImgBtnBadgeSearch;
+    private Button mImgBtnBadgeSearch;
     private Button mBtnBadgeAll;
     private Button mBtnBadgeTaiwan;
     private ActionBarTitle mActionBarTitle;
@@ -96,6 +98,32 @@ public class MainActivity extends ActionBarActivity {
                     mActionBarTitle.setText(getString(R.string.app_name));
                     Utils.setCommunityActionBarColor(MainActivity.this);
                     hideBdgeBanner(300);
+                }
+            }
+        });
+
+        // Get Taiwan Community
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(Common.OBJECT_COMMUNITY);
+        query.getInBackground("wtgxgSpmNH", new GetCallback<ParseObject>() {
+            @Override
+            public void done(final ParseObject community, ParseException e) {
+                if (e == null) {
+                    mBtnBadgeTaiwan.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ParseUtils.getCommunityQuestions(community);
+                            MainApplication app = (MainApplication) getApplication();
+                            ParseUser user = ParseUser.getCurrentUser();
+                            app.currentViewingCommunity = community;
+                            user.put(Common.OBJECT_USER_LAST_VIEWING_COMMUNITY, community);
+                            user.saveInBackground();
+
+                            mActionBarTitle.setText(community.getString(Common.OBJECT_COMMUNITY_TITLE));
+                            Utils.setCommunityActionBarColor(MainActivity.this);
+
+                            hideBdgeBanner(300);
+                        }
+                    });
                 }
             }
         });
@@ -160,7 +188,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
         float scale = getResources().getDisplayMetrics().density;
-        int pixels = (int) (70 * scale + 0.5f);
+        int pixels = (int) (50 * scale + 0.5f);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(pixels, pixels);
         params.gravity = Gravity.CENTER;
         int marginPixels = (int)(5 * scale + 0.5f);
@@ -216,7 +244,7 @@ public class MainActivity extends ActionBarActivity {
         mScrollBannerBadge = (HorizontalScrollView) findViewById(R.id.scroll_banner_badge);
         mBannerBadge = (LinearLayout) findViewById(R.id.banner_badge);
 
-        mImgBtnBadgeSearch = (ImageButton) findViewById(R.id.img_btn_badge_search);
+        mImgBtnBadgeSearch = (Button) findViewById(R.id.img_btn_badge_search);
         mBtnBadgeAll = (Button) findViewById(R.id.btn_badge_all);
         mBtnBadgeTaiwan = (Button) findViewById(R.id.btn_badge_taiwan);
 
