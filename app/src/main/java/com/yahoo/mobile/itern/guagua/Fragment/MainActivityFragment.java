@@ -27,6 +27,7 @@ import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.Event.QuestionEvent;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
+import com.yahoo.mobile.itern.guagua.Util.Utils;
 import com.yalantis.phoenix.PullToRefreshView;
 
 import java.util.ArrayList;
@@ -86,6 +87,12 @@ public class MainActivityFragment extends Fragment {
         mAdapter.flushFilter();
         mWrappedAdapter.notifyDataSetChanged();
         mPullToRefreshView.setRefreshing(false);
+        if(Utils.isBrowsingAllCommunity(getActivity())) {
+            mBtnAddPost.setVisibility(View.GONE);
+        }
+        else {
+            mBtnAddPost.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -99,7 +106,9 @@ public class MainActivityFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
 
         mBtnAddPost = (FloatingActionButton) mView.findViewById(R.id.btn_add_post);
-
+        if(Utils.isBrowsingAllCommunity(getActivity())) {
+            mBtnAddPost.setVisibility(View.GONE);
+        }
 
         mRecyclerView = (RecyclerView) getView().findViewById(R.id.recycler_view);
         mLayoutManager = new LinearLayoutManager(getActivity());

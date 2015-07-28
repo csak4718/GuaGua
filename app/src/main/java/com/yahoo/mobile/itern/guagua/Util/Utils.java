@@ -23,6 +23,7 @@ import com.yahoo.mobile.itern.guagua.Activity.CommentActivity;
 import com.yahoo.mobile.itern.guagua.Activity.CommunityActivity;
 import com.yahoo.mobile.itern.guagua.Activity.LoginActivity;
 import com.yahoo.mobile.itern.guagua.Activity.MainActivity;
+import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.R;
 
 /**
@@ -45,6 +46,13 @@ public class Utils {
         Intent it = new Intent(context, CommentActivity.class);
         it.putExtra(Common.EXTRA_COMMENT_POSTID, postId);
         context.startActivity(it);
+    }
+    static public boolean isBrowsingAllCommunity(Activity activity) {
+        return getCurrentViewingCommunity(activity) == null;
+    }
+    static public ParseObject getCurrentViewingCommunity(Activity activity) {
+        MainApplication app = (MainApplication) activity.getApplication();
+        return app.currentViewingCommunity;
     }
     static public void userLogout(Context context) {
         ParseUser.logOut();
