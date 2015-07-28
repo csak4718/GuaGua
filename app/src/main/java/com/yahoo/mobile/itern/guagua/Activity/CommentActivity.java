@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import com.yahoo.mobile.itern.guagua.Fragment.CommentFragment;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.Common;
+import com.yahoo.mobile.itern.guagua.Util.Utils;
 
 public class CommentActivity extends ActionBarActivity {
 
@@ -21,8 +22,10 @@ public class CommentActivity extends ActionBarActivity {
         mPostId = getIntent().getStringExtra(Common.EXTRA_COMMENT_POSTID);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         setContentView(R.layout.activity_comment);
+
+        Utils.setCommunityActionBarColor(this);
+
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container_comment, CommentFragment.newInstance(mPostId))
                 .commit();

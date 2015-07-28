@@ -45,6 +45,7 @@ public class ProfileSettingActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Utils.setCommunityActionBarColor(this);
 
         user = ParseUser.getCurrentUser();
 

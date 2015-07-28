@@ -6,12 +6,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.view.inputmethod.InputMethodManager;
 
 import com.parse.ParseObject;
@@ -31,6 +34,9 @@ public class Utils {
         InputMethodManager inputMethodManager = (InputMethodManager)  activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
     }
+    /*
+     * goto activity helper function
+     */
     static public void gotoMainActivity(Context context) {
         Intent it = new Intent(context, MainActivity.class);
         context.startActivity(it);
@@ -48,6 +54,12 @@ public class Utils {
         it.putExtra(Common.EXTRA_COMMENT_POSTID, postId);
         context.startActivity(it);
     }
+
+
+    /*
+     * Community related helper function
+     *
+     */
     static public boolean isBrowsingAllCommunity(Activity activity) {
         return getCurrentViewingCommunity(activity) == null;
     }
@@ -55,6 +67,20 @@ public class Utils {
         MainApplication app = (MainApplication) activity.getApplication();
         return app.currentViewingCommunity;
     }
+    static public int getCurrentActionBarColor(Activity activity) {
+        ParseObject community = getCurrentViewingCommunity(activity);
+        if(community != null) {
+            String hexCode = community.getString(Common.OBJECT_COMMUNITY_COLOR);
+            if(hexCode != null) {
+                return Color.parseColor(hexCode);
+            }
+        }
+        return Color.parseColor("#5AD3D2");
+    }
+    static public void setCommunityActionBarColor(AppCompatActivity activity) {
+        activity.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Utils.getCurrentActionBarColor(activity)));
+    }
+
     static public void userLogout(Context context) {
         ParseUser.logOut();
         Intent it = new Intent(context, LoginActivity.class);

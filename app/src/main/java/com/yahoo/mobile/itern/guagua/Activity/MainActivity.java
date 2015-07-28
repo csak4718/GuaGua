@@ -1,8 +1,10 @@
 package com.yahoo.mobile.itern.guagua.Activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.MenuItemCompat;
@@ -19,6 +21,8 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.parse.GetDataCallback;
+import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -44,6 +48,7 @@ public class MainActivity extends ActionBarActivity {
     private Runnable filterRunnable;
     private ImageButton mImgBtnBadgeSearch;
     private Button mBtnBadgeAll;
+    private Button mBtnBadgeTaiwan;
     private ActionBarTitle mActionBarTitle;
     private boolean badgeBannerVisible = false;
 
@@ -51,12 +56,12 @@ public class MainActivity extends ActionBarActivity {
         mActionBarTitle = new ActionBarTitle(this);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#5AD3D2")));
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setElevation(0);
         actionBar.setCustomView(mActionBarTitle);
-//        hideBdgeBanner(0);
+
+        Utils.setCommunityActionBarColor(this);
 
         ParseUtils.getUserCommunity(ParseUser.getCurrentUser());
 
@@ -89,6 +94,7 @@ public class MainActivity extends ActionBarActivity {
                     ParseUtils.getAllQuestions();
                     app.currentViewingCommunity = null;
                     mActionBarTitle.setText(getString(R.string.app_name));
+                    Utils.setCommunityActionBarColor(MainActivity.this);
                     hideBdgeBanner(300);
                 }
             }
@@ -122,18 +128,36 @@ public class MainActivity extends ActionBarActivity {
         badgeBannerVisible = true;
     }
 
-    private void setBadgeBackground(Button button, ParseObject community) {
-        
+    private void setBadgeBackground(final Button button, ParseFile logo, ParseObject community) {
+        logo.getDataInBackground(new GetDataCallback() {
+            @Override
+            public void done(byte[] bytes, ParseException e) {
+                if (e == null) {
+                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0,
+                            bytes.length);
+                    if (bmp != null) {
+                        button.setBackgroundDrawable(new BitmapDrawable(getResources(), bmp));
+                    }
+                }
+            }
+        });
     }
 
     private Button createNewBadge(final ParseObject community) {
         String title = community.getString(Common.OBJECT_COMMUNITY_TITLE);
         Button button = new Button(this);
-        button.setBackgroundResource(R.drawable.badge);
-        button.setText(title);
         button.setTextColor(Color.WHITE);
         button.setGravity(Gravity.CENTER);
         button.setPadding(0, 0, 0, 0);
+
+        ParseFile logo = community.getParseFile(Common.OBJECT_COMMUNITY_LOGO_SMALL);
+        if(logo != null) {
+            setBadgeBackground(button, logo, community);
+        }
+        else {
+            button.setBackgroundResource(R.drawable.badge);
+            button.setText(title);
+        }
 
         float scale = getResources().getDisplayMetrics().density;
         int pixels = (int) (70 * scale + 0.5f);
@@ -152,7 +176,10 @@ public class MainActivity extends ActionBarActivity {
                 app.currentViewingCommunity = community;
                 user.put(Common.OBJECT_USER_LAST_VIEWING_COMMUNITY, community);
                 user.saveInBackground();
+
                 mActionBarTitle.setText(community.getString(Common.OBJECT_COMMUNITY_TITLE));
+                Utils.setCommunityActionBarColor(MainActivity.this);
+
                 hideBdgeBanner(300);
             }
         });
@@ -162,7 +189,7 @@ public class MainActivity extends ActionBarActivity {
 
     public void onEvent(UserCommunityEvent event) {
         Log.d("eventbus", "user community event" + event.communityList.size());
-        for(int i = mBannerBadge.getChildCount() - 1; i >= 2; i--) {
+        for(int i = mBannerBadge.getChildCount() - 1; i >= 3; i--) {
             mBannerBadge.removeViewAt(i);
         }
         for(ParseObject community : event.communityList) {
@@ -188,8 +215,11 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         mScrollBannerBadge = (HorizontalScrollView) findViewById(R.id.scroll_banner_badge);
         mBannerBadge = (LinearLayout) findViewById(R.id.banner_badge);
+
         mImgBtnBadgeSearch = (ImageButton) findViewById(R.id.img_btn_badge_search);
         mBtnBadgeAll = (Button) findViewById(R.id.btn_badge_all);
+        mBtnBadgeTaiwan = (Button) findViewById(R.id.btn_badge_taiwan);
+
         setupActionBar();
         mainFragment = new MainActivityFragment();
         getSupportFragmentManager().beginTransaction()

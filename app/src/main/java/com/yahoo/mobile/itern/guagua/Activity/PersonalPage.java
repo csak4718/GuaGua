@@ -11,13 +11,14 @@ import android.view.MenuItem;
 
 import com.yahoo.mobile.itern.guagua.Fragment.MyFavoriteFragment;
 import com.yahoo.mobile.itern.guagua.R;
+import com.yahoo.mobile.itern.guagua.Util.Utils;
 
 public class PersonalPage extends ActionBarActivity {
 
     private void setupActionBar() {
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.action_bar_background)));
-        //actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        Utils.setCommunityActionBarColor(this);
     }
 
     @Override
@@ -52,6 +53,9 @@ public class PersonalPage extends ActionBarActivity {
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, ProfileSettingActivity.class));
             return true;
+        }
+        if (id == android.R.id.home) {
+            finish();
         }
 
         return super.onOptionsItemSelected(item);

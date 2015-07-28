@@ -27,6 +27,9 @@ public class Common {
     public final static String OBJECT_COMMUNITY = "Community";
     public final static String OBJECT_COMMUNITY_TITLE = "title";
     public final static String OBJECT_COMMUNITY_POSTS = "posts";
+    public final static String OBJECT_COMMUNITY_COLOR = "communityColor";
+    public final static String OBJECT_COMMUNITY_LOGO = "logo";
+    public final static String OBJECT_COMMUNITY_LOGO_SMALL = "logoSmall";
 
     public final static String EXTRA_COMMENT_POSTID = "postId";
 

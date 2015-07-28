@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import com.yahoo.mobile.itern.guagua.Fragment.AddPostActivityFragment;
 import com.yahoo.mobile.itern.guagua.R;
+import com.yahoo.mobile.itern.guagua.Util.Utils;
 
 
 public class AddPostActivity extends ActionBarActivity {
@@ -25,6 +26,8 @@ public class AddPostActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_post);
+
+        Utils.setCommunityActionBarColor(this);
 
         addPostFragment = new AddPostActivityFragment();
         getSupportFragmentManager().beginTransaction()
