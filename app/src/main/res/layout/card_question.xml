@@ -67,23 +67,23 @@
             android:visibility="invisible">
             <ImageButton
                 android:id="@+id/imgBtnLike"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:layout_marginRight="5dp"
                 />
             <ImageButton
                 android:id="@+id/imgBtnShare"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_reply_black_24dp"
                 android:layout_marginRight="5dp"
                 />
             <ImageButton
                 android:id="@+id/imgBtnComment"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:src="@drawable/ic_comment_black_24dp"
                 android:background="@android:color/transparent"/>
         </LinearLayout>

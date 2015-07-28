@@ -1,9 +1,6 @@
 package com.yahoo.mobile.itern.guagua.Fragment;
 
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SearchView;
@@ -11,7 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -20,14 +17,8 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.parse.ParseObject;
 import com.yahoo.mobile.itern.guagua.Activity.CommunityActivity;
 import com.yahoo.mobile.itern.guagua.R;
-import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
-import com.yahoo.mobile.itern.guagua.Util.Utils;
-
-import java.util.List;
-import java.util.Locale;
 
 
 /**
@@ -40,7 +31,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private CommunityActivity mCommunityActivity;
     private MapView mMapView;
     private SearchView mSearchBarView;
-    private Button mNextButton;
+    private ImageButton mNextButton;
     private GoogleMap mMap;
 
     @Override
@@ -80,13 +71,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             }
         });*/
 
-        mNextButton = (Button)rootView.findViewById(R.id.next_button);
+        mNextButton = (ImageButton)rootView.findViewById(R.id.next_button);
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(mCommunityActivity.getCurCommunity() != null) {
-                    ParseUtils.addCommunityToUser(mCommunityActivity.getCurCommunity().getObjectId());
-                    Utils.gotoMainActivity(getActivity());
+                    mCommunityActivity.switchToCommunityFragment();
                 }
             }
         });
@@ -97,6 +87,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         MapsInitializer.initialize(getActivity());
         mMapView.getMapAsync(this);
+
         return rootView;
     }
 
@@ -143,60 +134,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         });
     }
 
-    public void onCommunityChange(ParseObject belongCommunity){
-        if(mNextButton != null && belongCommunity!=null)
-            mNextButton.setText(belongCommunity.getString("title"));
+
+    public void updateLocation(){
+        Location location = mCommunityActivity.getLastLocation();
+        LatLng lastLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 15));
+
+        mMap.clear();
+        mMap.addMarker(new MarkerOptions()
+                .position(lastLatLng)
+                .title("Your community"));
     }
-
-    private class SearchClicked extends AsyncTask<Void, Void, Boolean> {
-        private String toSearch;
-        private Address address;
-
-        public SearchClicked(String toSearch) {
-            this.toSearch = toSearch;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-
-            try {
-                Geocoder geocoder = new Geocoder(getActivity().getApplicationContext(), Locale.UK);
-                List<Address> results = geocoder.getFromLocationName(toSearch, 1);
-
-                if (results.size() == 0) {
-                    return false;
-                }
-
-                address = results.get(0);
-                Log.d("Search result", "" + address.getLatitude() + " " + address.getLongitude());
-
-                Location location = new Location("dummyprovider");
-                location.setLatitude(address.getLatitude());
-                location.setLongitude(address.getLongitude());
-                mCommunityActivity.setLastLocation(location);
-
-
-            } catch (Exception e) {
-                Log.e("", "Something went wrong: ", e);
-                return false;
-            }
-            return true;
-        }
-
-
-        protected void onPostExecute(Boolean found){
-            if(found) {
-                Location location = mCommunityActivity.getLastLocation();
-                LatLng lastLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 15));
-
-                mMap.clear();
-                mMap.addMarker(new MarkerOptions()
-                        .position(lastLatLng)
-                        .title("Your community"));
-            }
-        }
-
-    }
-
 }
