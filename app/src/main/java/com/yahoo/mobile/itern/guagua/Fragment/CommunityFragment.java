@@ -1,5 +1,6 @@
 package com.yahoo.mobile.itern.guagua.Fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import com.parse.ParseObject;
 import com.yahoo.mobile.itern.guagua.Activity.CommunityActivity;
+import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
@@ -22,7 +24,7 @@ import com.yahoo.mobile.itern.guagua.Util.Utils;
 
 public class CommunityFragment extends Fragment {
     private final String TAG = "CommunityFragment";
-
+    private MainApplication mMainApplication;
     Context mContext;
     TextView mCommunityTitle;
     Button mYesBtn;
@@ -30,6 +32,7 @@ public class CommunityFragment extends Fragment {
 
     public CommunityFragment(Context context){
         mContext = context;
+        mMainApplication = (MainApplication)((Activity)mContext).getApplication();
     }
 
     @Override
@@ -39,7 +42,6 @@ public class CommunityFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View rootView = inflater.inflate(R.layout.fragment_community, container, false);
 
         mCommunityTitle = (TextView)rootView.findViewById(R.id.txt_community_title);
@@ -49,8 +51,10 @@ public class CommunityFragment extends Fragment {
         mYesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (((CommunityActivity)mContext).getCurCommunity() != null) {
-                    ParseUtils.addCommunityToUser(((CommunityActivity) mContext).getCurCommunity().getObjectId());
+                ParseObject curCommunity = ((CommunityActivity)mContext).getCurCommunity();
+                if (curCommunity != null) {
+                    ParseUtils.addCommunityToUser(curCommunity.getObjectId());
+                    mMainApplication.currentViewingCommunity = curCommunity;
                     Utils.gotoMainActivity(getActivity());
                 }
             }
