@@ -14,7 +14,6 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-
         <activity
             android:name=".Activity.CommunityActivity"
             android:label="@string/app_name" >
@@ -35,8 +34,8 @@
         <activity
             android:name=".Activity.ProfileSettingActivity"
             android:label="@string/title_activity_profile_setting"
-            android:theme="@style/GuaGuaTheme">
-    </activity>
+            android:theme="@style/GuaGuaTheme" >
+        </activity>
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
@@ -55,7 +54,10 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
-
+        <activity
+            android:name=".Activity.CommentActivity"
+            android:label="@string/title_activity_comment" >
+        </activity>
     </application>
 
 </manifest>

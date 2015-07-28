@@ -1,5 +1,6 @@
 package com.yahoo.mobile.itern.guagua.Fragment;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -19,6 +20,7 @@ import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimat
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.parse.ParseObject;
+import com.yahoo.mobile.itern.guagua.Activity.CommentActivity;
 import com.yahoo.mobile.itern.guagua.Activity.MainActivity;
 import com.yahoo.mobile.itern.guagua.Adapter.QuestionCardAdapter;
 import com.yahoo.mobile.itern.guagua.Application.MainApplication;
@@ -153,6 +155,7 @@ public class MainActivityFragment extends Fragment {
                         .replace(R.id.content_frame, new PostFragment())
                         .addToBackStack("main")
                         .commit();
+
             }
         });
 

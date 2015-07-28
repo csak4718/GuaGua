@@ -111,6 +111,7 @@ public class ParseUtils {
     static public void getPostComments(String postObjectId) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery(Common.OBJECT_COMMENT);
         query.whereEqualTo("PostId", postObjectId);
+        query.orderByAscending("updatedAt");
         query.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> commentList, ParseException e) {
                 if (e == null) {

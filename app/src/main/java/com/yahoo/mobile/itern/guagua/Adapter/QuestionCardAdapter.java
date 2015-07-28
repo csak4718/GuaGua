@@ -237,11 +237,12 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.imgBtnComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((AppCompatActivity) mContext).getSupportFragmentManager()
-                        .beginTransaction()
-                        .addToBackStack("main")
-                        .replace(R.id.content_frame, CommentFragment.newInstance(objectId))
-                        .commit();
+//                ((AppCompatActivity) mContext).getSupportFragmentManager()
+//                        .beginTransaction()
+//                        .addToBackStack("main")
+//                        .replace(R.id.content_frame, CommentFragment.newInstance(objectId))
+//                        .commit();
+                Utils.gotoCommentActivity(mContext, objectId);
             }
         });
 
