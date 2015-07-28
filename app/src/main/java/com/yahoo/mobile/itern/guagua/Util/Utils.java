@@ -2,28 +2,23 @@ package com.yahoo.mobile.itern.guagua.Util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
-import android.util.TypedValue;
-import android.view.Gravity;
-import android.view.ViewGroup;
+import android.provider.Settings;
+import android.support.v7.app.AlertDialog;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.LinearLayout;
 
-import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.yahoo.mobile.itern.guagua.Activity.CommentActivity;
 import com.yahoo.mobile.itern.guagua.Activity.CommunityActivity;
 import com.yahoo.mobile.itern.guagua.Activity.LoginActivity;
 import com.yahoo.mobile.itern.guagua.Activity.MainActivity;
-import com.yahoo.mobile.itern.guagua.R;
 
 /**
  * Created by cmwang on 7/20/15.
@@ -66,5 +61,29 @@ public class Utils {
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(bm, rect, rect, paint);
         return output;
+    }
+
+    static public void displayPromptForEnablingGPS(final Activity activity) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        final String action = Settings.ACTION_LOCATION_SOURCE_SETTINGS;
+        final String message = "\"Gua Gua\" would like to collect your current location data.";
+
+        builder.setMessage(message)
+                .setPositiveButton("Agree",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface d, int id) {
+                                activity.startActivity(new Intent(action));
+                                ((CommunityActivity)activity).onResume();
+                                d.dismiss();
+                            }
+                        })
+                .setNegativeButton("Disagree",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface d, int id) {
+                                gotoMainActivity(activity);
+                                d.cancel();
+                            }
+                        });
+        builder.create().show();
     }
 }

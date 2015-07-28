@@ -1,7 +1,6 @@
 package com.yahoo.mobile.itern.guagua.Activity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -24,6 +23,7 @@ import com.yahoo.mobile.itern.guagua.Fragment.CommunityFragment;
 import com.yahoo.mobile.itern.guagua.Fragment.MapFragment;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
+import com.yahoo.mobile.itern.guagua.Util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +53,8 @@ public class CommunityActivity extends FragmentActivity implements GoogleApiClie
     @Override
     public void onResume() {
         super.onResume();
-        mGoogleApiClient.connect();
+        if(mLocationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ))
+            mGoogleApiClient.connect();
     }
 
     @Override
@@ -83,11 +84,8 @@ public class CommunityActivity extends FragmentActivity implements GoogleApiClie
                 .commit();
 
         mLocationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        boolean gps = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        if(!gps){
-            Intent i = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivity(i);
-        }
+        if ( !mLocationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) )
+            Utils.displayPromptForEnablingGPS(this);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -96,8 +94,6 @@ public class CommunityActivity extends FragmentActivity implements GoogleApiClie
                 .build();
 
         ParseUtils.getAllCommunities();
-
-
     }
 
     @Override
@@ -111,7 +107,6 @@ public class CommunityActivity extends FragmentActivity implements GoogleApiClie
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         findCurrentCommunity();
         mMapFragment.setupMap();
-        Log.d(TAG, "mLastLocation:" + mLastLocation.toString());
     }
 
     @Override
@@ -127,8 +122,9 @@ public class CommunityActivity extends FragmentActivity implements GoogleApiClie
     @Override
     public void onLocationChanged(Location location) {
         Log.d(TAG, "Location changed: " + location.toString());
-        LatLng userLocation = new LatLng(location.getLatitude(),location.getLongitude());
+        setLastLocation(location);
 
+        LatLng userLocation = new LatLng(location.getLatitude(),location.getLongitude());
         findCurrentCommunity();
     }
 
@@ -168,7 +164,7 @@ public class CommunityActivity extends FragmentActivity implements GoogleApiClie
             comLocation.setLongitude(Double.parseDouble(com.getString("long")));
 
             double distance = mLastLocation.distanceTo(comLocation);
-            //Log.d("Community",""+distance+" meters to "+com.get("title"));
+            Log.d("Community",""+distance+" meters to "+com.get("title"));
 
             if(distance < minDistance) {
                 minDistance = distance;
