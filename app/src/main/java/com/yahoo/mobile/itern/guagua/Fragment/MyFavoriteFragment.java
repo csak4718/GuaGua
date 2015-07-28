@@ -68,7 +68,7 @@ public class MyFavoriteFragment extends Fragment {
                 Log.d("MFF", "myquestion");
                 return new MyQuestionFragment();
             }else{
-                return new PostFragment();
+                return new AddPostActivityFragment();
             }
         }
 

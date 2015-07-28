@@ -1,14 +1,10 @@
 package com.yahoo.mobile.itern.guagua.Activity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -18,7 +14,6 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
@@ -30,7 +25,7 @@ import com.parse.ParseUser;
 import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.Event.UserCommunityEvent;
 import com.yahoo.mobile.itern.guagua.Fragment.MainActivityFragment;
-import com.yahoo.mobile.itern.guagua.Fragment.PostFragment;
+
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.Common;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
@@ -248,47 +243,5 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-    // For changing camera_btn img
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        // To Handle Gallery Result
-        Log.d("Photo", "in result");
-        Log.d("Photo", String.valueOf(data == null));
-        Log.d("Photo", String.valueOf(requestCode));
-        if (data != null && requestCode == 1234) {
-            Log.d("Photo", "in result");
-            Uri selectedImageUri = data.getData();
-            Log.d("Photo", String.valueOf(selectedImageUri));
-            String[] fileColumn = { MediaStore.Images.Media.DATA };
-            Cursor imageCursor = getContentResolver().query(selectedImageUri, fileColumn, null,
-                    null, null);
-            imageCursor.moveToFirst();
-            int ori = imageCursor.getInt(0);
-            Log.d("Photo",String.valueOf(ori));
-            int fileColumnIndex = imageCursor.getColumnIndex(fileColumn[0]);
-            String picturePath = imageCursor.getString(fileColumnIndex);
-            Log.d("Photo", picturePath);
-            //Bitmap pictureObject = BitmapFactory.decodeFile(picturePath);
 
-            PostFragment myf = (PostFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame);
-            myf.change_Image(picturePath);
-
-        }else if(data != null && requestCode == 12345){
-            //Bundle extras = data.getExtras();
-            //Bitmap imageBitmap = (Bitmap) extras.get("data");
-            //mImageView.setImageBitmap(imageBitmap);
-            Uri imageUri = data.getData();
-            String[] fileColumn = { MediaStore.Images.Media.DATA };
-            Cursor imageCursor = getContentResolver().query(imageUri,fileColumn, null, null, null);
-            imageCursor.moveToFirst();
-            int ori = imageCursor.getInt(0);
-            Log.d("Photo",String.valueOf(ori));
-            int fileColumnIndex = imageCursor.getColumnIndex(fileColumn[0]);
-            String picturePath = imageCursor.getString(fileColumnIndex);
-            Log.d("Photo", picturePath);
-            Log.d("Photo",String.valueOf(imageUri));
-            PostFragment myf = (PostFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame);
-            myf.change_Image(picturePath);
-        }
-    }
 }
