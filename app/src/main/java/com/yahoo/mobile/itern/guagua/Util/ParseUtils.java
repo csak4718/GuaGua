@@ -126,6 +126,7 @@ public class ParseUtils {
 
     static public void postQuestions(String question, String optionA, String optionB, final ParseObject community) {
         final ParseObject mPost = new ParseObject(Common.OBJECT_POST);
+        final ParseUser user = ParseUser.getCurrentUser();
         mPost.put(Common.OBJECT_POST_CONTENT, question);
         mPost.put(Common.OBJECT_POST_QA, optionA);
         mPost.put(Common.OBJECT_POST_QB, optionB);
@@ -141,6 +142,9 @@ public class ParseUtils {
                     relation.add(mPost);
                     community.saveInBackground();
                 }
+                ParseRelation<ParseObject> relation = user.getRelation(Common.OBJECT_POST_MQ);
+                relation.add(mPost);
+                user.saveInBackground();
             }
         });
     }
