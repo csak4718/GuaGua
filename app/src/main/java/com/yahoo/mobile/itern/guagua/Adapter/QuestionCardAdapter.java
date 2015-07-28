@@ -276,9 +276,9 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         //render BtnLike
         holder.liked = mFavoriteList.contains(mQuestion);
         if (holder.liked){
-            holder.imgBtnLike.setImageResource(R.drawable.ic_favorite_black_24dp);
+            holder.imgBtnLike.setImageResource(R.drawable.ic_like);
         }else{
-            holder.imgBtnLike.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+            holder.imgBtnLike.setImageResource(R.drawable.ic_like1);
         }
 
         holder.imgBtnLike.setOnClickListener(new View.OnClickListener() {
@@ -294,14 +294,14 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                         relation.add(mQuestion);
                         currentUser.saveInBackground();
                         mFavoriteList.add(mQuestion);
-                        holder.imgBtnLike.setImageResource(R.drawable.ic_favorite_black_24dp);
+                        holder.imgBtnLike.setImageResource(R.drawable.ic_like);
                         holder.liked = true;
                     }else{
                         Log.d("On click","get dislike");
                         relation.remove(mQuestion);
                         currentUser.saveInBackground();
                         mFavoriteList.remove(mQuestion);
-                        holder.imgBtnLike.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+                        holder.imgBtnLike.setImageResource(R.drawable.ic_like1);
                         holder.liked = false;
                     }
 
