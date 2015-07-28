@@ -182,6 +182,16 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.btnA.setVoted(true, true);
         holder.btnB.setVoted(true, true);
 
+        holder.btnA.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
+        holder.btnB.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {}
+        });
+
         holder.layoutFuncButtons.setVisibility(View.VISIBLE);
 
         ParseRelation<ParseUser> relation = mQuestion.getRelation(Common.OBJECT_POST_VOTED_USER);
