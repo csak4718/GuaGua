@@ -17,8 +17,6 @@
 package com.yahoo.mobile.itern.guagua.View;
 
 import android.content.Context;
-import android.graphics.Typeface;
-import android.os.Build;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -66,9 +64,9 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
     }
 
-    private static final int TITLE_OFFSET_DIPS = 24;
-    private static final int TAB_VIEW_PADDING_DIPS = 16;
-    private static final int TAB_VIEW_TEXT_SIZE_SP = 12;
+    private static final int TITLE_OFFSET_DIPS = 16;
+    private static final int TAB_VIEW_PADDING_DIPS = 15;
+    private static final int TAB_VIEW_TEXT_SIZE_SP = 18;
 
     private int mTitleOffset;
 
@@ -175,10 +173,10 @@ public class SlidingTabLayout extends HorizontalScrollView {
         TextView textView = new TextView(context);
         textView.setGravity(Gravity.CENTER);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, TAB_VIEW_TEXT_SIZE_SP);
-        textView.setTypeface(Typeface.DEFAULT_BOLD);
+        //textView.setTypeface(null, Typeface.BOLD);
         //LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         //textView.setLayoutParams(lp);
-
+        /*
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             // If we're running on Honeycomb or newer, then we can use the Theme's
             // selectableItemBackground to ensure that the View has a pressed state
@@ -191,7 +189,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             // If we're running on ICS or newer, enable all-caps to match the Action Bar tab style
             textView.setAllCaps(true);
-        }
+        }*/
 
         int padding = (int) (TAB_VIEW_PADDING_DIPS * getResources().getDisplayMetrics().density);
         textView.setPadding(padding, padding, padding, padding);
@@ -227,8 +225,8 @@ public class SlidingTabLayout extends HorizontalScrollView {
             // Try to scale to screen
             //Display display = mContext.getgetWindowManager().getDefaultDisplay();
             int width = getResources().getDisplayMetrics().widthPixels;  // deprecated
-            Log.d("Get root view",String.valueOf(width/2));
-            tabView.setMinimumWidth(width/2);
+            Log.d("Get root view", String.valueOf(width / 2));
+            tabView.setMinimumWidth(width / 2);
             mTabStrip.addView(tabView);
         }
     }
