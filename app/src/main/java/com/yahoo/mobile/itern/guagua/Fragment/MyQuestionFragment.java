@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.yahoo.mobile.itern.guagua.Adapter.QuestionCardAdapter;
-import com.yahoo.mobile.itern.guagua.Event.CollectionEvent;
+import com.yahoo.mobile.itern.guagua.Event.MyQuestionsEvent;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 
@@ -26,12 +26,12 @@ import de.greenrobot.event.EventBus;
  * Created by fanwang on 7/23/15.
  */
 
-public class CollectionFragment extends Fragment {
+public class MyQuestionFragment extends Fragment {
     private View mRootView;
     private ParseUser mUser;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
-    private List<ParseObject> mCollection;
+    private List<ParseObject> mQuestions;
     private QuestionCardAdapter mAdapter;
 
     @Override
@@ -39,9 +39,9 @@ public class CollectionFragment extends Fragment {
         super.onCreate(savedInstanceState);
         //mUserId = getArguments().getString("objectId");
         mUser = ParseUser.getCurrentUser();
-        ParseUtils.getAllCollections(mUser);
-        mCollection = new ArrayList<>();
-        mAdapter = new QuestionCardAdapter(getActivity(), mCollection);
+        ParseUtils.getMyQuestions(mUser);
+        mQuestions = new ArrayList<>();
+        mAdapter = new QuestionCardAdapter(getActivity(), mQuestions);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class CollectionFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRootView = inflater.inflate(R.layout.fragment_collection, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_myquestion, container, false);
         return mRootView;
     }
 
@@ -74,14 +74,14 @@ public class CollectionFragment extends Fragment {
         //ParseUtils.getAllCollections(mUserId);
     }
 
-    public void onEvent(CollectionEvent event) {
-        Log.d("eventbus", "" + event.collectionList.size());
-        refreshList(event.collectionList);
+    public void onEvent(MyQuestionsEvent event) {
+        Log.d("eventbus", "" + event.myQuestionsList.size());
+        refreshList(event.myQuestionsList);
     }
 
     private void refreshList(List<ParseObject> list) {
-        mCollection.clear();
-        mCollection.addAll(list);
+        mQuestions.clear();
+        mQuestions.addAll(list);
         mAdapter.flushFilter();
         mAdapter.notifyDataSetChanged();
     }

@@ -229,7 +229,8 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
         if (id == R.id.action_profile) {
-            startActivity(new Intent(this, ProfileSettingActivity.class));
+            //startActivity(new Intent(this, ProfileSettingActivity.class));
+            startActivity(new Intent(this, PersonalPage.class));
         }
 
         return super.onOptionsItemSelected(item);
@@ -244,15 +245,13 @@ public class MainActivity extends ActionBarActivity {
         if (data != null && requestCode == 1234) {
             Log.d("Photo", "in result");
             Uri selectedImageUri = data.getData();
-            Log.d("Photo", "getdata");
+            Log.d("Photo", String.valueOf(selectedImageUri));
             String[] fileColumn = { MediaStore.Images.Media.DATA };
-            Log.d("Photo", "1");
-            Cursor imageCursor = getContentResolver().query(selectedImageUri,
-                    fileColumn, null, null, null);
+            Cursor imageCursor = getContentResolver().query(selectedImageUri, fileColumn, null,
+                    null, null);
             imageCursor.moveToFirst();
             int ori = imageCursor.getInt(0);
             Log.d("Photo",String.valueOf(ori));
-            Log.d("Photo", "2");
             int fileColumnIndex = imageCursor.getColumnIndex(fileColumn[0]);
             String picturePath = imageCursor.getString(fileColumnIndex);
             Log.d("Photo", picturePath);
@@ -261,6 +260,22 @@ public class MainActivity extends ActionBarActivity {
             PostFragment myf = (PostFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame);
             myf.change_Image(picturePath);
 
+        }else if(data != null && requestCode == 12345){
+            //Bundle extras = data.getExtras();
+            //Bitmap imageBitmap = (Bitmap) extras.get("data");
+            //mImageView.setImageBitmap(imageBitmap);
+            Uri imageUri = data.getData();
+            String[] fileColumn = { MediaStore.Images.Media.DATA };
+            Cursor imageCursor = getContentResolver().query(imageUri,fileColumn, null, null, null);
+            imageCursor.moveToFirst();
+            int ori = imageCursor.getInt(0);
+            Log.d("Photo",String.valueOf(ori));
+            int fileColumnIndex = imageCursor.getColumnIndex(fileColumn[0]);
+            String picturePath = imageCursor.getString(fileColumnIndex);
+            Log.d("Photo", picturePath);
+            Log.d("Photo",String.valueOf(imageUri));
+            PostFragment myf = (PostFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame);
+            myf.change_Image(picturePath);
         }
     }
 }
