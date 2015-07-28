@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 import com.yahoo.mobile.itern.guagua.Adapter.QuestionCardAdapter;
 import com.yahoo.mobile.itern.guagua.Event.CollectionEvent;
 import com.yahoo.mobile.itern.guagua.R;
@@ -27,7 +28,7 @@ import de.greenrobot.event.EventBus;
 
 public class CollectionFragment extends Fragment {
     private View mRootView;
-    private String mUserId;
+    private ParseUser mUser;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private List<ParseObject> mCollection;
@@ -37,7 +38,8 @@ public class CollectionFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //mUserId = getArguments().getString("objectId");
-        mUserId = "FanFan";
+        mUser = ParseUser.getCurrentUser();
+        ParseUtils.getAllCollections(mUser);
         mCollection = new ArrayList<>();
         mAdapter = new QuestionCardAdapter(getActivity(), mCollection);
     }
@@ -69,7 +71,7 @@ public class CollectionFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
-        ParseUtils.getAllCollections(mUserId);
+        //ParseUtils.getAllCollections(mUserId);
     }
 
     public void onEvent(CollectionEvent event) {

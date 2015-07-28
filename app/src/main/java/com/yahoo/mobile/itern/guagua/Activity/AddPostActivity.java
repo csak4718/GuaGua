@@ -82,6 +82,22 @@ public class AddPostActivity extends ActionBarActivity {
             AddPostActivityFragment myf = (AddPostActivityFragment) getSupportFragmentManager().findFragmentById(R.id.add_post_content_frame);
             myf.change_Image(picturePath);
 
+        }else if(data != null && requestCode == 12345){
+            //Bundle extras = data.getExtras();
+            //Bitmap imageBitmap = (Bitmap) extras.get("data");
+            //mImageView.setImageBitmap(imageBitmap);
+            Uri imageUri = data.getData();
+            String[] fileColumn = { MediaStore.Images.Media.DATA };
+            Cursor imageCursor = getContentResolver().query(imageUri,fileColumn, null, null, null);
+            imageCursor.moveToFirst();
+            int ori = imageCursor.getInt(0);
+            Log.d("Photo",String.valueOf(ori));
+            int fileColumnIndex = imageCursor.getColumnIndex(fileColumn[0]);
+            String picturePath = imageCursor.getString(fileColumnIndex);
+            Log.d("Photo", picturePath);
+            Log.d("Photo",String.valueOf(imageUri));
+            AddPostActivityFragment myf = (AddPostActivityFragment) getSupportFragmentManager().findFragmentById(R.id.add_post_content_frame);
+            myf.change_Image(picturePath);
         }
     }
 }

@@ -7,7 +7,6 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -20,6 +19,7 @@ import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.Event.CollectionEvent;
 import com.yahoo.mobile.itern.guagua.Event.CommentEvent;
 import com.yahoo.mobile.itern.guagua.Event.CommunityEvent;
+import com.yahoo.mobile.itern.guagua.Event.MyQuestionsEvent;
 import com.yahoo.mobile.itern.guagua.Event.QuestionEvent;
 import com.yahoo.mobile.itern.guagua.Event.UserCommunityEvent;
 
@@ -111,6 +111,7 @@ public class ParseUtils {
     static public void getPostComments(String postObjectId) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery(Common.OBJECT_COMMENT);
         query.whereEqualTo("PostId", postObjectId);
+        query.orderByAscending("updatedAt");
         query.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> commentList, ParseException e) {
                 if (e == null) {
@@ -122,6 +123,7 @@ public class ParseUtils {
             }
         });
     }
+
     static public void postQuestions(String question, String optionA, String optionB, final ParseObject community) {
         final ParseObject mPost = new ParseObject(Common.OBJECT_POST);
         mPost.put(Common.OBJECT_POST_CONTENT, question);
@@ -130,6 +132,7 @@ public class ParseUtils {
         mPost.put(Common.OBJECT_POST_QA_NUM, 0);
         mPost.put(Common.OBJECT_POST_QB_NUM, 0);
         mPost.put(Common.OBJECT_POST_USER, ParseUser.getCurrentUser());
+
         mPost.saveEventually(new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -142,10 +145,14 @@ public class ParseUtils {
         });
     }
     static public void postComment(String comment, final String postId, final Boolean refreshList) {
+
+        ParseUser currentUser = ParseUser.getCurrentUser();
+
         ParseObject mComment = new ParseObject(Common.OBJECT_COMMENT);
         mComment.put(Common.OBJECT_COMMENT_POSTID, postId);
         mComment.put(Common.OBJECT_COMMENT_MSG, comment);
-        mComment.put(Common.OBJECT_COMMENT_USER, ParseUser.getCurrentUser());
+        mComment.put(Common.OBJECT_COMMENT_USER, currentUser);
+        mComment.put(Common.OBJECT_COMMENT_USER_ID, currentUser.getObjectId());
         mComment.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -174,6 +181,7 @@ public class ParseUtils {
             }
         });
     }
+
     static public void displayImage(ParseFile img, final ImageView imgView) {
         img.getDataInBackground(new GetDataCallback() {
             @Override
@@ -188,8 +196,8 @@ public class ParseUtils {
             }
         });
     }
-    static public void getAllCollections(String uid) {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Prayer");
+    static public void getAllCollections(ParseUser user) {
+        ParseQuery<ParseObject> query = user.getRelation(Common.OBJECT_POST_LIKES).getQuery();
         //ParseQuery<ParseObject> query = ParseQuery.getQuery("Colleciton");
 
         query.orderByDescending("updatedAt");
@@ -201,6 +209,24 @@ public class ParseUtils {
                     EventBus.getDefault().post(new CollectionEvent(collectionList));
                 } else {
                     Log.d("collections", "Error: " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    static public void getMyQuestions(ParseUser user) {
+        ParseQuery<ParseObject> query = user.getRelation(Common.OBJECT_POST_MQ).getQuery();
+        //ParseQuery<ParseObject> query = ParseQuery.getQuery("Colleciton");
+
+        query.orderByDescending("updatedAt");
+        //query.whereEqualTo("uid",uid);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> myQuestionsList, ParseException e) {
+                if (e == null) {
+                    Log.d("myQuesions", "Retrieved " + myQuestionsList.size() + " collections");
+                    EventBus.getDefault().post(new MyQuestionsEvent(myQuestionsList));
+                } else {
+                    Log.d("myQuesions", "Error: " + e.getMessage());
                 }
             }
         });

@@ -21,7 +21,9 @@ import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimat
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.parse.ParseObject;
+
 import com.yahoo.mobile.itern.guagua.Activity.AddPostActivity;
+import com.yahoo.mobile.itern.guagua.Activity.CommentActivity;
 import com.yahoo.mobile.itern.guagua.Activity.MainActivity;
 import com.yahoo.mobile.itern.guagua.Adapter.QuestionCardAdapter;
 import com.yahoo.mobile.itern.guagua.Application.MainApplication;
@@ -86,8 +88,14 @@ public class MainActivityFragment extends Fragment {
         mList.clear();
         mList.addAll(list);
         mAdapter.flushFilter();
-        mWrappedAdapter.notifyDataSetChanged();
+        mAdapter.notifyDataSetChangedWithCache();
         mPullToRefreshView.setRefreshing(false);
+        if(Utils.isBrowsingAllCommunity(getActivity())) {
+            mBtnAddPost.setVisibility(View.GONE);
+        }
+        else {
+            mBtnAddPost.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -101,7 +109,9 @@ public class MainActivityFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
 
         mBtnAddPost = (FloatingActionButton) mView.findViewById(R.id.btn_add_post);
-
+        if(Utils.isBrowsingAllCommunity(getActivity())) {
+            mBtnAddPost.setVisibility(View.GONE);
+        }
 
         mRecyclerView = (RecyclerView) getView().findViewById(R.id.recycler_view);
         mLayoutManager = new LinearLayoutManager(getActivity());
@@ -140,12 +150,7 @@ public class MainActivityFragment extends Fragment {
                 mPullToRefreshView.post(new Runnable() {
                     @Override
                     public void run() {
-                        MainApplication app = (MainApplication) getActivity().getApplication();
-                        if (app.currentViewingCommunity == null) {
-                            ParseUtils.getAllQuestions();
-                        } else {
-                            ParseUtils.getCommunityQuestions(app.currentViewingCommunity);
-                        }
+                        ParseUtils.getCurrentCommunityQuestions(getActivity());
                     }
                 });
             }

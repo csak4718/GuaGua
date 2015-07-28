@@ -59,6 +59,11 @@ public class MainActivity extends ActionBarActivity {
 
         ParseUtils.getUserCommunity(ParseUser.getCurrentUser());
 
+        ParseObject community = ((MainApplication) getApplication()).currentViewingCommunity;
+        if(community != null) {
+            mActionBarTitle.setText(community.getString(Common.OBJECT_COMMUNITY_TITLE));
+        }
+
         mActionBarTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,7 +143,10 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
                 ParseUtils.getCommunityQuestions(community);
                 MainApplication app = (MainApplication)getApplication();
+                ParseUser user = ParseUser.getCurrentUser();
                 app.currentViewingCommunity = community;
+                user.put(Common.OBJECT_USER_LAST_VIEWING_COMMUNITY, community);
+                user.saveInBackground();
                 mActionBarTitle.setText(community.getString(Common.OBJECT_COMMUNITY_TITLE));
                 hideBdgeBanner(300);
             }
@@ -224,7 +232,8 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
         if (id == R.id.action_profile) {
-            startActivity(new Intent(this, ProfileSettingActivity.class));
+            //startActivity(new Intent(this, ProfileSettingActivity.class));
+            startActivity(new Intent(this, PersonalPage.class));
         }
 
         return super.onOptionsItemSelected(item);

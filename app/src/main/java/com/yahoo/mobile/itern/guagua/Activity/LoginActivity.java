@@ -12,9 +12,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.facebook.AccessToken;
+import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.LogInCallback;
+import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
+import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.Event.FbPictureEvent;
 import com.yahoo.mobile.itern.guagua.Event.UserProfileEvent;
 import com.yahoo.mobile.itern.guagua.R;
@@ -36,6 +41,31 @@ public class LoginActivity extends ActionBarActivity {
     private String mNickName;
     private String mFbId;
 
+
+    private void restoreUserSetting(ParseUser user) {
+        final MainApplication app = (MainApplication)getApplication();
+        final ParseObject community = user.getParseObject(Common.OBJECT_USER_LAST_VIEWING_COMMUNITY);
+        if(community != null) {
+            community.fetchInBackground(new GetCallback<ParseObject>() {
+                @Override
+                public void done(ParseObject parseObject, ParseException e) {
+                    app.currentViewingCommunity = parseObject;
+                    Utils.gotoMainActivity(LoginActivity.this);
+                    finish();
+                }
+            });
+        }
+        else {
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Utils.gotoMainActivity(LoginActivity.this);
+                    finish();
+                }
+            }, 700);
+        }
+    }
+
     private void setupLoginButton() {
 
         mBtnLoginFacebook.setOnClickListener(new View.OnClickListener() {
@@ -56,8 +86,7 @@ public class LoginActivity extends ActionBarActivity {
                                 FbUtils.getUserProfile(AccessToken.getCurrentAccessToken());
                             } else {
                                 Log.d("MyApp", "User logged in through Facebook!");
-                                Utils.gotoMainActivity(LoginActivity.this);
-                                finish();
+                                restoreUserSetting(user);
                             }
 
                         }
@@ -138,13 +167,7 @@ public class LoginActivity extends ActionBarActivity {
             showLoginAnimation();
         }
         else {
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Utils.gotoMainActivity(LoginActivity.this);
-                    finish();
-                }
-            }, 1000);
+            restoreUserSetting(ParseUser.getCurrentUser());
         }
     }
 
