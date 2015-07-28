@@ -17,18 +17,28 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.Switch;
 
 import com.parse.ParseObject;
 import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
+import com.yahoo.mobile.itern.guagua.View.ActionBarTitle;
 
-public class PostFragment extends Fragment {
+
+/**
+ * A placeholder fragment containing a simple view.
+ */
+public class AddPostActivityFragment extends Fragment {
     final int CAMERA_REQUEST = 12345;
     final int ACTIVITY_SELECT_IMAGE = 1234;
+
     View mView;
     EditText edtQuestion;
     EditText edtOptA;
@@ -37,12 +47,69 @@ public class PostFragment extends Fragment {
     Button btnCancel;
     ImageButton btnCameraA;
     ImageButton btnCameraB;
+    Switch btnSwitch;
+    boolean enableFBshare=false;
     boolean aorb;
+
+    private HorizontalScrollView mScrollBannerBadge;
+    private LinearLayout mBannerBadge;
+    private ImageButton mImgBtnBadgeSearch;
+    private boolean badgeBannerVisible = false;
+
+    private ActionBarTitle mActionBarTitle;
+
+//    private void setupActionBar() {
+//        mActionBarTitle = new ActionBarTitle(this);
+//
+//        ActionBar actionBar = getSupportActionBar();
+//        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#5AD3D2")));
+//        actionBar.setDisplayShowTitleEnabled(false);
+//        actionBar.setDisplayShowCustomEnabled(true);
+//        actionBar.setElevation(0);
+//        actionBar.setCustomView(mActionBarTitle);
+////        hideBdgeBanner(0);
+//
+//        ParseUtils.getUserCommunity(ParseUser.getCurrentUser());
+//
+//        mActionBarTitle.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (!badgeBannerVisible) {
+//                    showBdgeBanner(300);
+//                } else {
+//                    hideBdgeBanner(300);
+//                }
+//            }
+//        });
+//        mImgBtnBadgeSearch.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Utils.gotoCommunityActivity(MainActivity.this);
+//            }
+//        });
+//        mBtnBadgeAll.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                MainApplication app = (MainApplication)getApplication();
+//                if(app.currentViewingCommunity != null) {
+//                    ParseUtils.getAllQuestions();
+//                    app.currentViewingCommunity = null;
+//                    mActionBarTitle.setText(getString(R.string.app_name));
+//                    hideBdgeBanner(300);
+//                }
+//            }
+//        });
+//    }
+
+
+
+    public AddPostActivityFragment() {
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment_post, container, false);
+        mView = inflater.inflate(R.layout.fragment_add_post, container, false);
         edtQuestion = (EditText) mView.findViewById(R.id.edt_question);
         edtOptA = (EditText) mView.findViewById(R.id.edt_optA);
         edtOptB = (EditText) mView.findViewById(R.id.edt_optB);
@@ -53,6 +120,16 @@ public class PostFragment extends Fragment {
         btnCameraA.setImageBitmap(sqr2circle(adjustBitmap(bm,bm.getHeight())));
         btnCameraB = (ImageButton) mView.findViewById(R.id.btn_cameraB);
         btnCameraB.setImageBitmap(sqr2circle(adjustBitmap(bm,bm.getHeight())));
+        btnSwitch = (Switch) mView.findViewById(R.id.share_switch);
+
+
+        mScrollBannerBadge = (HorizontalScrollView) mView.findViewById(R.id.scroll_banner_badge);
+        mBannerBadge = (LinearLayout) mView.findViewById(R.id.banner_badge);
+        mImgBtnBadgeSearch = (ImageButton) mView.findViewById(R.id.img_btn_badge_search);
+
+
+//        setupActionBar();
+
 
         btnPost.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,7 +140,7 @@ public class PostFragment extends Fragment {
                 final ParseObject community = ((MainApplication) getActivity().getApplication()).currentViewingCommunity;
                 ParseUtils.postQuestions(question, optionA, optionB, community);
                 Utils.hideSoftKeyboard(getActivity());
-                getFragmentManager().popBackStack();
+                getActivity().finish();
 
             }
         });
@@ -71,10 +148,10 @@ public class PostFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Utils.hideSoftKeyboard(getActivity());
-                getFragmentManager().popBackStack();
+                getActivity().finish();
             }
         });
-        btnCameraA.setOnClickListener(new View.OnClickListener(){
+        btnCameraA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 aorb = false;
@@ -93,8 +170,18 @@ public class PostFragment extends Fragment {
 
             }
         });
+
+        btnSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) enableFBshare = true;
+                else enableFBshare = false;
+            }
+        });
+
         return mView;
     }
+
     //Change button pic after select a picture
     public void change_Image(String url){
         Bitmap bm = BitmapFactory.decodeFile(url);
@@ -140,7 +227,7 @@ public class PostFragment extends Fragment {
         paint.setAntiAlias(true);
         canvas.drawARGB(0, 0, 0, 0);
         paint.setColor(color);
-        canvas.drawCircle(bm.getWidth() / 2,bm.getHeight() / 2, bm.getWidth() / 2, paint);
+        canvas.drawCircle(bm.getWidth() / 2, bm.getHeight() / 2, bm.getWidth() / 2, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(bm, rect, rect, paint);
         return output;
@@ -170,4 +257,5 @@ public class PostFragment extends Fragment {
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
     }
+
 }

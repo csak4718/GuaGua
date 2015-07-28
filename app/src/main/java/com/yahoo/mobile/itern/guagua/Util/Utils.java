@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.parse.ParseObject;
 import com.parse.ParseUser;
+import com.yahoo.mobile.itern.guagua.Activity.AddPostActivity;
 import com.yahoo.mobile.itern.guagua.Activity.CommentActivity;
 import com.yahoo.mobile.itern.guagua.Activity.CommunityActivity;
 import com.yahoo.mobile.itern.guagua.Activity.LoginActivity;
@@ -36,6 +37,10 @@ public class Utils {
     }
     static public void gotoCommunityActivity(Context context) {
         Intent it = new Intent(context, CommunityActivity.class);
+        context.startActivity(it);
+    }
+    static public void gotoAddPostActivity(Context context) {
+        Intent it = new Intent(context, AddPostActivity.class);
         context.startActivity(it);
     }
     static public void gotoCommentActivity(Context context, String postId) {
