@@ -28,10 +28,13 @@ public class CommunityFragment extends Fragment {
     Button mYesBtn;
     Button mNoBtn;
 
+    public CommunityFragment(Context context){
+        mContext = context;
+    }
+
     @Override
     public void onCreate(Bundle savedBundle){
         super.onCreate(savedBundle);
-        mContext = getActivity();
     }
 
     @Override
@@ -60,11 +63,12 @@ public class CommunityFragment extends Fragment {
             }
         });
 
-        onCommunityChange(((CommunityActivity) mContext).getCurCommunity());
+        onCommunityChange();
         return rootView;
     }
 
-    public void onCommunityChange(ParseObject belongCommunity){
+    public void onCommunityChange(){
+        ParseObject belongCommunity = ((CommunityActivity)mContext).getCurCommunity();
         if(mCommunityTitle != null && belongCommunity != null)
             mCommunityTitle.setText("Do you want to join \n" + belongCommunity.getString("title") + "?");
     }

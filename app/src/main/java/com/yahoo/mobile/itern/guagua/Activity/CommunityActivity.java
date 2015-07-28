@@ -1,17 +1,11 @@
 package com.yahoo.mobile.itern.guagua.Activity;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
@@ -29,10 +23,10 @@ import com.yahoo.mobile.itern.guagua.Fragment.CommunityFragment;
 import com.yahoo.mobile.itern.guagua.Fragment.MapFragment;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
+import com.yahoo.mobile.itern.guagua.Util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import de.greenrobot.event.EventBus;
 
@@ -40,13 +34,13 @@ import de.greenrobot.event.EventBus;
  * Created by fanwang on 7/22/15.
  */
 
-public class CommunityActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks,
+public class CommunityActivity extends FragmentActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private final String TAG = "CommunityActivity";
 
-    CommunityFragment mCommunityFragement = new CommunityFragment();
-    MapFragment mMapFragment = new MapFragment();
+    CommunityFragment mCommunityFragement;
+    MapFragment mMapFragment;
 
     public ParseObject mCurCommunity;
     private List<ParseObject> mCommunities = new ArrayList<>();
@@ -55,12 +49,12 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     private GoogleApiClient mGoogleApiClient;
     private LocationManager mLocationManager;
     private LocationRequest mLocationRequest;
-    private ActionBar mActionBar;
 
     @Override
     public void onResume() {
         super.onResume();
-        mGoogleApiClient.connect();
+        if(mLocationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ))
+            mGoogleApiClient.connect();
     }
 
     @Override
@@ -81,17 +75,17 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_community);
-        setupActionBar();
+
+        mCommunityFragement = new CommunityFragment(this);
+        mMapFragment = new MapFragment(this);
+
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.community_content, mCommunityFragement)
                 .commit();
 
         mLocationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        boolean gps = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        if(!gps){
-            Intent i = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivity(i);
-        }
+        if ( !mLocationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) )
+            Utils.displayPromptForEnablingGPS(this);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -100,8 +94,6 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
                 .build();
 
         ParseUtils.getAllCommunities();
-
-
     }
 
     @Override
@@ -114,8 +106,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         findCurrentCommunity();
-        mMapFragment.setUpMap();
-        Log.d(TAG, "mLastLocation:" + mLastLocation.toString());
+        mMapFragment.setupMap();
     }
 
     @Override
@@ -131,8 +122,9 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     @Override
     public void onLocationChanged(Location location) {
         Log.d(TAG, "Location changed: " + location.toString());
-        LatLng userLocation = new LatLng(location.getLatitude(),location.getLongitude());
+        setLastLocation(location);
 
+        LatLng userLocation = new LatLng(location.getLatitude(),location.getLongitude());
         findCurrentCommunity();
     }
 
@@ -146,7 +138,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                new SearchClicked(query).execute();
+
                 return false;
             }
 
@@ -180,16 +172,9 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
             }
         }
 
-        mCommunityFragement.onCommunityChange(mCurCommunity);
+        mCommunityFragement.onCommunityChange();
+        mMapFragment.onCommunityChange();
         return ;
-    }
-
-    private void setupActionBar() {
-        mActionBar = getSupportActionBar();
-        mActionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor((R.color.cyan))));
-        mActionBar.setDisplayShowTitleEnabled(false);
-        mActionBar.setShowHideAnimationEnabled(false);
-        mActionBar.hide();
     }
 
 
@@ -218,59 +203,14 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
 
 
     public void switchToMapFragment(){
-        mActionBar.show();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.community_content, mMapFragment)
                 .commit();
     }
 
     public void switchToCommunityFragment(){
-        mActionBar.hide();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.community_content, mCommunityFragement)
                 .commit();
     }
-
-
-    private class SearchClicked extends AsyncTask<Void, Void, Boolean> {
-        private String toSearch;
-        private Address address;
-
-        public SearchClicked(String toSearch) {
-            this.toSearch = toSearch;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-
-            try {
-                Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-                List<Address> results = geocoder.getFromLocationName(toSearch, 1);
-
-                if (results.size() == 0) {
-                    return false;
-                }
-
-                address = results.get(0);
-                Log.d("Search result", "" + address.getLatitude() + " " + address.getLongitude());
-
-                Location location = new Location("dummyprovider");
-                location.setLatitude(address.getLatitude());
-                location.setLongitude(address.getLongitude());
-                setLastLocation(location);
-
-            } catch (Exception e) {
-                Log.e("", "Something went wrong: ", e);
-                return false;
-            }
-            return true;
-        }
-
-
-        protected void onPostExecute(Boolean found){
-            mMapFragment.updateLocation();
-
-        }
-    }
-
 }
