@@ -138,12 +138,7 @@ public class MainActivityFragment extends Fragment {
                 mPullToRefreshView.post(new Runnable() {
                     @Override
                     public void run() {
-                        MainApplication app = (MainApplication) getActivity().getApplication();
-                        if (app.currentViewingCommunity == null) {
-                            ParseUtils.getAllQuestions();
-                        } else {
-                            ParseUtils.getCommunityQuestions(app.currentViewingCommunity);
-                        }
+                        ParseUtils.getCurrentCommunityQuestions(getActivity());
                     }
                 });
             }
