@@ -20,6 +20,7 @@ public class Common {
     public final static String OBJECT_COMMENT_MSG = "msg";
     public final static String OBJECT_COMMENT_POSTID = "PostId";
     public final static String OBJECT_COMMENT_USER = "user";
+    public final static String OBJECT_COMMENT_USER_ID = "userId";
     public final static String OBJECT_COMMUNITY = "Community";
     public final static String OBJECT_COMMUNITY_TITLE = "title";
     public final static String OBJECT_COMMUNITY_POSTS = "posts";
