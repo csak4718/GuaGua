@@ -27,6 +27,7 @@ import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.Event.QuestionEvent;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
+import com.yahoo.mobile.itern.guagua.Util.Utils;
 import com.yalantis.phoenix.PullToRefreshView;
 
 import java.util.ArrayList;
@@ -84,8 +85,14 @@ public class MainActivityFragment extends Fragment {
         mList.clear();
         mList.addAll(list);
         mAdapter.flushFilter();
-        mWrappedAdapter.notifyDataSetChanged();
+        mAdapter.notifyDataSetChangedWithCache();
         mPullToRefreshView.setRefreshing(false);
+        if(Utils.isBrowsingAllCommunity(getActivity())) {
+            mBtnAddPost.setVisibility(View.GONE);
+        }
+        else {
+            mBtnAddPost.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -99,7 +106,9 @@ public class MainActivityFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
 
         mBtnAddPost = (FloatingActionButton) mView.findViewById(R.id.btn_add_post);
-
+        if(Utils.isBrowsingAllCommunity(getActivity())) {
+            mBtnAddPost.setVisibility(View.GONE);
+        }
 
         mRecyclerView = (RecyclerView) getView().findViewById(R.id.recycler_view);
         mLayoutManager = new LinearLayoutManager(getActivity());
@@ -138,12 +147,7 @@ public class MainActivityFragment extends Fragment {
                 mPullToRefreshView.post(new Runnable() {
                     @Override
                     public void run() {
-                        MainApplication app = (MainApplication) getActivity().getApplication();
-                        if (app.currentViewingCommunity == null) {
-                            ParseUtils.getAllQuestions();
-                        } else {
-                            ParseUtils.getCommunityQuestions(app.currentViewingCommunity);
-                        }
+                        ParseUtils.getCurrentCommunityQuestions(getActivity());
                     }
                 });
             }

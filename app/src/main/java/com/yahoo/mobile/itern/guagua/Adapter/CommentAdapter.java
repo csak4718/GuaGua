@@ -34,6 +34,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MainView
         OTHERS_COMMENT;
     }
 
+
     public CommentAdapter(Context context, List<ParseObject> list) {
         super();
         mContext = context;
