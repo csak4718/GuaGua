@@ -48,6 +48,7 @@ public class CommunityFragment extends Fragment {
         badgeDrawables.put("tzlj2Wj2U8", ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.badge_ntust_big, null));
         badgeDrawables.put("el6mVLwzHE", ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.badge_ntnu_big, null));
         badgeDrawables.put("VifEC40TJO", ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.badge_sunnyvale_big, null));
+        badgeDrawables.put("01E7QQKGLs", ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.badge_gua_big, null));
     }
 
     @Override

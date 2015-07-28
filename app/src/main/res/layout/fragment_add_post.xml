@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:divider="?android:dividerHorizontal">
+    android:divider="?android:dividerHorizontal"
+    tools:context="com.yahoo.mobile.itern.guagua.Fragment.AddPostActivityFragment">
 
 
     <RelativeLayout style="?android:buttonBarStyle"
@@ -104,12 +105,68 @@
                 android:layout_height="match_parent"
                 android:text="haha"
                 android:background="@android:color/transparent"/>
-                <!--android:background="@drawable/ic_local_see_black_48dp"-->
+            <!--android:background="@drawable/ic_local_see_black_48dp"-->
         </LinearLayout>
         <View
             android:layout_width="match_parent"
             android:layout_height="20px"
             android:background= "#cccccc" />
+
+    </LinearLayout>
+
+    <HorizontalScrollView
+        android:id="@+id/scroll_banner_badge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#A6000000"
+        android:visibility="visible">
+        <LinearLayout
+            android:id="@+id/banner_badge"
+            android:padding="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:animateLayoutChanges="true">
+            <ImageButton
+                android:layout_marginRight="5dp"
+                android:id="@+id/img_btn_badge_search"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_margin="5dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/badge_search" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/fb_imageView"
+            android:src="@drawable/ic_facebook_24dp" />
+        <TextView
+            android:id="@+id/share_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Share to Facebook"
+            android:paddingTop="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp"/>
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/share_switch" />
+
+
     </LinearLayout>
 
 </LinearLayout>
