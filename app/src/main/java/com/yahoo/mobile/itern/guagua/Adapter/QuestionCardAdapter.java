@@ -56,6 +56,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     CallbackManager callbackManager;
     ShareDialog shareDialog;
 
+
+
     public QuestionCardAdapter(Context context, List<ParseObject> list) {
         super();
         mContext = context;
@@ -73,19 +75,6 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        /*
-        ParseUser.getCurrentUser().getRelation(Common.OBJECT_POST_LIKES).getQuery().findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> list, ParseException e) {
-                if (e==null){
-                    Log.d("Get Likes","done");
-                    mFavoriteList = list;
-                }else{
-
-                }
-            }
-        });*/
-        voted = new HashMap<>();
 
         callbackManager = CallbackManager.Factory.create();
         shareDialog = new ShareDialog((Activity)mContext);
@@ -113,6 +102,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         }
         notifyDataSetChanged();
     }
+
+
 
     public static class ViewHolder extends AbstractSwipeableItemViewHolder {
         public View mView;

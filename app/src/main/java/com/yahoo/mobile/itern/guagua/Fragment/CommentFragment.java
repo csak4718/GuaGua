@@ -72,6 +72,7 @@ public class CommentFragment extends Fragment {
         mList.clear();
         mList.addAll(commentList);
         mAdapter.notifyDataSetChanged();
+        mRecyclerView.scrollToPosition(mList.size() - 1);
     }
 
     @Nullable

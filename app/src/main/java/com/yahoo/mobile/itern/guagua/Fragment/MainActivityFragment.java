@@ -85,7 +85,7 @@ public class MainActivityFragment extends Fragment {
         mList.clear();
         mList.addAll(list);
         mAdapter.flushFilter();
-        mWrappedAdapter.notifyDataSetChanged();
+        mAdapter.notifyDataSetChanged();
         mPullToRefreshView.setRefreshing(false);
         if(Utils.isBrowsingAllCommunity(getActivity())) {
             mBtnAddPost.setVisibility(View.GONE);
