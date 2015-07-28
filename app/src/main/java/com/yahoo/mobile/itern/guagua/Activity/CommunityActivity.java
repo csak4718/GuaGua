@@ -16,7 +16,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 import com.parse.ParseObject;
 import com.yahoo.mobile.itern.guagua.Event.CommunityEvent;
 import com.yahoo.mobile.itern.guagua.Fragment.CommunityFragment;
@@ -53,8 +52,7 @@ public class CommunityActivity extends FragmentActivity implements GoogleApiClie
     @Override
     public void onResume() {
         super.onResume();
-        if(mLocationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ))
-            mGoogleApiClient.connect();
+        mGoogleApiClient.connect();
     }
 
     @Override
@@ -122,9 +120,8 @@ public class CommunityActivity extends FragmentActivity implements GoogleApiClie
     @Override
     public void onLocationChanged(Location location) {
         Log.d(TAG, "Location changed: " + location.toString());
-        setLastLocation(location);
-
-        LatLng userLocation = new LatLng(location.getLatitude(),location.getLongitude());
+        if(getLastLocation() == null)
+            setLastLocation(location);
         findCurrentCommunity();
     }
 
@@ -172,9 +169,13 @@ public class CommunityActivity extends FragmentActivity implements GoogleApiClie
             }
         }
 
+        onCommunityChange();
+        return ;
+    }
+
+    public void onCommunityChange(){
         mCommunityFragement.onCommunityChange();
         mMapFragment.onCommunityChange();
-        return ;
     }
 
 
