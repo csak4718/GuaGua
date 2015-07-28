@@ -1,5 +1,7 @@
 package com.yahoo.mobile.itern.guagua.Fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,7 +27,8 @@ import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
 
 public class PostFragment extends Fragment {
-
+    final int CAMERA_REQUEST = 12345;
+    final int ACTIVITY_SELECT_IMAGE = 1234;
     View mView;
     EditText edtQuestion;
     EditText edtOptA;
@@ -75,12 +78,7 @@ public class PostFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 aorb = false;
-                Intent i = new Intent(Intent.ACTION_PICK,
-                        android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-                final int ACTIVITY_SELECT_IMAGE = 1234;
-                Log.d("Photo", "before act");
-                getActivity().startActivityForResult(i, ACTIVITY_SELECT_IMAGE);
-                Log.d("Photo", "after act");
+                cameraORgallery();
                 //Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_account_circle_black_48dp);
                 //btnCamera.setImageBitmap(bm);
             }
@@ -89,14 +87,10 @@ public class PostFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 aorb = true;
-                Intent i = new Intent(Intent.ACTION_PICK,
-                        android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-                final int ACTIVITY_SELECT_IMAGE = 1234;
-                Log.d("Photo", "before act");
-                getActivity().startActivityForResult(i, ACTIVITY_SELECT_IMAGE);
-                Log.d("Photo", "after act");
+                cameraORgallery();
                 //Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_account_circle_black_48dp);
                 //btnCamera.setImageBitmap(bm);
+
             }
         });
         return mView;
@@ -152,4 +146,28 @@ public class PostFragment extends Fragment {
         return output;
     }
 
+    private void cameraORgallery(){
+        new AlertDialog.Builder(getActivity())
+                .setTitle("Delete entry")
+                .setMessage("Are you sure you want to delete this entry?")
+                .setPositiveButton("Camera", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                        Intent i = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                        getActivity().startActivityForResult(i ,CAMERA_REQUEST);
+                    }
+                })
+                .setNegativeButton("Gallery", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                        Intent i = new Intent(Intent.ACTION_PICK,
+                                android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                        Log.d("Photo", "before act");
+                        getActivity().startActivityForResult(i, ACTIVITY_SELECT_IMAGE);
+                        Log.d("Photo", "after act");
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
 }

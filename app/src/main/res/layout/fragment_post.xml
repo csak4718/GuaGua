@@ -67,7 +67,7 @@
                 android:paddingRight="10dp"
                 android:paddingBottom="10dp"/>
             <ImageButton
-                android:id="@+id/btn_cameraB"
+                android:id="@+id/btn_cameraA"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
                 android:paddingRight="10dp"
@@ -96,7 +96,7 @@
                 android:paddingRight="10dp"
                 android:paddingBottom="10dp"/>
             <ImageButton
-                android:id="@+id/btn_cameraA"
+                android:id="@+id/btn_cameraB"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
                 android:paddingRight="10dp"
