@@ -22,8 +22,10 @@ public class Common {
     public final static String OBJECT_POST_LIKES = "likes";
     public final static String OBJECT_POST_MQ = "myQuestions";
     public final static String OBJECT_COMMENT_USER = "user";
+    public final static String OBJECT_COMMENT_USER_ID = "userId";
     public final static String OBJECT_COMMUNITY = "Community";
     public final static String OBJECT_COMMUNITY_TITLE = "title";
     public final static String OBJECT_COMMUNITY_POSTS = "posts";
+    public final static String EXTRA_COMMENT_POSTID = "postId";
 
 }

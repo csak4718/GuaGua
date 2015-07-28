@@ -111,6 +111,7 @@ public class ParseUtils {
     static public void getPostComments(String postObjectId) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery(Common.OBJECT_COMMENT);
         query.whereEqualTo("PostId", postObjectId);
+        query.orderByAscending("updatedAt");
         query.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> commentList, ParseException e) {
                 if (e == null) {
@@ -144,10 +145,14 @@ public class ParseUtils {
         });
     }
     static public void postComment(String comment, final String postId, final Boolean refreshList) {
+
+        ParseUser currentUser = ParseUser.getCurrentUser();
+
         ParseObject mComment = new ParseObject(Common.OBJECT_COMMENT);
         mComment.put(Common.OBJECT_COMMENT_POSTID, postId);
         mComment.put(Common.OBJECT_COMMENT_MSG, comment);
-        mComment.put(Common.OBJECT_COMMENT_USER, ParseUser.getCurrentUser());
+        mComment.put(Common.OBJECT_COMMENT_USER, currentUser);
+        mComment.put(Common.OBJECT_COMMENT_USER_ID, currentUser.getObjectId());
         mComment.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
