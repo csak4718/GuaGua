@@ -24,6 +24,8 @@ import com.yahoo.mobile.itern.guagua.Event.QuestionEvent;
 import com.yahoo.mobile.itern.guagua.Event.UserCommunityEvent;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -67,6 +69,17 @@ public class ParseUtils {
         });
     }
 
+    static public void sortByPopularity(List<ParseObject> questionList) {
+        Collections.sort(questionList, new Comparator<ParseObject>() {
+            @Override
+            public int compare(ParseObject lhs, ParseObject rhs) {
+                int lhs_key = lhs.getInt(Common.OBJECT_POST_QA_NUM) + lhs.getInt(Common.OBJECT_POST_QB_NUM);
+                int rhs_key = rhs.getInt(Common.OBJECT_POST_QA_NUM) + rhs.getInt(Common.OBJECT_POST_QB_NUM);
+                return rhs_key - lhs_key;
+            }
+        });
+    }
+
     static public void getAllQuestions() {
         ParseQuery<ParseObject> query = ParseQuery.getQuery(Common.OBJECT_POST);
         query.orderByDescending("updatedAt");
@@ -74,6 +87,7 @@ public class ParseUtils {
             public void done(List<ParseObject> questionList, ParseException e) {
                 if (e == null) {
                     Log.d("questions", "Retrieved " + questionList.size() + " questions");
+                    sortByPopularity(questionList);
                     EventBus.getDefault().post(new QuestionEvent(questionList));
                 } else {
                     Log.d("questions", "Error: " + e.getMessage());
@@ -139,7 +153,7 @@ public class ParseUtils {
         mPost.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
-                if(community != null) {
+                if (community != null) {
                     ParseRelation<ParseObject> relation = community.getRelation(Common.OBJECT_COMMUNITY_POSTS);
                     relation.add(mPost);
                     community.saveInBackground();
