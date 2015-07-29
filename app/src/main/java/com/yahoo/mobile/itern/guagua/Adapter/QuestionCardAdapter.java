@@ -83,18 +83,20 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                 if(e == null && list != null) {
                     mVotedQuestionList.clear();
                     mVotedQuestionList.addAll(list);
+                    notifyDataSetChangedWithCache();
                 }
             }
         });
     }
 
-    public void updateFavoriteList() {
+    public void updateFavoriteListAsync() {
         ParseUser.getCurrentUser().getRelation(Common.OBJECT_USER_LIKES).getQuery().findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
                 if (e == null && list != null) {
                     mFavoriteList.clear();
                     mFavoriteList.addAll(list);
+                    notifyDataSetChangedWithCache();
                 }
             }
         });
@@ -111,7 +113,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         mFavoriteList = new ArrayList<>();
         mVotedQuestionList = new ArrayList<>();
 
-        updateFavoriteList();
+        updateFavoriteListAsync();
         updateVotedQuestionListAsync();
 
         mVisibleQuestionList.addAll(mAllQuestionList);
