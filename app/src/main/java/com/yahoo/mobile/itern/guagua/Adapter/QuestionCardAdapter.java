@@ -95,7 +95,6 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                 if (e == null && list != null) {
                     mFavoriteList.clear();
                     mFavoriteList.addAll(list);
-                    Log.d("Get Likes", String.valueOf(list.size()));
                 }
             }
         });
