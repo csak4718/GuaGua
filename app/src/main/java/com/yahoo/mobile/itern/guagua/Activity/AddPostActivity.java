@@ -6,13 +6,18 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.parse.ParseObject;
+import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.Fragment.AddPostActivityFragment;
 import com.yahoo.mobile.itern.guagua.R;
+import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
 
 
@@ -20,14 +25,18 @@ public class AddPostActivity extends ActionBarActivity {
 
     private AddPostActivityFragment addPostFragment;
 
+    private void setupActionBar() {
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        Utils.setCommunityActionBarColor(this);
+    }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_post);
-
-        Utils.setCommunityActionBarColor(this);
+        setupActionBar();
 
         addPostFragment = new AddPostActivityFragment();
         getSupportFragmentManager().beginTransaction()
@@ -50,8 +59,26 @@ public class AddPostActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_post) {
+            addPost();
+            return true;
+        }
+        if (id == android.R.id.home) {
+            finish();
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void addPost(){
+        final String question = addPostFragment.edtQuestion.getText().toString();
+        final String optionA = addPostFragment.edtOptA.getText().toString();
+        final String optionB = addPostFragment.edtOptB.getText().toString();
+        final ParseObject community = ((MainApplication) getApplication()).currentViewingCommunity;
+        ParseUtils.postQuestions(question, optionA, optionB, community);
+        Utils.hideSoftKeyboard(this);
+        finish();
     }
 
     // For changing camera_btn img
