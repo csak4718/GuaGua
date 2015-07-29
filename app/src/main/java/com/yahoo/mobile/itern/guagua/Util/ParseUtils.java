@@ -136,7 +136,7 @@ public class ParseUtils {
         mPost.put(Common.OBJECT_POST_QB_NUM, 0);
         mPost.put(Common.OBJECT_POST_USER, ParseUser.getCurrentUser());
 
-        mPost.saveEventually(new SaveCallback() {
+        mPost.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if(community != null) {
@@ -147,6 +147,8 @@ public class ParseUtils {
                 ParseRelation<ParseObject> relation = user.getRelation(Common.OBJECT_USER_MY_QUESTIONS);
                 relation.add(mPost);
                 user.saveInBackground();
+
+                getCommunityQuestions(community);
             }
         });
     }
