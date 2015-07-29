@@ -6,13 +6,18 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.parse.ParseObject;
+import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.Fragment.AddPostActivityFragment;
 import com.yahoo.mobile.itern.guagua.R;
+import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
 
 
@@ -20,14 +25,18 @@ public class AddPostActivity extends ActionBarActivity {
 
     private AddPostActivityFragment addPostFragment;
 
+    private void setupActionBar() {
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        Utils.setCommunityActionBarColor(this);
+    }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_post);
-
-        Utils.setCommunityActionBarColor(this);
+        setupActionBar();
 
         addPostFragment = new AddPostActivityFragment();
         getSupportFragmentManager().beginTransaction()
@@ -51,12 +60,18 @@ public class AddPostActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_post) {
+            addPostFragment.addPost();
             return true;
+        }
+        if (id == android.R.id.home) {
+            finish();
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+
 
     // For changing camera_btn img
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
