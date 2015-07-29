@@ -53,7 +53,7 @@ public class OptionButton extends RelativeLayout {
         txtVoteText = (TextView) mView.findViewById(R.id.txtVoteText);
         imgVoted = (ImageView) mView.findViewById(R.id.img_voted);
 
-        txtVoteNum.setVisibility(INVISIBLE);
+        txtVoteNum.setVisibility(GONE);
         imgVoted.setVisibility(INVISIBLE);
         isVoted = false;
         this.setClickable(true);

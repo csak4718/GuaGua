@@ -55,8 +55,9 @@ public class Utils {
         it.putExtra(Common.EXTRA_COMMENT_POSTID, postId);
         context.startActivity(it);
     }
-    static public void gotoOtherUserProfileActivity(Context context, String userName, Bitmap profileImg) {
+    static public void gotoOtherUserProfileActivity(Context context, String userId, String userName, Bitmap profileImg) {
         Intent it = new Intent(context, OtherUserProfileActivity.class);
+        it.putExtra(Common.EXTRA_USER_ID, userId);
         it.putExtra(Common.EXTRA_USER_NICKNAME, userName);
         it.putExtra(Common.EXTRA_USER_PROFILE_IMG, profileImg);
         context.startActivity(it);

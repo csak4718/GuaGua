@@ -33,6 +33,7 @@ import com.parse.ParseObject;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.yahoo.mobile.itern.guagua.Event.OtherUserProfileEvent;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.Common;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
@@ -42,6 +43,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by cmwang on 7/16/15.
@@ -362,9 +365,10 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         }
     }
 
-    private void displayParseImage(final ViewHolder holder, final String userName, ParseFile img,
+    private void displayParseImage(final ViewHolder holder, final String userName, final ParseUser user,
                                    final ImageView imgView, final Map<String, Object> cache) {
-        img.getDataInBackground(new GetDataCallback() {
+        ParseFile imgFile = user.getParseFile(Common.OBJECT_USER_PROFILE_PIC);
+        imgFile.getDataInBackground(new GetDataCallback() {
             @Override
             public void done(byte[] bytes, ParseException e) {
                 if (e == null) {
@@ -373,7 +377,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                     if (bmp != null) {
                         imgView.setImageBitmap(bmp);
                         cache.put(Common.QUESTION_CARD_PROFILE_IMG, bmp);
-                        setupProfileImgListener(holder, userName, bmp);
+                        setupProfileImgListener(holder, user, userName, bmp, user.getObjectId());
                     }
                 }
             }
@@ -421,11 +425,12 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         });
     }
 
-    private void setupProfileImgListener(final ViewHolder holder, final String userName, final Bitmap profileImg, final String userId) {
+    private void setupProfileImgListener(final ViewHolder holder, final ParseUser user,
+                                         final String userName, final Bitmap profileImg, final String userId) {
         holder.imgProfile.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Utils.gotoOtherUserProfileActivity(mContext, userName, profileImg);
+                Utils.gotoOtherUserProfileActivity(mContext, userId, userName, profileImg);
             }
         });
     }
@@ -451,9 +456,10 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                     if(e == null) {
                         String nickName = user.getString(Common.OBJECT_USER_NICK);
                         holder.txtName.setText(nickName);
-                        ParseFile imgFile = user.getParseFile(Common.OBJECT_USER_PROFILE_PIC);
-                        displayParseImage(holder, nickName, imgFile, holder.imgProfile, cache);
 
+                        displayParseImage(holder, nickName, user, holder.imgProfile, cache);
+
+                        cache.put(Common.QUESTION_CARD_PARSE_USER, user);
                         cache.put(Common.QUESTION_CARD_NICK, nickName);
                         cache.put(Common.QUESTION_CARD_USER_ID, user.getObjectId());
 
@@ -518,6 +524,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     }
 
     private void loadFromCache(Map<String, Object> cache, final ViewHolder holder, final ParseObject mQuestion) {
+        final ParseUser user = (ParseUser) cache.get(Common.QUESTION_CARD_PARSE_USER);
+        final String userId = (String) cache.get(Common.QUESTION_CARD_USER_ID);
         final String nickName = (String) cache.get(Common.QUESTION_CARD_NICK);
         final Bitmap profileImg = (Bitmap) cache.get(Common.QUESTION_CARD_PROFILE_IMG);
         final String questionContent = (String) cache.get(Common.QUESTION_CARD_CONTENT);
@@ -531,7 +539,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.txtName.setText(nickName);
         if(profileImg != null) {
             holder.imgProfile.setImageBitmap(profileImg);
-            setupProfileImgListener(holder, nickName, profileImg);
+            setupProfileImgListener(holder, user, nickName, profileImg, userId);
         }
         else {
             holder.imgProfile.setImageBitmap(

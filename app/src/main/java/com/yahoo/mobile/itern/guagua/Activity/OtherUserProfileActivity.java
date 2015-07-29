@@ -6,22 +6,38 @@ import android.net.Uri;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.yahoo.mobile.itern.guagua.Event.CommentEvent;
+import com.yahoo.mobile.itern.guagua.Event.OtherUserProfileEvent;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.Common;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
 
+import de.greenrobot.event.EventBus;
+
 public class OtherUserProfileActivity extends ActionBarActivity {
 
+    private ParseUser mUser;
+    private String mUserId;
     private String mUserName;
-    private Bitmap mProfileImg;
+    private Bitmap mUserProfileImg;
+
+
     private ImageView mImgProfilePic;
     private Button mBtnViewOnFb;
+
+    public OtherUserProfileActivity() {
+    }
 
     private void setupActionBar() {
         ActionBar actionBar = getSupportActionBar();
@@ -32,32 +48,47 @@ public class OtherUserProfileActivity extends ActionBarActivity {
 
 
     private Intent getOpenFbIntent(String fbId) {
+        String facebookUrl = "https://www.facebook.com/" + fbId;
         try {
             getPackageManager().getPackageInfo("com.facebook.katana", 0);
-            return new Intent(Intent.ACTION_VIEW, Uri.parse("fb://page/" + fbId));
+            return new Intent(Intent.ACTION_VIEW, Uri.parse("fb://facewebmodal/f?href=" + facebookUrl));
+//            return new Intent(Intent.ACTION_VIEW, Uri.parse("fb://profile/" + fbId));
         } catch (Exception e) {
-            return new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/" + fbId));
+            return new Intent(Intent.ACTION_VIEW, Uri.parse(facebookUrl));
         }
     }
 
     private void setupViewOnFbButton() {
         String text = "View " + mUserName + " on Facebook";
         mBtnViewOnFb.setText(text);
-        mBtnViewOnFb.setOnClickListener(new View.OnClickListener(){
+
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.getInBackground(mUserId, new GetCallback<ParseUser>() {
             @Override
-            public void onClick(View v) {
-                Intent it = getOpenFbIntent("");
-                startActivity(it);
+            public void done(ParseUser user, ParseException e) {
+                if (e == null) {
+                    mUser = user;
+                    final String fbId = user.getString(Common.OBJECT_USER_FB_ID);
+                    mBtnViewOnFb.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent it = getOpenFbIntent(fbId);
+                            startActivity(it);
+                        }
+                    });
+                }
             }
         });
+
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mUserId = getIntent().getStringExtra(Common.EXTRA_USER_ID);
         mUserName = getIntent().getStringExtra(Common.EXTRA_USER_NICKNAME);
-        mProfileImg = getIntent().getParcelableExtra(Common.EXTRA_USER_PROFILE_IMG);
+        mUserProfileImg = getIntent().getParcelableExtra(Common.EXTRA_USER_PROFILE_IMG);
 
         setupActionBar();
 
@@ -65,10 +96,11 @@ public class OtherUserProfileActivity extends ActionBarActivity {
 
         mImgProfilePic = (ImageView) findViewById(R.id.img_profile_pic);
         mBtnViewOnFb = (Button) findViewById(R.id.btn_view_other_on_fb);
-        mImgProfilePic.setImageBitmap(mProfileImg);
+        mImgProfilePic.setImageBitmap(mUserProfileImg);
 
         setupViewOnFbButton();
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
