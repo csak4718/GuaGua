@@ -58,17 +58,18 @@
             android:name=".Activity.AddPostActivity"
             android:label="@string/add_post" >
         </activity>
-
         <activity
             android:name=".Activity.PersonalPageActivity"
             android:label="@string/app_name" >
         </activity>
-
         <activity
             android:name=".Activity.CommentActivity"
             android:label="@string/title_activity_comment" >
         </activity>
-
+        <activity
+            android:name=".Activity.OtherUserProfile"
+            android:label="@string/title_activity_other_user_profile" >
+        </activity>
     </application>
 
 </manifest>

@@ -44,4 +44,8 @@ public class Common {
     public final static String QUESTION_CARD_QA_NUM = "voteA";
     public final static String QUESTION_CARD_QB_NUM = "voteB";
     public final static String QUESTION_CARD_IS_VOTED = "isVoted";
+
+    public final static String OBJECT_VOTED_QUESTION = "VotedQuestion";
+    public final static String OBJECT_VOTED_QUESTION_QID = "questionId";
+    public final static String OBJECT_VOTED_QUESTION_OPTION = "option";
 }
