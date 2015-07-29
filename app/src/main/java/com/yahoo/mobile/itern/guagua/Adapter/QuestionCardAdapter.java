@@ -49,7 +49,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         implements SwipeableItemAdapter<QuestionCardAdapter.ViewHolder> {
 
 
-    private List<ParseObject> mAllQuestionList, mVisibleQuestionList, mFavoriteList;
+    private List<ParseObject> mAllQuestionList, mVisibleQuestionList, mFavoriteList, mVotedQuestionList;
     private Context mContext;
     private LayoutInflater mInflater;
 
@@ -59,8 +59,45 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     ShareDialog shareDialog;
 
     public void notifyDataSetChangedWithCache() {
-        cachedQuestion = new HashMap<>();
+        cachedQuestion.clear();
         notifyDataSetChanged();
+    }
+
+    public void updateVotedQuestionListSync() {
+        try {
+            List<ParseObject> list = ParseUser.getCurrentUser().getRelation(Common.OBJECT_USER_VOTED_QUESTIONS).getQuery().find();
+            if(list != null) {
+                mVotedQuestionList.clear();
+                mVotedQuestionList.addAll(list);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateVotedQuestionListAsync() {
+        ParseUser.getCurrentUser().getRelation(Common.OBJECT_USER_VOTED_QUESTIONS).getQuery().findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if(e == null && list != null) {
+                    mVotedQuestionList.clear();
+                    mVotedQuestionList.addAll(list);
+                }
+            }
+        });
+    }
+
+    public void updateFavoriteList() {
+        ParseUser.getCurrentUser().getRelation(Common.OBJECT_USER_LIKES).getQuery().findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e == null && list != null) {
+                    mFavoriteList.clear();
+                    mFavoriteList.addAll(list);
+                    Log.d("Get Likes", String.valueOf(list.size()));
+                }
+            }
+        });
     }
 
     public QuestionCardAdapter(Context context, List<ParseObject> list) {
@@ -72,20 +109,14 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         mAllQuestionList = list;
         mVisibleQuestionList = new ArrayList<>();
         mFavoriteList = new ArrayList<>();
+        mVotedQuestionList = new ArrayList<>();
+
+        updateFavoriteList();
+        updateVotedQuestionListAsync();
+
         mVisibleQuestionList.addAll(mAllQuestionList);
         mInflater = LayoutInflater.from(context);
         setHasStableIds(true);
-
-
-        ParseUser.getCurrentUser().getRelation(Common.OBJECT_POST_LIKES).getQuery().findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> list, ParseException e) {
-                if (e == null && list != null) {
-                    mFavoriteList.addAll(list);
-                    Log.d("Get Likes", String.valueOf(list.size()));
-                }
-            }
-        });
 
         callbackManager = CallbackManager.Factory.create();
         shareDialog = new ShareDialog((Activity)mContext);
@@ -210,9 +241,12 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
         ParseRelation<ParseUser> relation = mQuestion.getRelation(Common.OBJECT_POST_VOTED_USER);
         relation.add(ParseUser.getCurrentUser());
-
         mQuestion.saveInBackground();
 
+        ParseRelation<ParseObject> votedRelation = ParseUser.getCurrentUser().getRelation(Common.OBJECT_USER_VOTED_QUESTIONS);
+        votedRelation.add(mQuestion);
+        ParseUser.getCurrentUser().saveInBackground();
+        mVotedQuestionList.add(mQuestion);
 
         cache.put(Common.QUESTION_CARD_IS_VOTED, true);
         cache.put(Common.QUESTION_CARD_QA_NUM, voteA);
@@ -271,22 +305,16 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
     private void setupCardVotedAction(final ViewHolder holder, final ParseObject mQuestion, final ParseRelation<ParseUser> relation,
                                       final Map<String, Object> cache) {
-        relation.getQuery().findInBackground(new FindCallback<ParseUser>() {
-            @Override
-            public void done(List<ParseUser> votedUser, ParseException e) {
+        final int voteA = mQuestion.getInt(Common.OBJECT_POST_QA_NUM);
+        final int voteB = mQuestion.getInt(Common.OBJECT_POST_QB_NUM);
 
-                final int voteA = mQuestion.getInt(Common.OBJECT_POST_QA_NUM);
-                final int voteB = mQuestion.getInt(Common.OBJECT_POST_QB_NUM);
-
-                if (votedUser.contains(ParseUser.getCurrentUser())) {
-                    setCardVoted(holder);
-                    cache.put(Common.QUESTION_CARD_IS_VOTED, true);
-                } else {
-                    setCardNotVoted(holder, mQuestion, voteA, voteB, cache);
-                    cache.put(Common.QUESTION_CARD_IS_VOTED, false);
-                }
-            }
-        });
+        if (mVotedQuestionList.contains(mQuestion)) {
+            setCardVoted(holder);
+            cache.put(Common.QUESTION_CARD_IS_VOTED, true);
+        } else {
+            setCardNotVoted(holder, mQuestion, voteA, voteB, cache);
+            cache.put(Common.QUESTION_CARD_IS_VOTED, false);
+        }
     }
 
     private void displayImage(ParseFile img, final ImageView imgView, final Map<String, Object> cache) {
@@ -321,7 +349,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                 if (currentUser != null) {
                     // do stuff with the user
                     currentUser.getRelation("likes");
-                    ParseRelation<ParseObject> relation = currentUser.getRelation(Common.OBJECT_POST_LIKES);
+                    ParseRelation<ParseObject> relation = currentUser.getRelation(Common.OBJECT_USER_LIKES);
                     if (holder.liked == false){
                         Log.d("On click","get like");
                         relation.add(mQuestion);

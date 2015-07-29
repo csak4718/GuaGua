@@ -4,8 +4,8 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -16,8 +16,10 @@ import com.yahoo.mobile.itern.guagua.R;
  * Created by cmwang on 7/19/15.
  */
 public class OptionButton extends RelativeLayout {
+
+    Context mContext;
     View mView;
-    LinearLayout mRoot;
+    FrameLayout mRoot;
     ProgressBar progressBarVote;
     TextView txtVoteNum;
     TextView txtVoteText;
@@ -41,9 +43,12 @@ public class OptionButton extends RelativeLayout {
     }
 
     private void initView(Context context) {
+
+        mContext = context;
+
         LayoutInflater inflater = LayoutInflater.from(context);
         mView = inflater.inflate(R.layout.button_option, this);
-        mRoot = (LinearLayout) mView.findViewById(R.id.layout_root);
+        mRoot = (FrameLayout) mView.findViewById(R.id.layout_root);
         progressBarVote = (ProgressBar) mView.findViewById(R.id.prg_bar_vote);
         txtVoteNum = (TextView) mView.findViewById(R.id.txtVoteNum);
         txtVoteText = (TextView) mView.findViewById(R.id.txtVoteText);
@@ -92,7 +97,7 @@ public class OptionButton extends RelativeLayout {
             isVoted = true;
         }
         else {
-            txtVoteNum.setVisibility(INVISIBLE);
+            txtVoteNum.setVisibility(GONE);
             progressBarVote.setProgress(0);
             isVoted = false;
         }
@@ -106,7 +111,14 @@ public class OptionButton extends RelativeLayout {
         txtVoteNum.setText(Integer.toString(voteNum));
     }
     public void setVoteText(String voteText) {
+
         txtVoteText.setText(voteText);
+//        if(voteText.length() >= 9) {
+//            txtVoteText.setTextAppearance(mContext, android.R.style.TextAppearance_DeviceDefault_Small);
+//        }
+//        else {
+//            txtVoteText.setTextAppearance(mContext, android.R.style.TextAppearance_DeviceDefault_Medium);
+//        }
     }
 
     @Override
