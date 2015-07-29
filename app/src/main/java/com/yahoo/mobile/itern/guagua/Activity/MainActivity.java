@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.parse.GetCallback;
@@ -296,7 +295,7 @@ public class MainActivity extends ActionBarActivity {
         }
         if (id == R.id.action_profile) {
             //startActivity(new Intent(this, ProfileSettingActivity.class));
-            startActivity(new Intent(this, PersonalPage.class));
+            startActivity(new Intent(this, PersonalPageActivity.class));
         }
 
         return super.onOptionsItemSelected(item);

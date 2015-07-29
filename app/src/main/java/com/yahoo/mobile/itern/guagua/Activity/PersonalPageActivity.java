@@ -13,7 +13,7 @@ import com.yahoo.mobile.itern.guagua.Fragment.MyFavoriteFragment;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
 
-public class PersonalPage extends ActionBarActivity {
+public class PersonalPageActivity extends ActionBarActivity {
 
     private void setupActionBar() {
         ActionBar actionBar = getSupportActionBar();
