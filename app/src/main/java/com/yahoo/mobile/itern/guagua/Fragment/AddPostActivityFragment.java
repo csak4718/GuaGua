@@ -41,9 +41,9 @@ public class AddPostActivityFragment extends Fragment {
     final int ACTIVITY_SELECT_IMAGE = 1234;
 
     View mView;
-    public EditText edtQuestion;
-    public EditText edtOptA;
-    public EditText edtOptB;
+    EditText edtQuestion;
+    EditText edtOptA;
+    EditText edtOptB;
 
     ImageButton btnCameraA;
     ImageButton btnCameraB;
@@ -188,4 +188,13 @@ public class AddPostActivityFragment extends Fragment {
                 .show();
     }
 
+    public void addPost(){
+        final String question = edtQuestion.getText().toString();
+        final String optionA = edtOptA.getText().toString();
+        final String optionB = edtOptB.getText().toString();
+        final ParseObject community = ((MainApplication) getActivity().getApplication()).currentViewingCommunity;
+        ParseUtils.postQuestions(question, optionA, optionB, community);
+        Utils.hideSoftKeyboard(getActivity());
+        getActivity().finish();
+    }
 }

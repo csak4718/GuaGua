@@ -61,7 +61,7 @@ public class AddPostActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_post) {
-            addPost();
+            addPostFragment.addPost();
             return true;
         }
         if (id == android.R.id.home) {
@@ -71,15 +71,7 @@ public class AddPostActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void addPost(){
-        final String question = addPostFragment.edtQuestion.getText().toString();
-        final String optionA = addPostFragment.edtOptA.getText().toString();
-        final String optionB = addPostFragment.edtOptB.getText().toString();
-        final ParseObject community = ((MainApplication) getApplication()).currentViewingCommunity;
-        ParseUtils.postQuestions(question, optionA, optionB, community);
-        Utils.hideSoftKeyboard(this);
-        finish();
-    }
+
 
     // For changing camera_btn img
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
