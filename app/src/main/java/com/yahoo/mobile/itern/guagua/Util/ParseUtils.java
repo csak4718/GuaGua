@@ -144,7 +144,7 @@ public class ParseUtils {
                     relation.add(mPost);
                     community.saveInBackground();
                 }
-                ParseRelation<ParseObject> relation = user.getRelation(Common.OBJECT_POST_MQ);
+                ParseRelation<ParseObject> relation = user.getRelation(Common.OBJECT_USER_MY_QUESTIONS);
                 relation.add(mPost);
                 user.saveInBackground();
             }
@@ -204,7 +204,7 @@ public class ParseUtils {
         });
     }
     static public void getAllCollections(ParseUser user) {
-        ParseQuery<ParseObject> query = user.getRelation(Common.OBJECT_POST_LIKES).getQuery();
+        ParseQuery<ParseObject> query = user.getRelation(Common.OBJECT_USER_LIKES).getQuery();
         //ParseQuery<ParseObject> query = ParseQuery.getQuery("Colleciton");
 
         query.orderByDescending("updatedAt");
@@ -222,7 +222,7 @@ public class ParseUtils {
     }
 
     static public void getMyQuestions(ParseUser user) {
-        ParseQuery<ParseObject> query = user.getRelation(Common.OBJECT_POST_MQ).getQuery();
+        ParseQuery<ParseObject> query = user.getRelation(Common.OBJECT_USER_MY_QUESTIONS).getQuery();
         //ParseQuery<ParseObject> query = ParseQuery.getQuery("Colleciton");
 
         query.orderByDescending("updatedAt");
