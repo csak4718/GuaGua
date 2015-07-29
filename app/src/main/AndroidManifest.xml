@@ -67,7 +67,7 @@
             android:label="@string/title_activity_comment" >
         </activity>
         <activity
-            android:name=".Activity.OtherUserProfile"
+            android:name=".Activity.OtherUserProfileActivity"
             android:label="@string/title_activity_other_user_profile" >
         </activity>
     </application>
