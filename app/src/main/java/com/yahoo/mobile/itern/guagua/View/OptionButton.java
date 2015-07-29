@@ -15,6 +15,8 @@ import com.yahoo.mobile.itern.guagua.R;
  * Created by cmwang on 7/19/15.
  */
 public class OptionButton extends RelativeLayout {
+
+    Context mContext;
     View mView;
     FrameLayout mRoot;
     ProgressBar progressBarVote;
@@ -39,6 +41,9 @@ public class OptionButton extends RelativeLayout {
     }
 
     private void initView(Context context) {
+
+        mContext = context;
+
         LayoutInflater inflater = LayoutInflater.from(context);
         mView = inflater.inflate(R.layout.button_option, this);
         mRoot = (FrameLayout) mView.findViewById(R.id.layout_root);
@@ -78,7 +83,7 @@ public class OptionButton extends RelativeLayout {
             isVoted = true;
         }
         else {
-            txtVoteNum.setVisibility(INVISIBLE);
+            txtVoteNum.setVisibility(GONE);
             progressBarVote.setProgress(0);
             isVoted = false;
         }
@@ -92,7 +97,14 @@ public class OptionButton extends RelativeLayout {
         txtVoteNum.setText(Integer.toString(voteNum));
     }
     public void setVoteText(String voteText) {
+
         txtVoteText.setText(voteText);
+//        if(voteText.length() >= 9) {
+//            txtVoteText.setTextAppearance(mContext, android.R.style.TextAppearance_DeviceDefault_Small);
+//        }
+//        else {
+//            txtVoteText.setTextAppearance(mContext, android.R.style.TextAppearance_DeviceDefault_Medium);
+//        }
     }
 
     @Override
