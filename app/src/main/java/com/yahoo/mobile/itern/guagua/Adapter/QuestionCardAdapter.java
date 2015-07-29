@@ -167,6 +167,17 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         return vh;
     }
 
+    //warper for voting A or B
+    private void voteQuestionForA(ParseObject mQuestion, ViewHolder holder, int voteA, int voteB, Map<String, Object> cache){
+        voteQuestion(mQuestion, holder, voteA+1, voteB, cache);
+        holder.btnA.vote(true);
+    }
+
+    private void voteQuestionForB(ParseObject mQuestion, ViewHolder holder, int voteA, int voteB, Map<String, Object> cache){
+        voteQuestion(mQuestion, holder, voteA, voteB+1, cache);
+        holder.btnB.vote(true);
+    }
+
     private void voteQuestion(ParseObject mQuestion, ViewHolder holder, int voteA, int voteB, Map<String, Object> cache) {
         final String objectId = mQuestion.getObjectId();
 
@@ -187,9 +198,10 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             public void onClick(View v) {
             }
         });
-        holder.btnB.setOnClickListener(new View.OnClickListener(){
+        holder.btnB.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {}
+            public void onClick(View v) {
+            }
         });
 
         holder.layoutFuncButtons.setVisibility(View.VISIBLE);
@@ -242,13 +254,13 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.btnA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                voteQuestion(mQuestion, holder, voteA + 1, voteB, cache);
+                voteQuestionForA(mQuestion, holder, voteA, voteB, cache);
             }
         });
         holder.btnB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                voteQuestion(mQuestion, holder, voteA, voteB + 1, cache);
+                voteQuestionForB(mQuestion, holder, voteA, voteB, cache);
             }
         });
         cache.put(Common.QUESTION_CARD_IS_VOTED, false);

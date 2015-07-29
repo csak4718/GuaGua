@@ -4,7 +4,8 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -16,10 +17,11 @@ import com.yahoo.mobile.itern.guagua.R;
  */
 public class OptionButton extends RelativeLayout {
     View mView;
-    FrameLayout mRoot;
+    LinearLayout mRoot;
     ProgressBar progressBarVote;
     TextView txtVoteNum;
     TextView txtVoteText;
+    ImageView imgVoted;
     Boolean isVoted;
     int mProgress;
 
@@ -41,11 +43,14 @@ public class OptionButton extends RelativeLayout {
     private void initView(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
         mView = inflater.inflate(R.layout.button_option, this);
-        mRoot = (FrameLayout) mView.findViewById(R.id.layout_root);
+        mRoot = (LinearLayout) mView.findViewById(R.id.layout_root);
         progressBarVote = (ProgressBar) mView.findViewById(R.id.prg_bar_vote);
         txtVoteNum = (TextView) mView.findViewById(R.id.txtVoteNum);
         txtVoteText = (TextView) mView.findViewById(R.id.txtVoteText);
+        imgVoted = (ImageView) mView.findViewById(R.id.img_voted);
+
         txtVoteNum.setVisibility(INVISIBLE);
+        imgVoted.setVisibility(INVISIBLE);
         isVoted = false;
         this.setClickable(true);
     }
@@ -64,6 +69,15 @@ public class OptionButton extends RelativeLayout {
                 }
             }
         }.start();
+    }
+
+    public void vote(boolean voteMe){
+        if(voteMe) {
+            imgVoted.setVisibility(VISIBLE);
+        }
+        else {
+            imgVoted.setVisibility(INVISIBLE);
+        }
     }
 
     public void setVoted(boolean voted, boolean animation) {
