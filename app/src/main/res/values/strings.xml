@@ -15,4 +15,5 @@
     <string name="my_favorite_tag">Following</string>
     <string name="my_question_tag">My Questions</string>
     <string name="title_activity_comment">Comment</string>
+    <string name="title_activity_other_user_profile">OtherUserProfile</string>
 </resources>

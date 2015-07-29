@@ -32,6 +32,7 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.Common;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
@@ -200,18 +201,18 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
     //warper for voting A or B
     private void voteQuestionForA(ParseObject mQuestion, ViewHolder holder, int voteA, int voteB, Map<String, Object> cache){
-        voteQuestion(mQuestion, holder, voteA+1, voteB, cache);
+        voteQuestion(mQuestion, holder, voteA+1, voteB, "A", cache);
         holder.btnA.vote(true);
         cache.put(Common.QUESTION_CARD_VOTE_FOR_A, true);
     }
 
     private void voteQuestionForB(ParseObject mQuestion, ViewHolder holder, int voteA, int voteB, Map<String, Object> cache){
-        voteQuestion(mQuestion, holder, voteA, voteB+1, cache);
+        voteQuestion(mQuestion, holder, voteA, voteB+1, "B", cache);
         holder.btnB.vote(true);
         cache.put(Common.QUESTION_CARD_VOTE_FOR_A, false);
     }
 
-    private void voteQuestion(ParseObject mQuestion, ViewHolder holder, int voteA, int voteB, Map<String, Object> cache) {
+    private void voteQuestion(ParseObject mQuestion, ViewHolder holder, int voteA, int voteB, String option, Map<String, Object> cache) {
         final String objectId = mQuestion.getObjectId();
 
         int progressA = (int)(voteA * 100.0 / (voteA + voteB));
@@ -243,10 +244,26 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         relation.add(ParseUser.getCurrentUser());
         mQuestion.saveInBackground();
 
-        ParseRelation<ParseObject> votedRelation = ParseUser.getCurrentUser().getRelation(Common.OBJECT_USER_VOTED_QUESTIONS);
-        votedRelation.add(mQuestion);
-        ParseUser.getCurrentUser().saveInBackground();
-        mVotedQuestionList.add(mQuestion);
+        final ParseObject votedQuestion = new ParseObject(Common.OBJECT_VOTED_QUESTION);
+        votedQuestion.put(Common.OBJECT_VOTED_QUESTION_QID, mQuestion.getObjectId());
+        votedQuestion.put(Common.OBJECT_VOTED_QUESTION_OPTION, option);
+        votedQuestion.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if(e == null) {
+                    ParseUser user = ParseUser.getCurrentUser();
+                    ParseRelation<ParseObject> votedRelation = user.getRelation(Common.OBJECT_USER_VOTED_QUESTIONS);
+                    votedRelation.add(votedQuestion);
+                    user.saveInBackground();
+                }
+                else {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
+        mVotedQuestionList.add(votedQuestion);
 
         cache.put(Common.QUESTION_CARD_IS_VOTED, true);
         cache.put(Common.QUESTION_CARD_QA_NUM, voteA);
@@ -262,7 +279,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         });
         holder.btnB.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {}
+            public void onClick(View v) {
+            }
         });
     }
 
@@ -303,12 +321,23 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         cache.put(Common.QUESTION_CARD_IS_VOTED, false);
     }
 
+    private boolean isQuestionVoted(ParseObject mQuestion) {
+        final String qid = mQuestion.getObjectId();
+
+        for(ParseObject votedQuestion : mVotedQuestionList) {
+            if(votedQuestion.getString(Common.OBJECT_VOTED_QUESTION_QID).equals(qid)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void setupCardVotedAction(final ViewHolder holder, final ParseObject mQuestion, final ParseRelation<ParseUser> relation,
                                       final Map<String, Object> cache) {
         final int voteA = mQuestion.getInt(Common.OBJECT_POST_QA_NUM);
         final int voteB = mQuestion.getInt(Common.OBJECT_POST_QB_NUM);
 
-        if (mVotedQuestionList.contains(mQuestion)) {
+        if (isQuestionVoted(mQuestion)) {
             setCardVoted(holder);
             cache.put(Common.QUESTION_CARD_IS_VOTED, true);
         } else {
@@ -501,6 +530,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
         final ParseObject mQuestion = mVisibleQuestionList.get(position);
         final String objectId = mQuestion.getObjectId();
+
+        resetCard(holder);
 
         if(cachedQuestion.get(objectId) == null) {
             Map<String, Object> cache = new HashMap<>();

@@ -100,6 +100,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
             mSearchView.setQueryHint("Search Here");
             mSearchView.setSubmitButtonEnabled(false);
+            mSearchView.setIconified(true);
 
             mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
