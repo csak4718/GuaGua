@@ -24,6 +24,7 @@ import com.yahoo.mobile.itern.guagua.Activity.CommentActivity;
 import com.yahoo.mobile.itern.guagua.Activity.CommunityActivity;
 import com.yahoo.mobile.itern.guagua.Activity.LoginActivity;
 import com.yahoo.mobile.itern.guagua.Activity.MainActivity;
+import com.yahoo.mobile.itern.guagua.Activity.OtherUserProfileActivity;
 import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 
 /**
@@ -52,6 +53,12 @@ public class Utils {
     static public void gotoCommentActivity(Context context, String postId) {
         Intent it = new Intent(context, CommentActivity.class);
         it.putExtra(Common.EXTRA_COMMENT_POSTID, postId);
+        context.startActivity(it);
+    }
+    static public void gotoOtherUserProfileActivity(Context context, String userName, Bitmap profileImg) {
+        Intent it = new Intent(context, OtherUserProfileActivity.class);
+        it.putExtra(Common.EXTRA_USER_NICKNAME, userName);
+        it.putExtra(Common.EXTRA_USER_PROFILE_IMG, profileImg);
         context.startActivity(it);
     }
 
