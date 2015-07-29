@@ -225,6 +225,10 @@ public class AddPostActivityFragment extends Fragment {
 //        Log.d("OBJECT_ID:", mPost.getObjectId());
 
         Utils.hideSoftKeyboard(getActivity());
+
+
+
+        // To do: produce URL in onEvent()
         if (enableFBshare){
             if (ShareDialog.canShow(ShareLinkContent.class)) {
                 ShareLinkContent linkContent = new ShareLinkContent.Builder()
@@ -242,6 +246,8 @@ public class AddPostActivityFragment extends Fragment {
         else{
             getActivity().finish();
         }
+
+
 
     }
 }

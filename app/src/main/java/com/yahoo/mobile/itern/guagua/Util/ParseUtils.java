@@ -163,6 +163,8 @@ public class ParseUtils {
                 user.saveInBackground();
 
                 getCommunityQuestions(community);
+
+                // send mPost.getObjectId() to event box ---> eventBus.post(event);
             }
         });
 
