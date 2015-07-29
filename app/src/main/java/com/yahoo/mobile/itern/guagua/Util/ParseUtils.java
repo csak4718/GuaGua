@@ -140,7 +140,7 @@ public class ParseUtils {
         });
     }
 
-    static public void postQuestions(String question, String optionA, String optionB, final ParseObject community) {
+    static public String postQuestions(String question, String optionA, String optionB, final ParseObject community) {
         final ParseObject mPost = new ParseObject(Common.OBJECT_POST);
         final ParseUser user = ParseUser.getCurrentUser();
         mPost.put(Common.OBJECT_POST_CONTENT, question);
@@ -165,6 +165,8 @@ public class ParseUtils {
                 getCommunityQuestions(community);
             }
         });
+
+        return mPost.getObjectId();
     }
     static public void postComment(String comment, final String postId, final Boolean refreshList) {
 
