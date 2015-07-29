@@ -12,6 +12,9 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,6 +54,9 @@ public class AddPostActivityFragment extends Fragment {
     boolean enableFBshare=false;
     boolean aorb;
 
+//    ImageButton imgBtnPost;
+//    ImageButton imgBtnCancel;
+
     private HorizontalScrollView mScrollBannerBadge;
     private LinearLayout mBannerBadge;
     private ImageButton mImgBtnBadgeSearch;
@@ -59,6 +65,12 @@ public class AddPostActivityFragment extends Fragment {
     private ActionBarTitle mActionBarTitle;
 
 //    private void setupActionBar() {
+//        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+//        actionBar.setCustomView(R.layout.action_bar_post);
+//
+//
+//
+//
 //        mActionBarTitle = new ActionBarTitle(this);
 //
 //        ActionBar actionBar = getSupportActionBar();
@@ -123,12 +135,21 @@ public class AddPostActivityFragment extends Fragment {
         btnSwitch = (Switch) mView.findViewById(R.id.share_switch);
 
 
+//        imgBtnPost = (ImageButton) mView.findViewById(R.id.imgBtn_post_question);
+//        imgBtnCancel = (ImageButton) mView.findViewById(R.id.imgBtn_cancel);
+//        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+//        actionBar.setDisplayShowHomeEnabled(false);
+//        actionBar.setDisplayShowTitleEnabled(false);
+//        actionBar.setDisplayShowCustomEnabled(true);
+//        actionBar.setCustomView(R.layout.action_bar_post);
+//        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+
+
         mScrollBannerBadge = (HorizontalScrollView) mView.findViewById(R.id.scroll_banner_badge);
         mBannerBadge = (LinearLayout) mView.findViewById(R.id.banner_badge);
         mImgBtnBadgeSearch = (ImageButton) mView.findViewById(R.id.img_btn_badge_search);
 
 
-//        setupActionBar();
 
 
         btnPost.setOnClickListener(new View.OnClickListener() {
@@ -160,7 +181,7 @@ public class AddPostActivityFragment extends Fragment {
                 //btnCamera.setImageBitmap(bm);
             }
         });
-        btnCameraB.setOnClickListener(new View.OnClickListener(){
+        btnCameraB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 aorb = true;
@@ -178,6 +199,8 @@ public class AddPostActivityFragment extends Fragment {
                 else enableFBshare = false;
             }
         });
+
+//        setupActionBar();
 
         return mView;
     }
