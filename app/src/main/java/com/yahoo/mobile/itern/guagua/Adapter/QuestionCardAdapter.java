@@ -393,7 +393,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         });
     }
 
-    private void setupProfileImgListener(final ViewHolder holder, final String userName, final Bitmap profileImg) {
+    private void setupProfileImgListener(final ViewHolder holder, final String userName, final Bitmap profileImg, final String userId) {
         holder.imgProfile.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -416,16 +416,17 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         final int voteB = mQuestion.getInt(Common.OBJECT_POST_QB_NUM);
 
         if(postUser != null) {
-            postUser.fetchInBackground(new GetCallback<ParseObject>() {
+            postUser.fetchInBackground(new GetCallback<ParseUser>() {
                 @Override
-                public void done(ParseObject parseObject, ParseException e) {
+                public void done(ParseUser user, ParseException e) {
                     if(e == null) {
-                        String nickName = postUser.getString(Common.OBJECT_USER_NICK);
+                        String nickName = user.getString(Common.OBJECT_USER_NICK);
                         holder.txtName.setText(nickName);
-                        ParseFile imgFile = postUser.getParseFile(Common.OBJECT_USER_PROFILE_PIC);
+                        ParseFile imgFile = user.getParseFile(Common.OBJECT_USER_PROFILE_PIC);
                         displayParseImage(holder, nickName, imgFile, holder.imgProfile, cache);
 
                         cache.put(Common.QUESTION_CARD_NICK, nickName);
+                        cache.put(Common.QUESTION_CARD_USER_ID, user.getObjectId());
 
                     }
                 }

@@ -12,6 +12,7 @@ public class Common {
     public final static String OBJECT_USER_LIKES = "likes";
     public final static String OBJECT_USER_MY_QUESTIONS = "myQuestions";
     public final static String OBJECT_USER_VOTED_QUESTIONS = "votedQuestions";
+    public final static String OBJECT_USER_FB_ID = "fbId";
 
     public final static String OBJECT_POST = "Prayer";
     public final static String OBJECT_POST_USER = "user";
@@ -45,6 +46,7 @@ public class Common {
     public final static String EXTRA_USER_PROFILE_IMG = "profile_img";
 
     public final static String QUESTION_CARD_NICK = "nickname";
+    public final static String QUESTION_CARD_USER_ID = "userId";
     public final static String QUESTION_CARD_PROFILE_IMG = "profileImg";
     public final static String QUESTION_CARD_CONTENT = "content";
     public final static String QUESTION_CARD_QA = "QA";
