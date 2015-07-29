@@ -171,11 +171,13 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     private void voteQuestionForA(ParseObject mQuestion, ViewHolder holder, int voteA, int voteB, Map<String, Object> cache){
         voteQuestion(mQuestion, holder, voteA+1, voteB, cache);
         holder.btnA.vote(true);
+        cache.put(Common.QUESTION_CARD_VOTE_FOR_A, true);
     }
 
     private void voteQuestionForB(ParseObject mQuestion, ViewHolder holder, int voteA, int voteB, Map<String, Object> cache){
         voteQuestion(mQuestion, holder, voteA, voteB+1, cache);
         holder.btnB.vote(true);
+        cache.put(Common.QUESTION_CARD_VOTE_FOR_A, false);
     }
 
     private void voteQuestion(ParseObject mQuestion, ViewHolder holder, int voteA, int voteB, Map<String, Object> cache) {
@@ -210,6 +212,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         relation.add(ParseUser.getCurrentUser());
 
         mQuestion.saveInBackground();
+
 
         cache.put(Common.QUESTION_CARD_IS_VOTED, true);
         cache.put(Common.QUESTION_CARD_QA_NUM, voteA);
