@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -19,7 +18,7 @@ public class OptionButton extends RelativeLayout {
 
     Context mContext;
     View mView;
-    FrameLayout mRoot;
+    RelativeLayout mRoot;
     ProgressBar progressBarVote;
     TextView txtVoteNum;
     TextView txtVoteText;
@@ -48,7 +47,7 @@ public class OptionButton extends RelativeLayout {
 
         LayoutInflater inflater = LayoutInflater.from(context);
         mView = inflater.inflate(R.layout.button_option, this);
-        mRoot = (FrameLayout) mView.findViewById(R.id.layout_root);
+        mRoot = (RelativeLayout) mView.findViewById(R.id.layout_root);
         progressBarVote = (ProgressBar) mView.findViewById(R.id.prg_bar_vote);
         txtVoteNum = (TextView) mView.findViewById(R.id.txtVoteNum);
         txtVoteText = (TextView) mView.findViewById(R.id.txtVoteText);
@@ -76,16 +75,8 @@ public class OptionButton extends RelativeLayout {
         }.start();
     }
 
-    public void vote(boolean voteMe){
-        if(voteMe) {
-            imgVoted.setVisibility(VISIBLE);
-        }
-        else {
-            imgVoted.setVisibility(INVISIBLE);
-        }
-    }
 
-    public void setVoted(boolean voted, boolean animation) {
+    public void setVoted(boolean voted, boolean animation, boolean voteMe) {
         if(voted) {
             txtVoteNum.setVisibility(VISIBLE);
             if(animation) {
@@ -94,10 +85,19 @@ public class OptionButton extends RelativeLayout {
             else {
                 progressBarVote.setProgress(mProgress);
             }
+
+            if(voteMe) {
+                imgVoted.setVisibility(VISIBLE);
+            }
+            else {
+                imgVoted.setVisibility(INVISIBLE);
+            }
+
             isVoted = true;
         }
         else {
             txtVoteNum.setVisibility(GONE);
+            imgVoted.setVisibility(INVISIBLE);
             progressBarVote.setProgress(0);
             isVoted = false;
         }
