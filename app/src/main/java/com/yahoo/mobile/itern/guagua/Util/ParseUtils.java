@@ -95,7 +95,9 @@ public class ParseUtils {
         }
 
         ParseRelation<ParseObject> relation = community.getRelation(Common.OBJECT_COMMUNITY_POSTS);
-        relation.getQuery().findInBackground(new FindCallback<ParseObject>() {
+        ParseQuery<ParseObject> query = relation.getQuery();
+        query.orderByDescending("updatedAt");
+        query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
                 if (e == null) {
