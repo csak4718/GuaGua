@@ -83,18 +83,20 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                 if(e == null && list != null) {
                     mVotedQuestionList.clear();
                     mVotedQuestionList.addAll(list);
+                    notifyDataSetChangedWithCache();
                 }
             }
         });
     }
 
-    public void updateFavoriteList() {
+    public void updateFavoriteListAsync() {
         ParseUser.getCurrentUser().getRelation(Common.OBJECT_USER_LIKES).getQuery().findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
                 if (e == null && list != null) {
                     mFavoriteList.clear();
                     mFavoriteList.addAll(list);
+                    notifyDataSetChangedWithCache();
                 }
             }
         });
@@ -111,7 +113,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         mFavoriteList = new ArrayList<>();
         mVotedQuestionList = new ArrayList<>();
 
-        updateFavoriteList();
+        updateFavoriteListAsync();
         updateVotedQuestionListAsync();
 
         mVisibleQuestionList.addAll(mAllQuestionList);
@@ -360,7 +362,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         }
     }
 
-    private void displayImage(ParseFile img, final ImageView imgView, final Map<String, Object> cache) {
+    private void displayParseImage(final ViewHolder holder, final String userName, ParseFile img,
+                                   final ImageView imgView, final Map<String, Object> cache) {
         img.getDataInBackground(new GetDataCallback() {
             @Override
             public void done(byte[] bytes, ParseException e) {
@@ -370,6 +373,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                     if (bmp != null) {
                         imgView.setImageBitmap(bmp);
                         cache.put(Common.QUESTION_CARD_PROFILE_IMG, bmp);
+                        setupProfileImgListener(holder, userName, bmp);
                     }
                 }
             }
@@ -393,15 +397,15 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                     // do stuff with the user
                     currentUser.getRelation("likes");
                     ParseRelation<ParseObject> relation = currentUser.getRelation(Common.OBJECT_USER_LIKES);
-                    if (holder.liked == false){
-                        Log.d("On click","get like");
+                    if (holder.liked == false) {
+                        Log.d("On click", "get like");
                         relation.add(mQuestion);
                         currentUser.saveInBackground();
                         mFavoriteList.add(mQuestion);
                         holder.imgBtnLike.setImageResource(R.drawable.ic_like);
                         holder.liked = true;
-                    }else{
-                        Log.d("On click","get dislike");
+                    } else {
+                        Log.d("On click", "get dislike");
                         relation.remove(mQuestion);
                         currentUser.saveInBackground();
                         mFavoriteList.remove(mQuestion);
@@ -413,6 +417,15 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                 } else {
                     // show the signup or login screen
                 }
+            }
+        });
+    }
+
+    private void setupProfileImgListener(final ViewHolder holder, final String userName, final Bitmap profileImg) {
+        holder.imgProfile.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Utils.gotoOtherUserProfileActivity(mContext, userName, profileImg);
             }
         });
     }
@@ -436,11 +449,12 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                 @Override
                 public void done(ParseObject parseObject, ParseException e) {
                     if(e == null) {
-                        holder.txtName.setText(postUser.getString(Common.OBJECT_USER_NICK));
+                        String nickName = postUser.getString(Common.OBJECT_USER_NICK);
+                        holder.txtName.setText(nickName);
                         ParseFile imgFile = postUser.getParseFile(Common.OBJECT_USER_PROFILE_PIC);
-                        displayImage(imgFile, holder.imgProfile, cache);
+                        displayParseImage(holder, nickName, imgFile, holder.imgProfile, cache);
 
-                        cache.put(Common.QUESTION_CARD_NICK, postUser.getString(Common.OBJECT_USER_NICK));
+                        cache.put(Common.QUESTION_CARD_NICK, nickName);
 
                     }
                 }
@@ -516,6 +530,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.txtName.setText(nickName);
         if(profileImg != null) {
             holder.imgProfile.setImageBitmap(profileImg);
+            setupProfileImgListener(holder, nickName, profileImg);
         }
         else {
             holder.imgProfile.setImageBitmap(

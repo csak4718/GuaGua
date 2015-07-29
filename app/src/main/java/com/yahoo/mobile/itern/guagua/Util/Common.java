@@ -33,8 +33,16 @@ public class Common {
     public final static String OBJECT_COMMUNITY_COLOR = "communityColor";
     public final static String OBJECT_COMMUNITY_LOGO = "logo";
     public final static String OBJECT_COMMUNITY_LOGO_SMALL = "logoSmall";
+
+    public final static String OBJECT_VOTED_QUESTION = "VotedQuestion";
+    public final static String OBJECT_VOTED_QUESTION_QID = "questionId";
+    public final static String OBJECT_VOTED_QUESTION_OPTION = "option";
+
     public final static String EXTRA_COMMENT_POSTID = "postId";
 
+    // extra data for launch OtherUserProfileActivity
+    public final static String EXTRA_USER_NICKNAME = "nickname";
+    public final static String EXTRA_USER_PROFILE_IMG = "profile_img";
 
     public final static String QUESTION_CARD_NICK = "nickname";
     public final static String QUESTION_CARD_PROFILE_IMG = "profileImg";
@@ -46,7 +54,5 @@ public class Common {
     public final static String QUESTION_CARD_IS_VOTED = "isVoted";
     public final static String QUESTION_CARD_VOTE_FOR_A = "VotedForA";
 
-    public final static String OBJECT_VOTED_QUESTION = "VotedQuestion";
-    public final static String OBJECT_VOTED_QUESTION_QID = "questionId";
-    public final static String OBJECT_VOTED_QUESTION_OPTION = "option";
+
 }

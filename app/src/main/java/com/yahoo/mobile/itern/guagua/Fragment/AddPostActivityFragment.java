@@ -12,6 +12,7 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +30,7 @@ import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
-import com.yahoo.mobile.itern.guagua.View.ActionBarTitle;
+
 
 
 /**
@@ -43,64 +44,18 @@ public class AddPostActivityFragment extends Fragment {
     EditText edtQuestion;
     EditText edtOptA;
     EditText edtOptB;
-    Button btnPost;
-    Button btnCancel;
+
     ImageButton btnCameraA;
     ImageButton btnCameraB;
     Switch btnSwitch;
     boolean enableFBshare=false;
     boolean aorb;
 
+
     private HorizontalScrollView mScrollBannerBadge;
     private LinearLayout mBannerBadge;
     private ImageButton mImgBtnBadgeSearch;
     private boolean badgeBannerVisible = false;
-
-    private ActionBarTitle mActionBarTitle;
-
-//    private void setupActionBar() {
-//        mActionBarTitle = new ActionBarTitle(this);
-//
-//        ActionBar actionBar = getSupportActionBar();
-//        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#5AD3D2")));
-//        actionBar.setDisplayShowTitleEnabled(false);
-//        actionBar.setDisplayShowCustomEnabled(true);
-//        actionBar.setElevation(0);
-//        actionBar.setCustomView(mActionBarTitle);
-////        hideBdgeBanner(0);
-//
-//        ParseUtils.getUserCommunity(ParseUser.getCurrentUser());
-//
-//        mActionBarTitle.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (!badgeBannerVisible) {
-//                    showBdgeBanner(300);
-//                } else {
-//                    hideBdgeBanner(300);
-//                }
-//            }
-//        });
-//        mImgBtnBadgeSearch.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Utils.gotoCommunityActivity(MainActivity.this);
-//            }
-//        });
-//        mBtnBadgeAll.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                MainApplication app = (MainApplication)getApplication();
-//                if(app.currentViewingCommunity != null) {
-//                    ParseUtils.getAllQuestions();
-//                    app.currentViewingCommunity = null;
-//                    mActionBarTitle.setText(getString(R.string.app_name));
-//                    hideBdgeBanner(300);
-//                }
-//            }
-//        });
-//    }
-
 
 
     public AddPostActivityFragment() {
@@ -113,8 +68,6 @@ public class AddPostActivityFragment extends Fragment {
         edtQuestion = (EditText) mView.findViewById(R.id.edt_question);
         edtOptA = (EditText) mView.findViewById(R.id.edt_optA);
         edtOptB = (EditText) mView.findViewById(R.id.edt_optB);
-        btnPost = (Button) mView.findViewById(R.id.btn_post_question);
-        btnCancel = (Button) mView.findViewById(R.id.btn_cancel);
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_local_see_black_48dp);
         btnCameraA = (ImageButton) mView.findViewById(R.id.btn_cameraA);
         btnCameraA.setImageBitmap(sqr2circle(adjustBitmap(bm,bm.getHeight())));
@@ -128,29 +81,6 @@ public class AddPostActivityFragment extends Fragment {
         mImgBtnBadgeSearch = (ImageButton) mView.findViewById(R.id.img_btn_badge_search);
 
 
-//        setupActionBar();
-
-
-        btnPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final String question = edtQuestion.getText().toString();
-                final String optionA = edtOptA.getText().toString();
-                final String optionB = edtOptB.getText().toString();
-                final ParseObject community = ((MainApplication) getActivity().getApplication()).currentViewingCommunity;
-                ParseUtils.postQuestions(question, optionA, optionB, community);
-                Utils.hideSoftKeyboard(getActivity());
-                getActivity().finish();
-
-            }
-        });
-        btnCancel.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Utils.hideSoftKeyboard(getActivity());
-                getActivity().finish();
-            }
-        });
         btnCameraA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -160,7 +90,7 @@ public class AddPostActivityFragment extends Fragment {
                 //btnCamera.setImageBitmap(bm);
             }
         });
-        btnCameraB.setOnClickListener(new View.OnClickListener(){
+        btnCameraB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 aorb = true;
@@ -258,4 +188,13 @@ public class AddPostActivityFragment extends Fragment {
                 .show();
     }
 
+    public void addPost(){
+        final String question = edtQuestion.getText().toString();
+        final String optionA = edtOptA.getText().toString();
+        final String optionB = edtOptB.getText().toString();
+        final ParseObject community = ((MainApplication) getActivity().getApplication()).currentViewingCommunity;
+        ParseUtils.postQuestions(question, optionA, optionB, community);
+        Utils.hideSoftKeyboard(getActivity());
+        getActivity().finish();
+    }
 }
