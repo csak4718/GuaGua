@@ -33,6 +33,7 @@ import com.parse.ParseObject;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.yahoo.mobile.itern.guagua.Event.OtherUserProfileEvent;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.Common;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
@@ -42,6 +43,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by cmwang on 7/16/15.
@@ -200,6 +203,17 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         return vh;
     }
 
+    //warper for voting A or B
+    private void voteQuestionForA(ParseObject mQuestion, ViewHolder holder, int voteA, int voteB, Map<String, Object> cache){
+        voteQuestion(mQuestion, holder, voteA + 1, voteB, "A", cache);
+        cache.put(Common.QUESTION_CARD_VOTE_FOR_A, true);
+    }
+
+    private void voteQuestionForB(ParseObject mQuestion, ViewHolder holder, int voteA, int voteB, Map<String, Object> cache){
+        voteQuestion(mQuestion, holder, voteA, voteB + 1, "B", cache);
+        cache.put(Common.QUESTION_CARD_VOTE_FOR_A, false);
+    }
+
     private void voteQuestion(ParseObject mQuestion, ViewHolder holder, int voteA, int voteB, String option, Map<String, Object> cache) {
         final String objectId = mQuestion.getObjectId();
 
@@ -212,8 +226,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
         holder.btnA.setProgress(progressA);
         holder.btnB.setProgress(progressB);
-        holder.btnA.setVoted(true, true);
-        holder.btnB.setVoted(true, true);
+        holder.btnA.setVoted(true, true, option=="A");
+        holder.btnB.setVoted(true, true, option=="B");
 
         holder.btnA.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -259,8 +273,11 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     }
 
     private void resetCard(final ViewHolder holder) {
-        holder.btnA.setVoted(false, false);
-        holder.btnB.setVoted(false, false);
+        //String option = getString(Common.OBJECT_VOTED_QUESTION_OPTION);
+        //Boolean voteA = option.equals("A");
+
+        holder.btnA.setVoted(false, false, false);
+        holder.btnB.setVoted(false, false, false);
         holder.btnA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {}
@@ -272,10 +289,10 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         });
     }
 
-    private void setCardVoted(final ViewHolder holder) {
+    private void setCardVoted(final ViewHolder holder, boolean votedForA) {
         holder.layoutFuncButtons.setVisibility(View.VISIBLE);
-        holder.btnA.setVoted(true, false);
-        holder.btnB.setVoted(true, false);
+        holder.btnA.setVoted(true, false, votedForA);
+        holder.btnB.setVoted(true, false, !votedForA);
         holder.btnA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -291,19 +308,19 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     private void setCardNotVoted(final ViewHolder holder, final ParseObject mQuestion, final int voteA, final int voteB,
                                  final Map<String, Object> cache) {
         holder.layoutFuncButtons.setVisibility(View.INVISIBLE);
-        holder.btnA.setVoted(false, false);
-        holder.btnB.setVoted(false, false);
+        holder.btnA.setVoted(false, false, false);
+        holder.btnB.setVoted(false, false, false);
 
         holder.btnA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                voteQuestion(mQuestion, holder, voteA + 1, voteB, "A", cache);
+                voteQuestionForA(mQuestion, holder, voteA, voteB, cache);
             }
         });
         holder.btnB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                voteQuestion(mQuestion, holder, voteA, voteB + 1, "B", cache);
+                voteQuestionForB(mQuestion, holder, voteA, voteB, cache);
             }
         });
         cache.put(Common.QUESTION_CARD_IS_VOTED, false);
@@ -320,13 +337,27 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         return false;
     }
 
+    private boolean isQuestionVotedForA(ParseObject mQuestion) {
+        final String qid = mQuestion.getObjectId();
+
+        for(ParseObject votedQuestion : mVotedQuestionList) {
+            if(votedQuestion.getString(Common.OBJECT_VOTED_QUESTION_QID).equals(qid)) {
+                return votedQuestion.getString("option").equals("A");
+            }
+        }
+        return false;
+    }
+
+
+
     private void setupCardVotedAction(final ViewHolder holder, final ParseObject mQuestion, final ParseRelation<ParseUser> relation,
                                       final Map<String, Object> cache) {
         final int voteA = mQuestion.getInt(Common.OBJECT_POST_QA_NUM);
         final int voteB = mQuestion.getInt(Common.OBJECT_POST_QB_NUM);
 
         if (isQuestionVoted(mQuestion)) {
-            setCardVoted(holder);
+            final boolean votedForA = isQuestionVotedForA(mQuestion);
+            setCardVoted(holder, votedForA);
             cache.put(Common.QUESTION_CARD_IS_VOTED, true);
         } else {
             setCardNotVoted(holder, mQuestion, voteA, voteB, cache);
@@ -334,9 +365,10 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         }
     }
 
-    private void displayParseImage(final ViewHolder holder, final String userName, ParseFile img,
+    private void displayParseImage(final ViewHolder holder, final String userName, final ParseUser user,
                                    final ImageView imgView, final Map<String, Object> cache) {
-        img.getDataInBackground(new GetDataCallback() {
+        ParseFile imgFile = user.getParseFile(Common.OBJECT_USER_PROFILE_PIC);
+        imgFile.getDataInBackground(new GetDataCallback() {
             @Override
             public void done(byte[] bytes, ParseException e) {
                 if (e == null) {
@@ -345,7 +377,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                     if (bmp != null) {
                         imgView.setImageBitmap(bmp);
                         cache.put(Common.QUESTION_CARD_PROFILE_IMG, bmp);
-                        setupProfileImgListener(holder, userName, bmp);
+                        setupProfileImgListener(holder, user, userName, bmp, user.getObjectId());
                     }
                 }
             }
@@ -393,11 +425,12 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         });
     }
 
-    private void setupProfileImgListener(final ViewHolder holder, final String userName, final Bitmap profileImg) {
+    private void setupProfileImgListener(final ViewHolder holder, final ParseUser user,
+                                         final String userName, final Bitmap profileImg, final String userId) {
         holder.imgProfile.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Utils.gotoOtherUserProfileActivity(mContext, userName, profileImg);
+                Utils.gotoOtherUserProfileActivity(mContext, userId, userName, profileImg);
             }
         });
     }
@@ -414,18 +447,21 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         final String optionB = mQuestion.getString(Common.OBJECT_POST_QB);
         final int voteA = mQuestion.getInt(Common.OBJECT_POST_QA_NUM);
         final int voteB = mQuestion.getInt(Common.OBJECT_POST_QB_NUM);
+        final boolean voteForA = isQuestionVotedForA(mQuestion);
 
         if(postUser != null) {
-            postUser.fetchInBackground(new GetCallback<ParseObject>() {
+            postUser.fetchInBackground(new GetCallback<ParseUser>() {
                 @Override
-                public void done(ParseObject parseObject, ParseException e) {
+                public void done(ParseUser user, ParseException e) {
                     if(e == null) {
-                        String nickName = postUser.getString(Common.OBJECT_USER_NICK);
+                        String nickName = user.getString(Common.OBJECT_USER_NICK);
                         holder.txtName.setText(nickName);
-                        ParseFile imgFile = postUser.getParseFile(Common.OBJECT_USER_PROFILE_PIC);
-                        displayParseImage(holder, nickName, imgFile, holder.imgProfile, cache);
 
+                        displayParseImage(holder, nickName, user, holder.imgProfile, cache);
+
+                        cache.put(Common.QUESTION_CARD_PARSE_USER, user);
                         cache.put(Common.QUESTION_CARD_NICK, nickName);
+                        cache.put(Common.QUESTION_CARD_USER_ID, user.getObjectId());
 
                     }
                 }
@@ -451,6 +487,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         cache.put(Common.QUESTION_CARD_QB, optionB);
         cache.put(Common.QUESTION_CARD_QA_NUM, voteA);
         cache.put(Common.QUESTION_CARD_QB_NUM, voteB);
+        cache.put(Common.QUESTION_CARD_VOTE_FOR_A, voteForA);
 
         holder.shareBtnPost.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -487,6 +524,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     }
 
     private void loadFromCache(Map<String, Object> cache, final ViewHolder holder, final ParseObject mQuestion) {
+        final ParseUser user = (ParseUser) cache.get(Common.QUESTION_CARD_PARSE_USER);
+        final String userId = (String) cache.get(Common.QUESTION_CARD_USER_ID);
         final String nickName = (String) cache.get(Common.QUESTION_CARD_NICK);
         final Bitmap profileImg = (Bitmap) cache.get(Common.QUESTION_CARD_PROFILE_IMG);
         final String questionContent = (String) cache.get(Common.QUESTION_CARD_CONTENT);
@@ -495,11 +534,12 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         final int voteA = (int) cache.get(Common.QUESTION_CARD_QA_NUM);
         final int voteB = (int) cache.get(Common.QUESTION_CARD_QB_NUM);
         final Boolean isVoted = (Boolean) cache.get(Common.QUESTION_CARD_IS_VOTED);
+        final Boolean isVotedForA = (Boolean) cache.get(Common.QUESTION_CARD_VOTE_FOR_A);
 
         holder.txtName.setText(nickName);
         if(profileImg != null) {
             holder.imgProfile.setImageBitmap(profileImg);
-            setupProfileImgListener(holder, nickName, profileImg);
+            setupProfileImgListener(holder, user, nickName, profileImg, userId);
         }
         else {
             holder.imgProfile.setImageBitmap(
@@ -517,7 +557,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.btnB.setProgress(progressB);
 
         if(isVoted) {
-            setCardVoted(holder);
+            setCardVoted(holder,isVotedForA);
         }
         else {
             setCardNotVoted(holder, mQuestion, voteA, voteB, cache);

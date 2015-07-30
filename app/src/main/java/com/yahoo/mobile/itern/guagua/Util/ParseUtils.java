@@ -41,6 +41,12 @@ public class ParseUtils {
         testObject.saveInBackground();
     }
 
+
+    static public void updateUserProfile(final String nickName, final String mFbId, Bitmap profilePic) {
+        final ParseUser user = ParseUser.getCurrentUser();
+        user.put(Common.OBJECT_USER_FB_ID, mFbId);
+        updateUserProfile(nickName, profilePic);
+    }
     static public void updateUserProfile(final String nickName, Bitmap profilePic) {
         final ParseUser user = ParseUser.getCurrentUser();
 
@@ -56,7 +62,6 @@ public class ParseUtils {
                 user.saveInBackground();
             }
         });
-
     }
     static public void getUserCommunity(ParseUser user) {
         ParseRelation<ParseObject> relation = user.getRelation(Common.OBJECT_USER_COMMUNITY_RELATION);

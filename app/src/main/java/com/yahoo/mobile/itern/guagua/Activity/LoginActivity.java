@@ -110,7 +110,7 @@ public class LoginActivity extends ActionBarActivity {
     }
     public void onEvent(final FbPictureEvent event) {
         ParseUser.getCurrentUser().put(Common.OBJECT_USER_FB_NAME, mNickName);
-        ParseUtils.updateUserProfile(mNickName, event.mPic);
+        ParseUtils.updateUserProfile(mNickName, mFbId, event.mPic);
         startActivity(new Intent(this, CommunityActivity.class));
         finish();
     }
