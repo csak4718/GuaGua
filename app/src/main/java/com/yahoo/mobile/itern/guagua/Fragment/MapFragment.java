@@ -45,8 +45,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private GoogleMap mMap;
 
 
-    public MapFragment(Context context){
-        mContext = context;
+    public MapFragment() {
+    }
+
+    public static MapFragment newInstance(Context context)
+    {
+        MapFragment mapFragment = new MapFragment();
+        mapFragment.mContext = context;
+        return mapFragment;
     }
 
     @Override
@@ -58,7 +64,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-
     }
 
     @Override

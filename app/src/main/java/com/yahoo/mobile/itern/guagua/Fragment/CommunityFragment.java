@@ -39,8 +39,23 @@ public class CommunityFragment extends Fragment {
     Button mNoBtn;
     ImageView mCommunityBadge;
 
-    public CommunityFragment(Context context){
-        mContext = context;
+
+    public CommunityFragment() {
+    }
+
+    public static  CommunityFragment newInstance(Context context)
+    {
+        CommunityFragment communityFragment = new CommunityFragment();
+        communityFragment.mContext = context;
+        return communityFragment;
+    }
+
+
+
+    @Override
+    public void onCreate(Bundle savedBundle){
+        super.onCreate(savedBundle);
+        mContext = getActivity();
         mMainApplication = (MainApplication)((Activity)mContext).getApplication();
         badgeDrawables = new HashMap<>();
         badgeDrawables.put("TFLWNFWhrd", ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.badge_ytaiwan_big, null));
@@ -49,11 +64,6 @@ public class CommunityFragment extends Fragment {
         badgeDrawables.put("el6mVLwzHE", ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.badge_ntnu_big, null));
         badgeDrawables.put("VifEC40TJO", ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.badge_sunnyvale_big, null));
         badgeDrawables.put("01E7QQKGLs", ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.badge_gua_big, null));
-    }
-
-    @Override
-    public void onCreate(Bundle savedBundle){
-        super.onCreate(savedBundle);
     }
 
     @Override

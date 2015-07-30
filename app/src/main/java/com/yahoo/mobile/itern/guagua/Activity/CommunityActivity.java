@@ -70,8 +70,8 @@ public class CommunityActivity extends FragmentActivity implements GoogleApiClie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_community);
 
-        mCommunityFragement = new CommunityFragment(this);
-        mMapFragment = new MapFragment(this);
+        mCommunityFragement = CommunityFragment.newInstance(this);
+        mMapFragment = MapFragment.newInstance(this);
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.community_content, mCommunityFragement)
