@@ -21,6 +21,7 @@ import com.yahoo.mobile.itern.guagua.Event.CommentEvent;
 import com.yahoo.mobile.itern.guagua.Event.CommunityEvent;
 import com.yahoo.mobile.itern.guagua.Event.MyQuestionsEvent;
 import com.yahoo.mobile.itern.guagua.Event.QuestionEvent;
+import com.yahoo.mobile.itern.guagua.Event.ShareDuringPostEvent;
 import com.yahoo.mobile.itern.guagua.Event.UserCommunityEvent;
 
 import java.io.ByteArrayOutputStream;
@@ -140,7 +141,7 @@ public class ParseUtils {
         });
     }
 
-    static public String postQuestions(String question, String optionA, String optionB, final ParseObject community) {
+    static public void postQuestions(String question, String optionA, String optionB, final ParseObject community) {
         final ParseObject mPost = new ParseObject(Common.OBJECT_POST);
         final ParseUser user = ParseUser.getCurrentUser();
         mPost.put(Common.OBJECT_POST_CONTENT, question);
@@ -164,11 +165,10 @@ public class ParseUtils {
 
                 getCommunityQuestions(community);
 
-                // send mPost.getObjectId() to event box ---> eventBus.post(event);
+                EventBus.getDefault().post(new ShareDuringPostEvent(mPost));
             }
         });
 
-        return mPost.getObjectId();
     }
     static public void postComment(String comment, final String postId, final Boolean refreshList) {
 

@@ -35,10 +35,12 @@ import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 import com.parse.ParseObject;
 import com.yahoo.mobile.itern.guagua.Application.MainApplication;
+import com.yahoo.mobile.itern.guagua.Event.ShareDuringPostEvent;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
 
+import de.greenrobot.event.EventBus;
 
 
 /**
@@ -60,17 +62,18 @@ public class AddPostActivityFragment extends Fragment {
     boolean aorb;
 
 
+    // To do
     private HorizontalScrollView mScrollBannerBadge;
     private LinearLayout mBannerBadge;
     private ImageButton mImgBtnBadgeSearch;
     private boolean badgeBannerVisible = false;
 
 
-    //These variables are used to implement FB sharing during posting
-    CallbackManager callbackManager;
-    ShareDialog shareDialog;
-
     public AddPostActivityFragment() {
+    }
+
+    public boolean getEnableFBshare(){
+        return enableFBshare;
     }
 
     @Override
@@ -118,21 +121,6 @@ public class AddPostActivityFragment extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) enableFBshare = true;
                 else enableFBshare = false;
-            }
-        });
-
-        // Facebook
-        callbackManager = CallbackManager.Factory.create();
-        shareDialog = new ShareDialog(getActivity());
-
-        shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
-            public void onSuccess(Sharer.Result results) {
-            }
-
-            public void onCancel() {
-            }
-
-            public void onError(FacebookException e) {
             }
         });
 
@@ -220,34 +208,7 @@ public class AddPostActivityFragment extends Fragment {
         final String optionA = edtOptA.getText().toString();
         final String optionB = edtOptB.getText().toString();
         final ParseObject community = ((MainApplication) getActivity().getApplication()).currentViewingCommunity;
-//        ParseObject mPost = ParseUtils.postQuestions(question, optionA, optionB, community);
-        String post_objectId = ParseUtils.postQuestions(question, optionA, optionB, community);
-//        Log.d("OBJECT_ID:", mPost.getObjectId());
-
+        ParseUtils.postQuestions(question, optionA, optionB, community);
         Utils.hideSoftKeyboard(getActivity());
-
-
-
-        // To do: produce URL in onEvent()
-        if (enableFBshare){
-            if (ShareDialog.canShow(ShareLinkContent.class)) {
-                ShareLinkContent linkContent = new ShareLinkContent.Builder()
-                        .setContentTitle("呱呱 - 投票結果")
-                        .setContentDescription(question)
-                        .setContentUrl(Uri.parse("https://aqueous-falls-3271.herokuapp" +
-                                ".com/guagua/" + post_objectId + "/results/"))
-                        .build();//mPost.getObjectId()
-
-                shareDialog.show(linkContent);
-            }
-
-            getActivity().finish();
-        }
-        else{
-            getActivity().finish();
-        }
-
-
-
     }
 }
