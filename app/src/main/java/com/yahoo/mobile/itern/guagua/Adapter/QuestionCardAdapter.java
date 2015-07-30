@@ -33,9 +33,12 @@ import com.parse.ParseObject;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.readystatesoftware.viewbadger.BadgeView;
+import com.yahoo.mobile.itern.guagua.Event.CommentSizeEvent;
 import com.yahoo.mobile.itern.guagua.Event.OtherUserProfileEvent;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.Common;
+import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
 import com.yahoo.mobile.itern.guagua.View.OptionButton;
 
@@ -83,7 +86,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         ParseUser.getCurrentUser().getRelation(Common.OBJECT_USER_VOTED_QUESTIONS).getQuery().findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
-                if(e == null && list != null) {
+                if (e == null && list != null) {
                     mVotedQuestionList.clear();
                     mVotedQuestionList.addAll(list);
                     notifyDataSetChangedWithCache();
@@ -170,6 +173,12 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         public LinearLayout layoutFuncButtons;
         public Boolean liked = false;
 
+        public BadgeView commentBadge;
+
+         public BadgeView getCommentBadge(){
+            return commentBadge;
+        }
+
         public ViewHolder(View v) {
             super(v);
             Log.d("QDA", "Create viewhoder");
@@ -185,13 +194,53 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
             layoutFuncButtons = (LinearLayout) v.findViewById(R.id.layout_function_buttons);
 
+
+//            EventBus.getDefault().register(QuestionCardAdapter.ViewHolder.class);
         }
         @Override
         public View getSwipeableContainerView() {
             return mView;
         }
 
+
+
+
+//        @Override
+//        public void onStart() {
+//            EventBus.getDefault().register(this);
+//            super.onStart();
+//        }
+//
+//        @Override
+//        public void onStop() {
+//            EventBus.getDefault().unregister(this);
+//            super.onStop();
+//        }
+//
+//        public void onEvent(CommentSizeEvent event) {
+//            Log.d("TEST TEST eventbus", "" + event.commentList.size());
+//            commentBadge.setText(String.valueOf(event.commentList.size()));
+//            commentBadge.show();
+//        }
+
+
+
+
+
+
     }
+
+//    @Override
+//    public void onStart() {
+//        EventBus.getDefault().register(this);
+//        super.onStart();
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        EventBus.getDefault().unregister(this);
+//        super.onStop();
+//    }
 
     @Override
     public QuestionCardAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
@@ -200,6 +249,11 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                 .inflate(R.layout.card_question, parent, false);
 
         ViewHolder vh = new ViewHolder(v);
+
+        // put parent.getContext() into the following line
+        vh.commentBadge = new BadgeView(parent.getContext(), vh.imgBtnComment);
+
+
         return vh;
     }
 
@@ -280,7 +334,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.btnB.setVoted(false, false, false);
         holder.btnA.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {}
+            public void onClick(View v) {
+            }
         });
         holder.btnB.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -437,7 +492,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
     private void loadFromParse(final ParseObject mQuestion, final ViewHolder holder, final Map<String, Object> cache) {
 
-        resetCard(holder);
+        resetCard(holder);//?? why do again? why not for loadFromCache also?
 
         final String objectId = mQuestion.getObjectId();
         final ParseRelation<ParseUser> relation = mQuestion.getRelation(Common.OBJECT_POST_VOTED_USER);
@@ -511,7 +566,6 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.btnA.setProgress(progressA);
         holder.btnB.setProgress(progressB);
 
-
         holder.imgBtnComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -582,7 +636,30 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         else {
             loadFromCache(cachedQuestion.get(objectId), holder, mQuestion);
         }
+
+
+        ParseUtils.getPostCommentsSize(objectId);
+//        holder.commentBadge.setText("1");
+//        holder.commentBadge.show();
     }
+
+//    @Override
+//    public void onStart() {
+//        EventBus.getDefault().register(this);
+//        super.onStart();
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        EventBus.getDefault().unregister(this);
+//        super.onStop();
+//    }
+//
+//    public void onEvent(CommentSizeEvent event) {
+//        Log.d("eventbus", "" + event.commentList.size());
+//        QuestionCardAdapter.ViewHolder.commentBadge.setText(String.valueOf(event.commentList.size()));
+//    }
+
 
     @Override
     public long getItemId(int position) {

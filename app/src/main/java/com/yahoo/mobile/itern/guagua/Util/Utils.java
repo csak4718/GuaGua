@@ -25,6 +25,7 @@ import com.yahoo.mobile.itern.guagua.Activity.CommunityActivity;
 import com.yahoo.mobile.itern.guagua.Activity.LoginActivity;
 import com.yahoo.mobile.itern.guagua.Activity.MainActivity;
 import com.yahoo.mobile.itern.guagua.Activity.OtherUserProfileActivity;
+import com.yahoo.mobile.itern.guagua.Adapter.QuestionCardAdapter;
 import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 
 /**

@@ -27,7 +27,9 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.yahoo.mobile.itern.guagua.Adapter.QuestionCardAdapter;
 import com.yahoo.mobile.itern.guagua.Application.MainApplication;
+import com.yahoo.mobile.itern.guagua.Event.CommentSizeEvent;
 import com.yahoo.mobile.itern.guagua.Event.UserCommunityEvent;
 import com.yahoo.mobile.itern.guagua.Fragment.MainActivityFragment;
 
@@ -213,6 +215,19 @@ public class MainActivity extends ActionBarActivity {
 
         return button;
     }
+
+
+
+
+    public void onEvent(CommentSizeEvent event) {
+        Log.d("TEST TEST eventbus", "" + event.commentList.size());
+        QuestionCardAdapter.ViewHolder.getCommentBadge().setText(String.valueOf(event.commentList.size()));
+        QuestionCardAdapter.ViewHolder.getCommentBadge().show();
+    }
+
+
+
+
 
     public void onEvent(UserCommunityEvent event) {
         Log.d("eventbus", "user community event" + event.communityList.size());
