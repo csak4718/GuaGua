@@ -29,6 +29,7 @@ import com.facebook.share.widget.ShareDialog;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
+import com.parse.CountCallback;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.GetDataCallback;
@@ -422,6 +423,21 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         });
     }
 
+    private void setupCommentButton(final ViewHolder holder, final String postId, final int commentCount) {
+
+        holder.commentBadge.setText(String.valueOf(commentCount));
+        holder.commentBadge.setBadgePosition(BadgeView.POSITION_BOTTOM_LEFT);
+        holder.commentBadge.setTextColor(Color.WHITE);
+        holder.commentBadge.setBadgeBackgroundColor(mContext.getResources().getColor(R.color.cyan));
+        holder.commentBadge.show();
+        holder.imgBtnComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.gotoCommentActivity(mContext, postId);
+            }
+        });
+    }
+
     private void loadFromParse(final ParseObject mQuestion, final ViewHolder holder, final Map<String, Object> cache) {
 
         resetCard(holder);
@@ -498,14 +514,19 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.btnA.setProgress(progressA);
         holder.btnB.setProgress(progressB);
 
-        holder.imgBtnComment.setOnClickListener(new View.OnClickListener() {
+        setupLikeButton(mQuestion, holder);
+
+
+        ParseRelation<ParseObject> commentsRelation = mQuestion.getRelation(Common.OBJECT_POST_COMMENTS);
+        commentsRelation.getQuery().countInBackground(new CountCallback() {
             @Override
-            public void onClick(View v) {
-                Utils.gotoCommentActivity(mContext, objectId);
+            public void done(int count, ParseException e) {
+                setupCommentButton(holder, mQuestion.getObjectId(), count);
+                cache.put(Common.QUESTION_CARD_COMMENTS_NUM, count);
             }
         });
 
-        setupLikeButton(mQuestion, holder);
+
         setupCardVotedAction(holder, mQuestion, relation, cache);
     }
 
@@ -521,6 +542,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         final int voteB = (int) cache.get(Common.QUESTION_CARD_QB_NUM);
         final Boolean isVoted = (Boolean) cache.get(Common.QUESTION_CARD_IS_VOTED);
         final Boolean isVotedForA = (Boolean) cache.get(Common.QUESTION_CARD_VOTE_FOR_A);
+        final int commentNum = (int) cache.get(Common.QUESTION_CARD_COMMENTS_NUM);
 
         holder.txtName.setText(nickName);
         if(profileImg != null) {
@@ -550,6 +572,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         }
 
         setupLikeButton(mQuestion, holder);
+        setupCommentButton(holder, mQuestion.getObjectId(), commentNum);
     }
 
     public void startLikeButtonAnimation(View v){
@@ -628,26 +651,6 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         else {
             loadFromCache(cachedQuestion.get(objectId), holder, mQuestion);
         }
-
-        ParseQuery<ParseObject> query = ParseQuery.getQuery(Common.OBJECT_COMMENT);
-        query.whereEqualTo("PostId", objectId);
-        query.findInBackground(new FindCallback<ParseObject>() {
-            public void done(List<ParseObject> commentList, ParseException e) {
-                if (e == null) {
-                    Log.d("onBindViewHolder", "Retrieved " + commentList.size() + " comments");
-
-                    holder.commentBadge.setText(String.valueOf(commentList.size()));
-                    holder.commentBadge.setBadgePosition(BadgeView.POSITION_BOTTOM_LEFT);
-                    holder.commentBadge.setTextColor(Color.WHITE);
-                    holder.commentBadge.setBadgeBackgroundColor(mContext.getResources().getColor(R.color.cyan));
-                    holder.commentBadge.show();
-
-                } else {
-                    Log.d("comments", "Error: " + e.getMessage());
-                }
-            }
-        });
-
     }
 
     @Override

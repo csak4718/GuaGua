@@ -4,6 +4,10 @@ package com.yahoo.mobile.itern.guagua.Util;
  * Created by cmwang on 7/22/15.
  */
 public class Common {
+
+    public final static String PARSE_COMMON_CREATED = "createdAt";
+    public final static String PARSE_COMMON_UPDATED = "updatedAt";
+
     public final static String OBJECT_USER_NICK = "nickname";
     public final static String OBJECT_USER_PROFILE_PIC = "profile_pic";
     public final static String OBJECT_USER_COMMUNITY_RELATION = "community";
@@ -58,6 +62,7 @@ public class Common {
     public final static String QUESTION_CARD_QB_NUM = "voteB";
     public final static String QUESTION_CARD_IS_VOTED = "isVoted";
     public final static String QUESTION_CARD_VOTE_FOR_A = "VotedForA";
+    public final static String QUESTION_CARD_COMMENTS_NUM = "commentsNum";
 
 
 }

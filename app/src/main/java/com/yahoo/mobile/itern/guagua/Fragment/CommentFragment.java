@@ -63,7 +63,9 @@ public class CommentFragment extends Fragment {
 
     private void refreshList() {
         ParseRelation<ParseObject> commentsRelation = mQuestion.getRelation(Common.OBJECT_POST_COMMENTS);
-        commentsRelation.getQuery().findInBackground(new FindCallback<ParseObject>() {
+        ParseQuery<ParseObject> query = commentsRelation.getQuery();
+        query.orderByAscending(Common.PARSE_COMMON_CREATED);
+        query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
                 mList.clear();
@@ -94,13 +96,13 @@ public class CommentFragment extends Fragment {
         ParseQuery<ParseObject> query = ParseQuery.getQuery(Common.OBJECT_POST);
         try {
             mQuestion = query.get(mPostObjectId);
+            refreshList();
         } catch (ParseException e) {
             e.printStackTrace();
             getActivity().finish();
         }
 
 //        ParseUtils.getPostComments(mPostObjectId);
-
 
         mBtnCommentSend.setOnClickListener(new View.OnClickListener() {
             @Override
