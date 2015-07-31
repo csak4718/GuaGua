@@ -40,10 +40,10 @@ import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-import com.readystatesoftware.viewbadger.BadgeView;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.Common;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
+import com.yahoo.mobile.itern.guagua.View.CommentButton;
 import com.yahoo.mobile.itern.guagua.View.OptionButton;
 
 import java.util.ArrayList;
@@ -396,7 +396,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                         mFavoriteList.add(mQuestion);
                         holder.imgBtnLike.setImageResource(R.drawable.ic_like);
                         holder.liked = true;
-                        if (mAmin == true){
+                        if (mAmin == true) {
                             startLikeButtonAnimation(v);
                         }
 
@@ -429,11 +429,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
     private void setupCommentButton(final ViewHolder holder, final String postId, final int commentCount) {
 
-        holder.commentBadge.setText(String.valueOf(commentCount));
-        holder.commentBadge.setBadgePosition(BadgeView.POSITION_BOTTOM_LEFT);
-        holder.commentBadge.setTextColor(Color.WHITE);
-        holder.commentBadge.setBadgeBackgroundColor(mContext.getResources().getColor(R.color.cyan));
-        holder.commentBadge.show();
+        holder.imgBtnComment.setBadgeCount(commentCount);
         holder.imgBtnComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -699,16 +695,13 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         public OptionButton btnA;
         public OptionButton btnB;
         public ImageButton shareBtnPost;
-        public ImageButton imgBtnComment;
+        public CommentButton imgBtnComment;
         public ImageButton imgBtnLike;
         public LinearLayout layoutFuncButtons;
         public Boolean liked = false;
 
-        public BadgeView commentBadge;
-
         public ViewHolder(View v) {
             super(v);
-            Log.d("QDA", "Create viewhoder");
             mView = v;
             imgProfile = (ImageView) v.findViewById(R.id.imgProfile);
             txtName = (TextView) v.findViewById(R.id.txtName);
@@ -716,11 +709,9 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             btnA = (OptionButton) v.findViewById(R.id.btnA);
             btnB = (OptionButton) v.findViewById(R.id.btnB);
             shareBtnPost = (ImageButton)v.findViewById(R.id.shareBtnPost);
-            imgBtnComment = (ImageButton) v.findViewById(R.id.imgBtnComment);
+            imgBtnComment = (CommentButton) v.findViewById(R.id.imgBtnComment);
             imgBtnLike = (ImageButton) v.findViewById(R.id.imgBtnLike);
             layoutFuncButtons = (LinearLayout) v.findViewById(R.id.layout_function_buttons);
-
-            commentBadge = new BadgeView(v.getContext(), imgBtnComment);
         }
         @Override
         public View getSwipeableContainerView() {
