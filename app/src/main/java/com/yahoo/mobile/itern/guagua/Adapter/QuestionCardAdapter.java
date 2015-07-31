@@ -422,7 +422,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
     private void loadFromParse(final ParseObject mQuestion, final ViewHolder holder, final Map<String, Object> cache) {
 
-        resetCard(holder);//?? why do again? why not for loadFromCache also?
+        resetCard(holder);
 
         final String objectId = mQuestion.getObjectId();
         final ParseRelation<ParseUser> relation = mQuestion.getRelation(Common.OBJECT_POST_VOTED_USER);
