@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -53,6 +54,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         implements SwipeableItemAdapter<QuestionCardAdapter.ViewHolder> {
 
 
+    private Handler mHandler = new Handler();
     private List<ParseObject> mAllQuestionList, mVisibleQuestionList, mFavoriteList, mVotedQuestionList;
     private Context mContext;
     private LayoutInflater mInflater;
@@ -63,8 +65,13 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     ShareDialog shareDialog;
 
     public void notifyDataSetChangedWithCache() {
-        cachedQuestion.clear();
-        notifyDataSetChanged();
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                cachedQuestion.clear();
+                notifyDataSetChanged();
+            }
+        });
     }
 
     public void updateVotedQuestionListSync() {
@@ -80,7 +87,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     }
 
     public void updateVotedQuestionListAsync() {
-        ParseUser.getCurrentUser().getRelation(Common.OBJECT_USER_VOTED_QUESTIONS).getQuery().findInBackground(new FindCallback<ParseObject>() {
+        ParseUser.getCurrentUser().getRelation(Common.OBJECT_USER_VOTED_QUESTIONS).getQuery().findInBackground(new FindCallback<ParseObject>()
+        {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
                 if(e == null && list != null) {
