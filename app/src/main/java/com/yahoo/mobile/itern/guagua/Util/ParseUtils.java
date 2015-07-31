@@ -200,6 +200,7 @@ public class ParseUtils {
 
     static public void getAllCommunities() {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Community");
+        // exclude taiwan community
         query.whereNotEqualTo("objectId", "wtgxgSpmNH");
         query.orderByDescending("updatedAt");
         query.findInBackground(new FindCallback<ParseObject>() {
