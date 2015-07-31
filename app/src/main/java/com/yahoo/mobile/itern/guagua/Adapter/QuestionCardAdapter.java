@@ -29,6 +29,7 @@ import com.facebook.share.widget.ShareDialog;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
+import com.parse.CountCallback;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.GetDataCallback;
@@ -39,10 +40,10 @@ import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-import com.readystatesoftware.viewbadger.BadgeView;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.Common;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
+import com.yahoo.mobile.itern.guagua.View.CommentButton;
 import com.yahoo.mobile.itern.guagua.View.OptionButton;
 
 import java.util.ArrayList;
@@ -395,7 +396,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                         mFavoriteList.add(mQuestion);
                         holder.imgBtnLike.setImageResource(R.drawable.ic_like);
                         holder.liked = true;
-                        if (mAmin == true){
+                        if (mAmin == true) {
                             startLikeButtonAnimation(v);
                         }
 
@@ -422,6 +423,17 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             @Override
             public void onClick(View v) {
                 Utils.gotoOtherUserProfileActivity(mContext, userId, userName, profileImg);
+            }
+        });
+    }
+
+    private void setupCommentButton(final ViewHolder holder, final String postId, final int commentCount) {
+
+        holder.imgBtnComment.setBadgeCount(commentCount);
+        holder.imgBtnComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.gotoCommentActivity(mContext, postId);
             }
         });
     }
@@ -502,14 +514,19 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.btnA.setProgress(progressA);
         holder.btnB.setProgress(progressB);
 
-        holder.imgBtnComment.setOnClickListener(new View.OnClickListener() {
+        setupLikeButton(mQuestion, holder);
+
+
+        ParseRelation<ParseObject> commentsRelation = mQuestion.getRelation(Common.OBJECT_POST_COMMENTS);
+        commentsRelation.getQuery().countInBackground(new CountCallback() {
             @Override
-            public void onClick(View v) {
-                Utils.gotoCommentActivity(mContext, objectId);
+            public void done(int count, ParseException e) {
+                setupCommentButton(holder, mQuestion.getObjectId(), count);
+                cache.put(Common.QUESTION_CARD_COMMENTS_NUM, count);
             }
         });
 
-        setupLikeButton(mQuestion, holder);
+
         setupCardVotedAction(holder, mQuestion, relation, cache);
     }
 
@@ -525,6 +542,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         final int voteB = (int) cache.get(Common.QUESTION_CARD_QB_NUM);
         final Boolean isVoted = (Boolean) cache.get(Common.QUESTION_CARD_IS_VOTED);
         final Boolean isVotedForA = (Boolean) cache.get(Common.QUESTION_CARD_VOTE_FOR_A);
+        final int commentNum = (int) cache.get(Common.QUESTION_CARD_COMMENTS_NUM);
 
         holder.txtName.setText(nickName);
         if(profileImg != null) {
@@ -554,6 +572,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         }
 
         setupLikeButton(mQuestion, holder);
+        setupCommentButton(holder, mQuestion.getObjectId(), commentNum);
     }
 
     public void startLikeButtonAnimation(View v){
@@ -637,26 +656,6 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         else {
             loadFromCache(cachedQuestion.get(objectId), holder, mQuestion);
         }
-
-        ParseQuery<ParseObject> query = ParseQuery.getQuery(Common.OBJECT_COMMENT);
-        query.whereEqualTo("PostId", objectId);
-        query.findInBackground(new FindCallback<ParseObject>() {
-            public void done(List<ParseObject> commentList, ParseException e) {
-                if (e == null) {
-                    Log.d("onBindViewHolder", "Retrieved " + commentList.size() + " comments");
-
-                    holder.commentBadge.setText(String.valueOf(commentList.size()));
-                    holder.commentBadge.setBadgePosition(BadgeView.POSITION_BOTTOM_LEFT);
-                    holder.commentBadge.setTextColor(Color.WHITE);
-                    holder.commentBadge.setBadgeBackgroundColor(mContext.getResources().getColor(R.color.cyan));
-                    holder.commentBadge.show();
-
-                } else {
-                    Log.d("comments", "Error: " + e.getMessage());
-                }
-            }
-        });
-
     }
 
     @Override
@@ -701,16 +700,13 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         public OptionButton btnA;
         public OptionButton btnB;
         public ImageButton shareBtnPost;
-        public ImageButton imgBtnComment;
+        public CommentButton imgBtnComment;
         public ImageButton imgBtnLike;
         public LinearLayout layoutFuncButtons;
         public Boolean liked = false;
 
-        public BadgeView commentBadge;
-
         public ViewHolder(View v) {
             super(v);
-            Log.d("QDA", "Create viewhoder");
             mView = v;
             imgProfile = (ImageView) v.findViewById(R.id.imgProfile);
             txtName = (TextView) v.findViewById(R.id.txtName);
@@ -718,11 +714,9 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             btnA = (OptionButton) v.findViewById(R.id.btnA);
             btnB = (OptionButton) v.findViewById(R.id.btnB);
             shareBtnPost = (ImageButton)v.findViewById(R.id.shareBtnPost);
-            imgBtnComment = (ImageButton) v.findViewById(R.id.imgBtnComment);
+            imgBtnComment = (CommentButton) v.findViewById(R.id.imgBtnComment);
             imgBtnLike = (ImageButton) v.findViewById(R.id.imgBtnLike);
             layoutFuncButtons = (LinearLayout) v.findViewById(R.id.layout_function_buttons);
-
-            commentBadge = new BadgeView(v.getContext(), imgBtnComment);
         }
         @Override
         public View getSwipeableContainerView() {
