@@ -395,7 +395,10 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                         mFavoriteList.add(mQuestion);
                         holder.imgBtnLike.setImageResource(R.drawable.ic_like);
                         holder.liked = true;
-                        startLikeButtonAnimation(v);
+                        if (mAmin == true){
+                            startLikeButtonAnimation(v);
+                        }
+
                     } else {
                         Log.d("On click", "get dislike");
                         relation.remove(mQuestion);
