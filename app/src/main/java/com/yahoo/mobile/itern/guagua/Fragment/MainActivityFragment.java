@@ -2,6 +2,7 @@ package com.yahoo.mobile.itern.guagua.Fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
