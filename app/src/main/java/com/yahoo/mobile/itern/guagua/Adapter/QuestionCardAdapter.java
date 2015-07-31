@@ -74,6 +74,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             @Override
             public void run() {
                 cachedQuestion.clear();
+                updateVotedQuestionListSync();
                 notifyDataSetChanged();
             }
         });
@@ -213,8 +214,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
         holder.btnA.setProgress(progressA);
         holder.btnB.setProgress(progressB);
-        holder.btnA.setVoted(true, true, option=="A");
-        holder.btnB.setVoted(true, true, option=="B");
+        holder.btnA.setVoted(true, true, option.equals("A"));
+        holder.btnB.setVoted(true, true, option.equals("B"));
 
         holder.btnA.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -277,10 +278,10 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         });
     }
 
-    private void setCardVoted(final ViewHolder holder, boolean votedForA) {
+    private void setCardVoted(final ViewHolder holder, String option) {
         holder.layoutFuncButtons.setVisibility(View.VISIBLE);
-        holder.btnA.setVoted(true, false, votedForA);
-        holder.btnB.setVoted(true, false, !votedForA);
+        holder.btnA.setVoted(true, false, option.equals("A"));
+        holder.btnB.setVoted(true, false, option.equals("B"));
         holder.btnA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -335,6 +336,16 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         }
         return false;
     }
+    private String questionVotedOption(ParseObject mQuestion) {
+        final String qid = mQuestion.getObjectId();
+
+        for(ParseObject votedQuestion : mVotedQuestionList) {
+            if(votedQuestion.getString(Common.OBJECT_VOTED_QUESTION_QID).equals(qid)) {
+                return votedQuestion.getString("option");
+            }
+        }
+        return "";
+    }
 
 
 
@@ -344,8 +355,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         final int voteB = mQuestion.getInt(Common.OBJECT_POST_QB_NUM);
 
         if (isQuestionVoted(mQuestion)) {
-            final boolean votedForA = isQuestionVotedForA(mQuestion);
-            setCardVoted(holder, votedForA);
+            setCardVoted(holder, questionVotedOption(mQuestion));
             cache.put(Common.QUESTION_CARD_IS_VOTED, true);
         } else {
             setCardNotVoted(holder, mQuestion, voteA, voteB, cache);
@@ -565,7 +575,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.btnB.setProgress(progressB);
 
         if(isVoted) {
-            setCardVoted(holder,isVotedForA);
+            setCardVoted(holder, questionVotedOption(mQuestion));
         }
         else {
             setCardNotVoted(holder, mQuestion, voteA, voteB, cache);
