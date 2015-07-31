@@ -194,12 +194,12 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     //warper for voting A or B
     private void voteQuestionForA(ParseObject mQuestion, ViewHolder holder, int voteA, int voteB, Map<String, Object> cache){
         voteQuestion(mQuestion, holder, voteA + 1, voteB, "A", cache);
-        cache.put(Common.QUESTION_CARD_VOTE_FOR_A, true);
+        cache.put(Common.QUESTION_CARD_VOTE_OPTION, "A");
     }
 
     private void voteQuestionForB(ParseObject mQuestion, ViewHolder holder, int voteA, int voteB, Map<String, Object> cache){
         voteQuestion(mQuestion, holder, voteA, voteB + 1, "B", cache);
-        cache.put(Common.QUESTION_CARD_VOTE_FOR_A, false);
+        cache.put(Common.QUESTION_CARD_VOTE_OPTION, "B");
     }
 
     private void voteQuestion(ParseObject mQuestion, ViewHolder holder, int voteA, int voteB, String option, Map<String, Object> cache) {
@@ -460,7 +460,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         final String optionB = mQuestion.getString(Common.OBJECT_POST_QB);
         final int voteA = mQuestion.getInt(Common.OBJECT_POST_QA_NUM);
         final int voteB = mQuestion.getInt(Common.OBJECT_POST_QB_NUM);
-        final boolean voteForA = isQuestionVotedForA(mQuestion);
+        final String voteOption = questionVotedOption(mQuestion);
 
         if(postUser != null) {
             postUser.fetchInBackground(new GetCallback<ParseUser>() {
@@ -500,7 +500,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         cache.put(Common.QUESTION_CARD_QB, optionB);
         cache.put(Common.QUESTION_CARD_QA_NUM, voteA);
         cache.put(Common.QUESTION_CARD_QB_NUM, voteB);
-        cache.put(Common.QUESTION_CARD_VOTE_FOR_A, voteForA);
+        cache.put(Common.QUESTION_CARD_VOTE_OPTION, voteOption);
 
         holder.shareBtnPost.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -551,7 +551,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         final int voteA = (int) cache.get(Common.QUESTION_CARD_QA_NUM);
         final int voteB = (int) cache.get(Common.QUESTION_CARD_QB_NUM);
         final Boolean isVoted = (Boolean) cache.get(Common.QUESTION_CARD_IS_VOTED);
-        final Boolean isVotedForA = (Boolean) cache.get(Common.QUESTION_CARD_VOTE_FOR_A);
+        final String voteOption = (String) cache.get(Common.QUESTION_CARD_VOTE_OPTION);
         final int commentNum = (int) cache.get(Common.QUESTION_CARD_COMMENTS_NUM);
 
         holder.txtName.setText(nickName);
@@ -575,7 +575,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.btnB.setProgress(progressB);
 
         if(isVoted) {
-            setCardVoted(holder, questionVotedOption(mQuestion));
+            setCardVoted(holder, voteOption);
         }
         else {
             setCardNotVoted(holder, mQuestion, voteA, voteB, cache);
