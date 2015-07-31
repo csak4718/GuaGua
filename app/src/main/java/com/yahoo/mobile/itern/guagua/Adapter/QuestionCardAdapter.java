@@ -552,7 +552,6 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         setupLikeButton(mQuestion, holder);
     }
 
-
     public void startLikeButtonAnimation(View v){
         final ImageView img = new ImageView(mContext);
         img.setImageResource(R.drawable.ic_like);
