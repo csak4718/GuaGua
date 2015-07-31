@@ -558,7 +558,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
     public void startLikeButtonAnimation(View v){
         final ImageView img = new ImageView(mContext);
-        img.setImageResource(R.drawable.ic_like);
+        img.setImageResource(R.drawable.ic_favorite_border_black_24dp);
         final int[] xy = new int[2];
         final int[] fxy = new int[2];
         v.getLocationInWindow(xy);
@@ -582,6 +582,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         //Animation am = new TranslateAnimation(xy[0],fxy[0]+w/4,xy[1],fxy[1]+w/4);
         fxy[0] = fxy[0]+w/4;
         fxy[1] = fxy[1]+w/4;
+        img.setX(xy[0]);
+        img.setY(xy[1]);
         ValueAnimator am = ValueAnimator.ofFloat(0,1);
         am.setDuration(1000);
         am.setRepeatCount(0);
@@ -597,12 +599,15 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             public void onAnimationUpdate(ValueAnimator animation) {
                 float value = ((Float) (animation.getAnimatedValue()))
                         .floatValue();
-                img.setTranslationX((float) (xy[0] + (fxy[0] - xy[0]) * value));
-                img.setTranslationY((float) (xy[1] + (fxy[1] - xy[1]) * Math.sin((value) * Math
-                        .PI / 2)));
+                //img.setMaxWidth((int) (18 * value));
+                img.getLayoutParams().width = (int)(18*value);
+                img.getLayoutParams().height = 200;
+                img.requestLayout();
+                /*img.setTranslationX((float) (xy[0] + (fxy[0] - xy[0]) * value));
+                img.setTranslationY((float) (xy[1] + (fxy[1] - xy[1]) * Math.sin((value) * Math.PI / 2)));
                 if (value < 0.8) {
                     img.setAlpha((int) (255 * (1 - value)));
-                }
+                }*/
                 // Set translation of your view here. Position can be calculated
                 // out of value. This code should move the view in a half circle.
 
