@@ -12,10 +12,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseRelation;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.yahoo.mobile.itern.guagua.Adapter.CommentAdapter;
 import com.yahoo.mobile.itern.guagua.Event.CommentEvent;
 import com.yahoo.mobile.itern.guagua.R;
+import com.yahoo.mobile.itern.guagua.Util.Common;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
 
@@ -28,6 +35,9 @@ import de.greenrobot.event.EventBus;
  * Created by cmwang on 7/20/15.
  */
 public class CommentFragment extends Fragment {
+
+    private ParseObject mQuestion;
+
     private View mView;
     private EditText mEdtCommentText;
     private Button mBtnCommentSend;
@@ -51,29 +61,22 @@ public class CommentFragment extends Fragment {
         mPostObjectId = getArguments().getString("objectId");
     }
 
-    @Override
-    public void onStart() {
-        EventBus.getDefault().register(this);
-        super.onStart();
+    private void refreshList() {
+        ParseRelation<ParseObject> commentsRelation = mQuestion.getRelation(Common.OBJECT_POST_COMMENTS);
+        ParseQuery<ParseObject> query = commentsRelation.getQuery();
+        query.orderByAscending(Common.PARSE_COMMON_CREATED);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                mList.clear();
+                mList.addAll(list);
+                mAdapter.notifyDataSetChanged();
+                mRecyclerView.scrollToPosition(mList.size() - 1);
+            }
+        });
     }
 
-    @Override
-    public void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
-    }
 
-    public void onEvent(CommentEvent event) {
-        Log.d("eventbus", "" + event.commentList.size());
-        refreshList(event.commentList);
-    }
-
-    private void refreshList(List<ParseObject> commentList) {
-        mList.clear();
-        mList.addAll(commentList);
-        mAdapter.notifyDataSetChanged();
-        mRecyclerView.scrollToPosition(mList.size() - 1);
-    }
 
     @Nullable
     @Override
@@ -89,14 +92,48 @@ public class CommentFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
-        ParseUtils.getPostComments(mPostObjectId);
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(Common.OBJECT_POST);
+        try {
+            mQuestion = query.get(mPostObjectId);
+            refreshList();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            getActivity().finish();
+        }
+
+//        ParseUtils.getPostComments(mPostObjectId);
 
         mBtnCommentSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String commentMsg = mEdtCommentText.getText().toString();
                 if (commentMsg.length() > 0) {
-                    ParseUtils.postComment(commentMsg, mPostObjectId, true);
+
+                    ParseUser currentUser = ParseUser.getCurrentUser();
+
+                    final ParseObject mComment = new ParseObject(Common.OBJECT_COMMENT);
+                    mComment.put(Common.OBJECT_COMMENT_POSTID, mQuestion.getObjectId());
+                    mComment.put(Common.OBJECT_COMMENT_MSG, commentMsg);
+                    mComment.put(Common.OBJECT_COMMENT_USER, currentUser);
+                    mComment.put(Common.OBJECT_COMMENT_USER_ID, currentUser.getObjectId());
+
+                    mComment.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null) {
+                                ParseRelation<ParseObject> commentsRelation = mQuestion.getRelation(Common.OBJECT_POST_COMMENTS);
+                                commentsRelation.add(mComment);
+                                mQuestion.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        refreshList();
+                                    }
+                                });
+                            }
+                        }
+                    });
+
                     mEdtCommentText.setText("");
                     mEdtCommentText.clearFocus();
                     Utils.hideSoftKeyboard(getActivity());

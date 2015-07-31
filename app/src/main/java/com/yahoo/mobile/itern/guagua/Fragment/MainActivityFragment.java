@@ -1,20 +1,13 @@
 package com.yahoo.mobile.itern.guagua.Fragment;
 
-import android.content.Context;
-import android.content.Intent;
-import android.os.Handler;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
@@ -22,12 +15,7 @@ import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimat
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.parse.ParseObject;
-
-import com.yahoo.mobile.itern.guagua.Activity.AddPostActivity;
-import com.yahoo.mobile.itern.guagua.Activity.CommentActivity;
-import com.yahoo.mobile.itern.guagua.Activity.MainActivity;
 import com.yahoo.mobile.itern.guagua.Adapter.QuestionCardAdapter;
-import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.Event.QuestionEvent;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
@@ -127,6 +115,7 @@ public class MainActivityFragment extends Fragment {
 
         mList = new ArrayList<>();
         mAdapter = new QuestionCardAdapter(getActivity(), mList);
+        mAdapter.setLikeAnimation(true);
 
         mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(mAdapter);      // wrap for swiping
 

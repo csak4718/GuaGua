@@ -1,5 +1,6 @@
 package com.yahoo.mobile.itern.guagua.Fragment;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
@@ -25,12 +27,20 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.share.Sharer;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
 import com.parse.ParseObject;
 import com.yahoo.mobile.itern.guagua.Application.MainApplication;
+import com.yahoo.mobile.itern.guagua.Event.ShareDuringPostEvent;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
 
+import de.greenrobot.event.EventBus;
 
 
 /**
@@ -52,6 +62,7 @@ public class AddPostActivityFragment extends Fragment {
     boolean aorb;
 
 
+    // To do
     private HorizontalScrollView mScrollBannerBadge;
     private LinearLayout mBannerBadge;
     private ImageButton mImgBtnBadgeSearch;
@@ -59,6 +70,10 @@ public class AddPostActivityFragment extends Fragment {
 
 
     public AddPostActivityFragment() {
+    }
+
+    public boolean getEnableFBshare(){
+        return enableFBshare;
     }
 
     @Override
@@ -195,6 +210,5 @@ public class AddPostActivityFragment extends Fragment {
         final ParseObject community = ((MainApplication) getActivity().getApplication()).currentViewingCommunity;
         ParseUtils.postQuestions(question, optionA, optionB, community);
         Utils.hideSoftKeyboard(getActivity());
-        getActivity().finish();
     }
 }

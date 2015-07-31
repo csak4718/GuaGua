@@ -1,9 +1,13 @@
 package com.yahoo.mobile.itern.guagua.Adapter;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
@@ -25,18 +29,21 @@ import com.facebook.share.widget.ShareDialog;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
+import com.parse.CountCallback;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.Common;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
+import com.yahoo.mobile.itern.guagua.View.CommentButton;
 import com.yahoo.mobile.itern.guagua.View.OptionButton;
 
 import java.util.ArrayList;
@@ -57,6 +64,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     private LayoutInflater mInflater;
 
     private Map<String, Map<String, Object>> cachedQuestion;
+    private boolean mAmin = false;
 
     CallbackManager callbackManager;
     ShareDialog shareDialog;
@@ -100,7 +108,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
-                if(e == null && list != null) {
+                if (e == null && list != null) {
                     mVotedQuestionList.clear();
                     mVotedQuestionList.addAll(list);
                     notifyDataSetChangedWithCache();
@@ -172,51 +180,13 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         notifyDataSetChanged();
     }
 
-
-
-    public static class ViewHolder extends AbstractSwipeableItemViewHolder {
-        public View mView;
-        public ImageView imgProfile;
-        public TextView txtName;
-        public TextView txtTitle;
-        public OptionButton btnA;
-        public OptionButton btnB;
-        public ImageButton shareBtnPost;
-        public ImageButton imgBtnComment;
-        public ImageButton imgBtnLike;
-        public LinearLayout layoutFuncButtons;
-        public Boolean liked = false;
-
-        public ViewHolder(View v) {
-            super(v);
-            Log.d("QDA", "Create viewhoder");
-            mView = v;
-            imgProfile = (ImageView) v.findViewById(R.id.imgProfile);
-            txtName = (TextView) v.findViewById(R.id.txtName);
-            txtTitle = (TextView) v.findViewById(R.id.title);
-            btnA = (OptionButton) v.findViewById(R.id.btnA);
-            btnB = (OptionButton) v.findViewById(R.id.btnB);
-            shareBtnPost = (ImageButton)v.findViewById(R.id.shareBtnPost);
-            imgBtnComment = (ImageButton) v.findViewById(R.id.imgBtnComment);
-            imgBtnLike = (ImageButton) v.findViewById(R.id.imgBtnLike);
-
-            layoutFuncButtons = (LinearLayout) v.findViewById(R.id.layout_function_buttons);
-
-        }
-        @Override
-        public View getSwipeableContainerView() {
-            return mView;
-        }
-
-    }
-
     @Override
     public QuestionCardAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                    int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_question, parent, false);
-
         ViewHolder vh = new ViewHolder(v);
+
         return vh;
     }
 
@@ -297,7 +267,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.btnB.setVoted(false, false, false);
         holder.btnA.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {}
+            public void onClick(View v) {
+            }
         });
         holder.btnB.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -425,6 +396,10 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                         mFavoriteList.add(mQuestion);
                         holder.imgBtnLike.setImageResource(R.drawable.ic_like);
                         holder.liked = true;
+                        if (mAmin == true) {
+                            startLikeButtonAnimation(v);
+                        }
+
                     } else {
                         Log.d("On click", "get dislike");
                         relation.remove(mQuestion);
@@ -448,6 +423,17 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             @Override
             public void onClick(View v) {
                 Utils.gotoOtherUserProfileActivity(mContext, userId, userName, profileImg);
+            }
+        });
+    }
+
+    private void setupCommentButton(final ViewHolder holder, final String postId, final int commentCount) {
+
+        holder.imgBtnComment.setBadgeCount(commentCount);
+        holder.imgBtnComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.gotoCommentActivity(mContext, postId);
             }
         });
     }
@@ -528,15 +514,19 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.btnA.setProgress(progressA);
         holder.btnB.setProgress(progressB);
 
+        setupLikeButton(mQuestion, holder);
 
-        holder.imgBtnComment.setOnClickListener(new View.OnClickListener() {
+
+        ParseRelation<ParseObject> commentsRelation = mQuestion.getRelation(Common.OBJECT_POST_COMMENTS);
+        commentsRelation.getQuery().countInBackground(new CountCallback() {
             @Override
-            public void onClick(View v) {
-                Utils.gotoCommentActivity(mContext, objectId);
+            public void done(int count, ParseException e) {
+                setupCommentButton(holder, mQuestion.getObjectId(), count);
+                cache.put(Common.QUESTION_CARD_COMMENTS_NUM, count);
             }
         });
 
-        setupLikeButton(mQuestion, holder);
+
         setupCardVotedAction(holder, mQuestion, relation, cache);
     }
 
@@ -552,6 +542,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         final int voteB = (int) cache.get(Common.QUESTION_CARD_QB_NUM);
         final Boolean isVoted = (Boolean) cache.get(Common.QUESTION_CARD_IS_VOTED);
         final Boolean isVotedForA = (Boolean) cache.get(Common.QUESTION_CARD_VOTE_FOR_A);
+        final int commentNum = (int) cache.get(Common.QUESTION_CARD_COMMENTS_NUM);
 
         holder.txtName.setText(nickName);
         if(profileImg != null) {
@@ -581,6 +572,67 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         }
 
         setupLikeButton(mQuestion, holder);
+        setupCommentButton(holder, mQuestion.getObjectId(), commentNum);
+    }
+
+    public void startLikeButtonAnimation(View v){
+        final ImageView img = new ImageView(mContext);
+        img.setImageResource(R.drawable.ic_like);
+        final int[] xy = new int[2];
+        final int[] fxy = new int[2];
+        v.getLocationInWindow(xy);
+        ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(v.getHeight(),v.getHeight());
+
+        //params.setMargins(100,100,100,100);
+        img.setLayoutParams(params);
+        //RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(xy[0],xy[1]);
+        //RelativeLayout rl = (RelativeLayout) v.getRootView().findViewById(R.id.main_layout);
+        final ViewGroup rl = (ViewGroup) v.getRootView();
+        View ap = rl.findViewById(R.id.action_profile);
+        ap.getLocationInWindow(fxy);
+        int w = ap.getHeight();
+        //img.setLayoutParams(params);
+        rl.addView(img);
+        Log.d("Location", String.valueOf(xy[0]) + ' ' + String.valueOf(xy[1]));
+        //Animation am = new TranslateAnimation(img.getX(),img.getY(),10,500);
+        //Log.d("XY In windows", String.valueOf(xy[0]) + ' ' + String.valueOf(xy[1]));
+        //v.getLocationOnScreen(xy);
+        //Log.d("XY On screens",String.valueOf(xy[0])+' '+String.valueOf(xy[1]));
+        //Animation am = new TranslateAnimation(xy[0],fxy[0]+w/4,xy[1],fxy[1]+w/4);
+        fxy[0] = fxy[0]+w/4;
+        fxy[1] = fxy[1]+w/4;
+        ValueAnimator am = ValueAnimator.ofFloat(0,1);
+        am.setDuration(1000);
+        am.setRepeatCount(0);
+        am.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                rl.removeView(img);
+            }
+        });
+        am.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = ((Float) (animation.getAnimatedValue()))
+                        .floatValue();
+                img.setTranslationX((float) (xy[0] + (fxy[0] - xy[0]) * value));
+                img.setTranslationY((float) (xy[1] + (fxy[1] - xy[1]) * Math.sin((value) * Math
+                        .PI / 2)));
+                if (value < 0.8) {
+                    img.setAlpha((int) (255 * (1 - value)));
+                }
+                // Set translation of your view here. Position can be calculated
+                // out of value. This code should move the view in a half circle.
+
+                /*if(value>0.5){
+                    img.setImageAlpha((int)(80*(1-value)));
+                }*/
+            }
+        });
+        //img.setAnimation(am);
+        //am.startNow();
+        am.start();
     }
 
     @Override
@@ -627,5 +679,44 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
     @Override
     public void onPerformAfterSwipeReaction(ViewHolder holder, int position, int result, int reaction) {
+    }
+
+    public void setLikeAnimation(boolean b){
+        mAmin = b;
+    }
+
+
+
+    public static class ViewHolder extends AbstractSwipeableItemViewHolder {
+        public View mView;
+        public ImageView imgProfile;
+        public TextView txtName;
+        public TextView txtTitle;
+        public OptionButton btnA;
+        public OptionButton btnB;
+        public ImageButton shareBtnPost;
+        public CommentButton imgBtnComment;
+        public ImageButton imgBtnLike;
+        public LinearLayout layoutFuncButtons;
+        public Boolean liked = false;
+
+        public ViewHolder(View v) {
+            super(v);
+            mView = v;
+            imgProfile = (ImageView) v.findViewById(R.id.imgProfile);
+            txtName = (TextView) v.findViewById(R.id.txtName);
+            txtTitle = (TextView) v.findViewById(R.id.title);
+            btnA = (OptionButton) v.findViewById(R.id.btnA);
+            btnB = (OptionButton) v.findViewById(R.id.btnB);
+            shareBtnPost = (ImageButton)v.findViewById(R.id.shareBtnPost);
+            imgBtnComment = (CommentButton) v.findViewById(R.id.imgBtnComment);
+            imgBtnLike = (ImageButton) v.findViewById(R.id.imgBtnLike);
+            layoutFuncButtons = (LinearLayout) v.findViewById(R.id.layout_function_buttons);
+        }
+        @Override
+        public View getSwipeableContainerView() {
+            return mView;
+        }
+
     }
 }

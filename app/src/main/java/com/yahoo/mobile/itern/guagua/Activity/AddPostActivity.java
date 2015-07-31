@@ -13,17 +13,63 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.share.Sharer;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
 import com.parse.ParseObject;
 import com.yahoo.mobile.itern.guagua.Application.MainApplication;
+import com.yahoo.mobile.itern.guagua.Event.ShareDuringPostEvent;
 import com.yahoo.mobile.itern.guagua.Fragment.AddPostActivityFragment;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
 
+import de.greenrobot.event.EventBus;
+
 
 public class AddPostActivity extends ActionBarActivity {
 
     private AddPostActivityFragment addPostFragment;
+
+    //These variables are used to implement FB sharing during posting
+    CallbackManager callbackManager;
+    ShareDialog shareDialog;
+
+    @Override
+    public void onStart() {
+        EventBus.getDefault().register(this);
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    public void onEvent(ShareDuringPostEvent event){
+        // produce URL in onEvent()
+        Log.d("enableFBshare = ", String.valueOf(addPostFragment.getEnableFBshare()));
+        if (addPostFragment.getEnableFBshare()){
+            if (ShareDialog.canShow(ShareLinkContent.class)) {
+                ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                        .setContentTitle("呱呱 - 投票結果")
+                        .setContentDescription(event.mPost.getString("prayer"))
+                        .setContentUrl(Uri.parse("https://aqueous-falls-3271.herokuapp" +
+                                ".com/guagua/" + event.mPost.getObjectId() + "/results/"))
+                        .build();
+
+                Log.d("objectId = ", event.mPost.getObjectId());
+
+                shareDialog.show(linkContent);
+            }
+
+        }
+        finish();
+    }
 
     private void setupActionBar() {
         ActionBar actionBar = getSupportActionBar();
@@ -36,7 +82,23 @@ public class AddPostActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_post);
+
         setupActionBar();
+
+        // Facebook
+        callbackManager = CallbackManager.Factory.create();
+        shareDialog = new ShareDialog(this);
+
+        shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
+            public void onSuccess(Sharer.Result results) {
+            }
+
+            public void onCancel() {
+            }
+
+            public void onError(FacebookException e) {
+            }
+        });
 
         addPostFragment = new AddPostActivityFragment();
         getSupportFragmentManager().beginTransaction()

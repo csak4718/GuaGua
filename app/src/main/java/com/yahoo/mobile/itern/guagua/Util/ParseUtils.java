@@ -21,6 +21,7 @@ import com.yahoo.mobile.itern.guagua.Event.CommentEvent;
 import com.yahoo.mobile.itern.guagua.Event.CommunityEvent;
 import com.yahoo.mobile.itern.guagua.Event.MyQuestionsEvent;
 import com.yahoo.mobile.itern.guagua.Event.QuestionEvent;
+import com.yahoo.mobile.itern.guagua.Event.ShareDuringPostEvent;
 import com.yahoo.mobile.itern.guagua.Event.UserCommunityEvent;
 
 import java.io.ByteArrayOutputStream;
@@ -126,24 +127,6 @@ public class ParseUtils {
             }
         });
     }
-    /*
-     * get comments related to a question
-     */
-    static public void getPostComments(String postObjectId) {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery(Common.OBJECT_COMMENT);
-        query.whereEqualTo("PostId", postObjectId);
-        query.orderByAscending("updatedAt");
-        query.findInBackground(new FindCallback<ParseObject>() {
-            public void done(List<ParseObject> commentList, ParseException e) {
-                if (e == null) {
-                    Log.d("comments", "Retrieved " + commentList.size() + " comments");
-                    EventBus.getDefault().post(new CommentEvent(commentList));
-                } else {
-                    Log.d("comments", "Error: " + e.getMessage());
-                }
-            }
-        });
-    }
 
     static public void postQuestions(String question, String optionA, String optionB, final ParseObject community) {
         final ParseObject mPost = new ParseObject(Common.OBJECT_POST);
@@ -168,34 +151,16 @@ public class ParseUtils {
                 user.saveInBackground();
 
                 getCommunityQuestions(community);
+
+                EventBus.getDefault().post(new ShareDuringPostEvent(mPost));
             }
         });
-    }
-    static public void postComment(String comment, final String postId, final Boolean refreshList) {
 
-        ParseUser currentUser = ParseUser.getCurrentUser();
-
-        ParseObject mComment = new ParseObject(Common.OBJECT_COMMENT);
-        mComment.put(Common.OBJECT_COMMENT_POSTID, postId);
-        mComment.put(Common.OBJECT_COMMENT_MSG, comment);
-        mComment.put(Common.OBJECT_COMMENT_USER, currentUser);
-        mComment.put(Common.OBJECT_COMMENT_USER_ID, currentUser.getObjectId());
-        mComment.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e == null) {
-                    if (refreshList) {
-                        getPostComments(postId);
-                    }
-                } else {
-
-                }
-            }
-        });
     }
 
     static public void getAllCommunities() {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Community");
+        // exclude taiwan community
         query.whereNotEqualTo("objectId", "wtgxgSpmNH");
         query.orderByDescending("updatedAt");
         query.findInBackground(new FindCallback<ParseObject>() {
