@@ -63,6 +63,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     private LayoutInflater mInflater;
 
     private Map<String, Map<String, Object>> cachedQuestion;
+    private boolean mAmin = false;
 
     CallbackManager callbackManager;
     ShareDialog shareDialog;
@@ -676,6 +677,10 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
     @Override
     public void onPerformAfterSwipeReaction(ViewHolder holder, int position, int result, int reaction) {
+    }
+
+    public void setLikeAnimation(boolean b){
+        mAmin = b;
     }
 
 
