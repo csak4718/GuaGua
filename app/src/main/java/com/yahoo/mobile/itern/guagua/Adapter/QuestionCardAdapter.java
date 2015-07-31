@@ -64,6 +64,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     private LayoutInflater mInflater;
 
     private Map<String, Map<String, Object>> cachedQuestion;
+    private boolean mAmin = false;
 
     CallbackManager callbackManager;
     ShareDialog shareDialog;
@@ -395,7 +396,10 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                         mFavoriteList.add(mQuestion);
                         holder.imgBtnLike.setImageResource(R.drawable.ic_like);
                         holder.liked = true;
-                        startLikeButtonAnimation(v);
+                        if (mAmin == true){
+                            startLikeButtonAnimation(v);
+                        }
+
                     } else {
                         Log.d("On click", "get dislike");
                         relation.remove(mQuestion);
@@ -679,6 +683,10 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
     @Override
     public void onPerformAfterSwipeReaction(ViewHolder holder, int position, int result, int reaction) {
+    }
+
+    public void setLikeAnimation(boolean b){
+        mAmin = b;
     }
 
 
