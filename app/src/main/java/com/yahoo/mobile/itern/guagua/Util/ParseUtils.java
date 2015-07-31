@@ -21,6 +21,7 @@ import com.yahoo.mobile.itern.guagua.Event.CommentEvent;
 import com.yahoo.mobile.itern.guagua.Event.CommunityEvent;
 import com.yahoo.mobile.itern.guagua.Event.MyQuestionsEvent;
 import com.yahoo.mobile.itern.guagua.Event.QuestionEvent;
+import com.yahoo.mobile.itern.guagua.Event.ShareDuringPostEvent;
 import com.yahoo.mobile.itern.guagua.Event.UserCommunityEvent;
 
 import java.io.ByteArrayOutputStream;
@@ -168,8 +169,11 @@ public class ParseUtils {
                 user.saveInBackground();
 
                 getCommunityQuestions(community);
+
+                EventBus.getDefault().post(new ShareDuringPostEvent(mPost));
             }
         });
+
     }
     static public void postComment(String comment, final String postId, final Boolean refreshList) {
 
