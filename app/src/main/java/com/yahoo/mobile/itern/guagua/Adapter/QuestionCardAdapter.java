@@ -34,7 +34,6 @@ import com.parse.ParseObject;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-import com.yahoo.mobile.itern.guagua.Event.OtherUserProfileEvent;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.Common;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
@@ -44,8 +43,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * Created by cmwang on 7/16/15.
@@ -81,7 +78,19 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                 mVotedQuestionList.clear();
                 mVotedQuestionList.addAll(list);
             }
-        } catch (ParseException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateFavoriteListSync() {
+        try {
+            List<ParseObject> list = ParseUser.getCurrentUser().getRelation(Common.OBJECT_USER_LIKES).getQuery().find();
+            if(list != null) {
+                mFavoriteList.clear();
+                mFavoriteList.addAll(list);
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -124,8 +133,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         mFavoriteList = new ArrayList<>();
         mVotedQuestionList = new ArrayList<>();
 
-        updateFavoriteListAsync();
-        updateVotedQuestionListAsync();
+        updateFavoriteListSync();
+        updateVotedQuestionListSync();
 
         mVisibleQuestionList.addAll(mAllQuestionList);
         mInflater = LayoutInflater.from(context);

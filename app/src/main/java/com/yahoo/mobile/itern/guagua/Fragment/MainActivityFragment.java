@@ -44,7 +44,7 @@ import de.greenrobot.event.EventBus;
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment {
-    
+
     private View mView;
     private FloatingActionButton mBtnAddPost;
     private RecyclerView mRecyclerView;
