@@ -21,6 +21,8 @@ import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -35,7 +37,7 @@ public class CommunityActivity extends FragmentActivity implements GoogleApiClie
     private final String TAG = "CommunityActivity";
 
     CommunityFragment mCommunityFragement;
-    MapFragment mMapFragment;
+    public MapFragment mMapFragment;
 
     public ParseObject mCurCommunity;
     private List<ParseObject> mCommunities = new ArrayList<>();
@@ -186,5 +188,30 @@ public class CommunityActivity extends FragmentActivity implements GoogleApiClie
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.community_content, mCommunityFragement)
                 .commit();
+    }
+
+    public void updateCommunityList(){
+        Collections.sort(mCommunities, new Comparator<ParseObject>() {
+            int calcDistance(ParseObject com){
+                Location comLocation = new Location(LocationManager.GPS_PROVIDER);
+                comLocation.setLatitude(Double.parseDouble(com.getString("lat")));
+                comLocation.setLongitude(Double.parseDouble(com.getString("long")));
+
+                if(mLastLocation != null)
+                    return (int)mLastLocation.distanceTo(comLocation);
+                else
+                    return (int)1E15;
+            }
+
+            @Override
+            public int compare(ParseObject lhs, ParseObject rhs) {
+                return calcDistance(lhs) - calcDistance(rhs);
+            }
+        });
+    }
+
+    public List<ParseObject> getAllCommunities(){
+        updateCommunityList();
+        return mCommunities;
     }
 }

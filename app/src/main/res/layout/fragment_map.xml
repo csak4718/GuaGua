@@ -9,7 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-
     <android.support.v7.widget.SearchView
         android:id="@+id/map_search_view"
         android:layout_width="match_parent"
@@ -20,6 +19,14 @@
         android:iconifiedByDefault="false"
         android:layout_alignParentTop="true"/>
 
+    <ListView
+        android:id="@+id/list_suggestion"
+        android:textSize="24dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/cyan"
+        android:layout_below="@+id/map_search_view"/>
+
     <ImageButton
         android:id="@+id/next_button"
         android:layout_gravity="center"
@@ -29,6 +36,7 @@
         android:padding="15dp"
         android:background="@color/cyan"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"/>
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
 
 </RelativeLayout>
