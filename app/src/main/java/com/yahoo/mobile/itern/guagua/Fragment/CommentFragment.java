@@ -28,6 +28,9 @@ import de.greenrobot.event.EventBus;
  * Created by cmwang on 7/20/15.
  */
 public class CommentFragment extends Fragment {
+
+    private ParseObject mQuestion;
+
     private View mView;
     private EditText mEdtCommentText;
     private Button mBtnCommentSend;
