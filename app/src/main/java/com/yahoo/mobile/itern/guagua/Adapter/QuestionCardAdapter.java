@@ -1,5 +1,8 @@
 package com.yahoo.mobile.itern.guagua.Adapter;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -425,6 +428,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                         mFavoriteList.add(mQuestion);
                         holder.imgBtnLike.setImageResource(R.drawable.ic_like);
                         holder.liked = true;
+                        startLikeButtonAnimation(v);
                     } else {
                         Log.d("On click", "get dislike");
                         relation.remove(mQuestion);
@@ -581,6 +585,67 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         }
 
         setupLikeButton(mQuestion, holder);
+    }
+
+
+    public void startLikeButtonAnimation(View v){
+        final ImageView img = new ImageView(mContext);
+        img.setImageResource(R.drawable.ic_like);
+        final int[] xy = new int[2];
+        final int[] fxy = new int[2];
+        v.getLocationInWindow(xy);
+        ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(v.getHeight(),v.getHeight());
+
+        //params.setMargins(100,100,100,100);
+        img.setLayoutParams(params);
+        //RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(xy[0],xy[1]);
+        //RelativeLayout rl = (RelativeLayout) v.getRootView().findViewById(R.id.main_layout);
+        final ViewGroup rl = (ViewGroup) v.getRootView();
+        View ap = rl.findViewById(R.id.action_profile);
+        ap.getLocationInWindow(fxy);
+        int w = ap.getHeight();
+        //img.setLayoutParams(params);
+        rl.addView(img);
+        Log.d("Location", String.valueOf(xy[0]) + ' ' + String.valueOf(xy[1]));
+        //Animation am = new TranslateAnimation(img.getX(),img.getY(),10,500);
+        //Log.d("XY In windows", String.valueOf(xy[0]) + ' ' + String.valueOf(xy[1]));
+        //v.getLocationOnScreen(xy);
+        //Log.d("XY On screens",String.valueOf(xy[0])+' '+String.valueOf(xy[1]));
+        //Animation am = new TranslateAnimation(xy[0],fxy[0]+w/4,xy[1],fxy[1]+w/4);
+        fxy[0] = fxy[0]+w/4;
+        fxy[1] = fxy[1]+w/4;
+        ValueAnimator am = ValueAnimator.ofFloat(0,1);
+        am.setDuration(1000);
+        am.setRepeatCount(0);
+        am.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                rl.removeView(img);
+            }
+        });
+        am.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = ((Float) (animation.getAnimatedValue()))
+                        .floatValue();
+                img.setTranslationX((float) (xy[0] + (fxy[0] - xy[0]) * value));
+                img.setTranslationY((float) (xy[1] + (fxy[1] - xy[1]) * Math.sin((value) * Math
+                        .PI / 2)));
+                if (value < 0.8) {
+                    img.setAlpha((int) (255 * (1 - value)));
+                }
+                // Set translation of your view here. Position can be calculated
+                // out of value. This code should move the view in a half circle.
+
+                /*if(value>0.5){
+                    img.setImageAlpha((int)(80*(1-value)));
+                }*/
+            }
+        });
+        //img.setAnimation(am);
+        //am.startNow();
+        am.start();
     }
 
     @Override
