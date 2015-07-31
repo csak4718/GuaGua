@@ -185,8 +185,6 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                 .inflate(R.layout.card_question, parent, false);
         ViewHolder vh = new ViewHolder(v);
 
-        vh.commentBadge = new BadgeView(parent.getContext(), vh.imgBtnComment);
-
         return vh;
     }
 
@@ -710,8 +708,9 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             shareBtnPost = (ImageButton)v.findViewById(R.id.shareBtnPost);
             imgBtnComment = (ImageButton) v.findViewById(R.id.imgBtnComment);
             imgBtnLike = (ImageButton) v.findViewById(R.id.imgBtnLike);
-
             layoutFuncButtons = (LinearLayout) v.findViewById(R.id.layout_function_buttons);
+
+            commentBadge = new BadgeView(v.getContext(), imgBtnComment);
         }
         @Override
         public View getSwipeableContainerView() {
