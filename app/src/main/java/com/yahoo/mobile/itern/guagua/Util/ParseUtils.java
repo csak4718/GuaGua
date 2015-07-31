@@ -18,7 +18,6 @@ import com.parse.SaveCallback;
 import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.Event.CollectionEvent;
 import com.yahoo.mobile.itern.guagua.Event.CommentEvent;
-import com.yahoo.mobile.itern.guagua.Event.CommentSizeEvent;
 import com.yahoo.mobile.itern.guagua.Event.CommunityEvent;
 import com.yahoo.mobile.itern.guagua.Event.MyQuestionsEvent;
 import com.yahoo.mobile.itern.guagua.Event.QuestionEvent;
@@ -140,21 +139,6 @@ public class ParseUtils {
                 if (e == null) {
                     Log.d("comments", "Retrieved " + commentList.size() + " comments");
                     EventBus.getDefault().post(new CommentEvent(commentList));
-                } else {
-                    Log.d("comments", "Error: " + e.getMessage());
-                }
-            }
-        });
-    }
-
-    static public void getPostCommentsSize(String postObjectId){
-        ParseQuery<ParseObject> query = ParseQuery.getQuery(Common.OBJECT_COMMENT);
-        query.whereEqualTo("PostId", postObjectId);
-        query.findInBackground(new FindCallback<ParseObject>() {
-            public void done(List<ParseObject> commentList, ParseException e) {
-                if (e == null) {
-                    Log.d("TEST comments", "Retrieved " + commentList.size() + " comments");
-                    EventBus.getDefault().post(new CommentSizeEvent(commentList));
                 } else {
                     Log.d("comments", "Error: " + e.getMessage());
                 }
