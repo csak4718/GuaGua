@@ -15,6 +15,7 @@ import com.google.android.gms.location.LocationServices;
 import com.parse.ParseObject;
 import com.yahoo.mobile.itern.guagua.Event.CommunityEvent;
 import com.yahoo.mobile.itern.guagua.Fragment.CommunityFragment;
+import com.yahoo.mobile.itern.guagua.Fragment.CommunityListFragment;
 import com.yahoo.mobile.itern.guagua.Fragment.MapFragment;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
@@ -36,12 +37,14 @@ public class CommunityActivity extends FragmentActivity implements GoogleApiClie
 
     private final String TAG = "CommunityActivity";
 
-    CommunityFragment mCommunityFragement;
+    public CommunityFragment mCommunityFragement;
     public MapFragment mMapFragment;
+    public CommunityListFragment mCommunityListFragement;
 
     public ParseObject mCurCommunity;
     private List<ParseObject> mCommunities = new ArrayList<>();
 
+    private Location mCurLocation;
     private Location mLastLocation;
     private GoogleApiClient mGoogleApiClient;
     private LocationManager mLocationManager;
@@ -74,9 +77,10 @@ public class CommunityActivity extends FragmentActivity implements GoogleApiClie
 
         mCommunityFragement = CommunityFragment.newInstance(this);
         mMapFragment = MapFragment.newInstance(this);
+        mCommunityListFragement = CommunityListFragment.newInstance(this);
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.community_content, mCommunityFragement)
+                .replace(R.id.community_content, mCommunityListFragement)
                 .commit();
 
         mLocationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
@@ -100,9 +104,13 @@ public class CommunityActivity extends FragmentActivity implements GoogleApiClie
         mLocationRequest.setInterval(1000); // Update location every second
 
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        mCurLocation  = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         findCurrentCommunity();
+
+
         mMapFragment.setupMap();
+        mCommunityListFragement.setupMap();
     }
 
     @Override
@@ -125,27 +133,9 @@ public class CommunityActivity extends FragmentActivity implements GoogleApiClie
 
 
     public void findCurrentCommunity(){
-        if(mLastLocation == null)
-            return;
 
-        double minDistance = 10E15;
-
-        for(ParseObject com:mCommunities){
-            Location comLocation = new Location(LocationManager.GPS_PROVIDER);
-            comLocation.setLatitude(Double.parseDouble(com.getString("lat")));
-            comLocation.setLongitude(Double.parseDouble(com.getString("long")));
-
-            double distance = mLastLocation.distanceTo(comLocation);
-            Log.d("Community",""+distance+" meters to "+com.get("title"));
-
-            if(distance < minDistance) {
-                minDistance = distance;
-                mCurCommunity = com;
-            }
-        }
-
-        onCommunityChange();
-        return ;
+        updateCommunityList();
+        mCurCommunity = mCommunities.get(0);
     }
 
     public void onCommunityChange(){
@@ -166,7 +156,13 @@ public class CommunityActivity extends FragmentActivity implements GoogleApiClie
     }
 
     public ParseObject getCurCommunity(){
+        findCurrentCommunity();
         return mCurCommunity;
+    }
+
+    public Location getCurrentLocation(){
+        //findCurrentCommunity();
+        return mCurLocation;
     }
 
     public Location getLastLocation(){
@@ -190,6 +186,8 @@ public class CommunityActivity extends FragmentActivity implements GoogleApiClie
                 .commit();
     }
 
+
+    //sort communities with distance to mLastLocation
     public void updateCommunityList(){
         Collections.sort(mCommunities, new Comparator<ParseObject>() {
             int calcDistance(ParseObject com){

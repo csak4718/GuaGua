@@ -93,7 +93,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
 
         mSuggestionList = (ListView)rootView.findViewById(R.id.list_suggestion);
-        mAdapter = new CommunitySuggestionAdapter(mContext, android.R.layout.simple_spinner_item, ((CommunityActivity)mContext).getAllCommunities());
+        mAdapter = new CommunitySuggestionAdapter(mContext, android.R.layout.simple_list_item_1, ((CommunityActivity)mContext).getAllCommunities());
         mSuggestionList.setAdapter(mAdapter);
 
         //mSuggestionSpinner = (Spinner)rootView.findViewById(R.id.spinner_suggestion);
