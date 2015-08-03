@@ -265,10 +265,6 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_search) {
             return true;
         }
-        if (id == R.id.action_profile) {
-            //startActivity(new Intent(this, ProfileSettingActivity.class));
-            startActivity(new Intent(this, PersonalPageActivity.class));
-        }
 
         return super.onOptionsItemSelected(item);
     }

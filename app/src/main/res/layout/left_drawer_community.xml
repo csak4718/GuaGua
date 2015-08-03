@@ -21,11 +21,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
+                android:layout_marginBottom="5dp"
                 android:text="Community"
                 style="?android:attr/textAppearanceMedium"/>
             <ImageView
                 android:layout_width="17dp"
                 android:layout_height="17dp"
+                android:layout_marginTop="5dp"
                 android:layout_alignParentRight="true"
                 android:src="@drawable/setting" />
         </RelativeLayout>
