@@ -21,15 +21,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:layout_marginBottom="5dp"
                 android:text="Community"
                 style="?android:attr/textAppearanceMedium"/>
-            <ImageView
-                android:layout_width="17dp"
-                android:layout_height="17dp"
-                android:layout_marginTop="5dp"
+            <ImageButton
+                android:id="@+id/img_btn_edit_mode"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:layout_alignParentRight="true"
-                android:src="@drawable/setting" />
+                android:background="@drawable/setting" />
         </RelativeLayout>
 
         <ImageView
