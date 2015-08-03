@@ -133,9 +133,9 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
 
 
     public void findCurrentCommunity(){
-
         updateCommunityList();
-        mCurCommunity = mCommunities.get(0);
+        if(mCommunities.size()>0)
+            mCurCommunity = mCommunities.get(0);
     }
 
     public void onCommunityChange(){
@@ -189,21 +189,20 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
 
     //sort communities with distance to mLastLocation
     public void updateCommunityList(){
+        for(ParseObject com:mCommunities){
+            Location comLocation = new Location(LocationManager.GPS_PROVIDER);
+            comLocation.setLatitude(Double.parseDouble(com.getString("lat")));
+            comLocation.setLongitude(Double.parseDouble(com.getString("long")));
+            if(mLastLocation != null)
+                com.put("distance", (int)mLastLocation.distanceTo(comLocation));
+            else
+                com.put("distance", (int)1E15);
+        }
+
         Collections.sort(mCommunities, new Comparator<ParseObject>() {
-            int calcDistance(ParseObject com){
-                Location comLocation = new Location(LocationManager.GPS_PROVIDER);
-                comLocation.setLatitude(Double.parseDouble(com.getString("lat")));
-                comLocation.setLongitude(Double.parseDouble(com.getString("long")));
-
-                if(mLastLocation != null)
-                    return (int)mLastLocation.distanceTo(comLocation);
-                else
-                    return (int)1E15;
-            }
-
             @Override
             public int compare(ParseObject lhs, ParseObject rhs) {
-                return calcDistance(lhs) - calcDistance(rhs);
+                return lhs.getInt("distance") - rhs.getInt("distance");
             }
         });
     }

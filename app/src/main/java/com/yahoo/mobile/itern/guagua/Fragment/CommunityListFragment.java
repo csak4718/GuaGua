@@ -2,16 +2,18 @@ package com.yahoo.mobile.itern.guagua.Fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -38,8 +40,10 @@ public class CommunityListFragment extends Fragment implements OnMapReadyCallbac
     private GoogleMap mMap;
     private MapView mMapView;
     private CommunitySuggestionAdapter mAdapter;
-    private SearchView mSearchView;
+    private SearchView mCommunitySearchView;
     private ListView mSuggestionList;
+    private LinearLayout mEditLocationLayout;
+
 
     public CommunityListFragment() {
     }
@@ -64,19 +68,25 @@ public class CommunityListFragment extends Fragment implements OnMapReadyCallbac
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_community_list, container, false);
 
-        mMapView = (MapView)rootView.findViewById(R.id.map);
-        mMapView.onCreate(savedInstanceState);
-        mMapView.onResume();
-        MapsInitializer.initialize(getActivity());
-        mMapView.getMapAsync(this);
-        mMapView.setOnDragListener(new View.OnDragListener() {
+        mEditLocationLayout = (LinearLayout)rootView.findViewById(R.id.layout_edit_community);
+        mEditLocationLayout.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onDrag(View v, DragEvent event) {
-                Log.d("onDrag", "retuning false");
-                return false;
+            public void onClick(View v) {
+                ((CommunityActivity)mContext).switchToMapFragment();
             }
         });
 
+
+        mMapView = (MapView)rootView.findViewById(R.id.map);
+        mMapView.onCreate(savedInstanceState);
+        mMapView.onResume();
+
+        MapsInitializer.initialize(getActivity());
+        mMapView.getMapAsync(this);
+
+
+        mCommunitySearchView = (SearchView)rootView.findViewById(R.id.search_community);
+        setupCommunitySearchView();
 
         mSuggestionList = (ListView)rootView.findViewById(R.id.list_community_suggestion);
         mAdapter = new CommunitySuggestionAdapter(mContext, R.layout.suggestion_item, ((CommunityActivity)mContext).getAllCommunities());
@@ -135,6 +145,7 @@ public class CommunityListFragment extends Fragment implements OnMapReadyCallbac
             mAdapter.notifyDataSetChanged();
 
             if(showMarker) {
+                mMap.clear();
                 mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(location.getLatitude(), location.getLongitude()))
                         .title(((CommunityActivity) mContext).getCurCommunity().getString("title")))
@@ -144,5 +155,31 @@ public class CommunityListFragment extends Fragment implements OnMapReadyCallbac
         }
 
 
+    }
+
+    public void setupCommunitySearchView(){
+        if(mCommunitySearchView != null){
+            //set text color
+            TextView searchText = (TextView) mCommunitySearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+            if (searchText!=null) {
+                searchText.setTextColor(Color.BLACK);
+                searchText.setHintTextColor(Color.BLACK);
+            }
+
+            mCommunitySearchView.setSubmitButtonEnabled(false);
+            mCommunitySearchView.setIconified(true);
+
+            mCommunitySearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    return false;
+                }
+            });
+        }
     }
 }

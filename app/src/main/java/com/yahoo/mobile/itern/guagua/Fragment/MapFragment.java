@@ -14,8 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -26,7 +24,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.yahoo.mobile.itern.guagua.Activity.CommunityActivity;
-import com.yahoo.mobile.itern.guagua.Adapter.CommunitySuggestionAdapter;
 import com.yahoo.mobile.itern.guagua.R;
 
 import java.util.List;
@@ -43,11 +40,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private Context mContext;
     private MapView mMapView;
     private SearchView mSearchView;
-    private ImageButton mNextButton;
     private GoogleMap mMap;
-    private ListView mSuggestionList;
-    private CommunitySuggestionAdapter mAdapter;
-
 
     public MapFragment() {
     }
@@ -74,32 +67,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
-
-        mNextButton = (ImageButton)rootView.findViewById(R.id.next_button);
-        mNextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (((CommunityActivity) mContext).getCurCommunity() != null) {
-                    ((CommunityActivity) mContext).switchToCommunityFragment();
-                }
-            }
-        });
-
         mMapView = (MapView)rootView.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
         MapsInitializer.initialize(getActivity());
         mMapView.getMapAsync(this);
-
-        mSearchView = (SearchView)rootView.findViewById(R.id.search_community);
-        int rowHeight = mSearchView.getHeight();
-
-        mSuggestionList = (ListView)rootView.findViewById(R.id.list_suggestion);
-        mAdapter = new CommunitySuggestionAdapter(mContext, android.R.layout.simple_list_item_1, ((CommunityActivity)mContext).getAllCommunities());
-        mSuggestionList.setAdapter(mAdapter);
-
-        //mSuggestionSpinner = (Spinner)rootView.findViewById(R.id.spinner_suggestion);
-        //mSuggestionSpinner.setAdapter(mAdapter);
 
         mSearchView = (SearchView)rootView.findViewById(R.id.map_search_view);
         setupSearchView();
@@ -112,18 +84,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             //set text color
             TextView searchText = (TextView) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
             if (searchText!=null) {
-                searchText.setTextColor(Color.WHITE);
-                searchText.setHintTextColor(Color.WHITE);
+                searchText.setTextColor(Color.BLACK);
+                searchText.setHintTextColor(Color.BLACK);
             }
 
             mSearchView.setQueryHint("Search Here");
             mSearchView.setSubmitButtonEnabled(false);
-            mSearchView.setIconified(true);
+            mSearchView.setIconified(false);
 
             mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
-                    mSuggestionList.setVisibility(View.INVISIBLE);
                     new SearchClicked(query).execute();
 
 
@@ -137,7 +108,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
                 @Override
                 public boolean onQueryTextChange(String newText) {
-                    mSuggestionList.setVisibility(View.VISIBLE);
                     return false;
                 }
             });
@@ -199,7 +169,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 .showInfoWindow();
 
         ((CommunityActivity)mContext).updateCommunityList();
-        mAdapter.notifyDataSetChanged();
     }
 
     public void onCommunityChange(){
@@ -256,16 +225,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         protected void onPostExecute(Boolean found) {
             if (found) {
                 updateLocation();
-                /*Location location = ((CommunityActivity)mContext).getLastLocation();
-                LatLng lastLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 15));
 
-                mMap.clear();
-                mMap.addMarker(new MarkerOptions()
-                        .position(lastLatLng)
-                        .title(((CommunityActivity)mContext).getCurCommunity().getString("title")))
-                        .showInfoWindow();
-                        */
             }
         }
     }

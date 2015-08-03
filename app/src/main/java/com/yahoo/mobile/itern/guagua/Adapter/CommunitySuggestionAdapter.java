@@ -19,15 +19,18 @@ import java.util.List;
  */
 
 public class CommunitySuggestionAdapter extends ArrayAdapter<ParseObject> {
-    private final int MAX_SIZE = 3;
+    private final int MAX_SIZE = 10;
     private Context mContext;
     private List<ParseObject> mCommunityList;
+    private List<ParseObject> mVisibleCommunityList;
+
     private int mRowHeight;
 
     public CommunitySuggestionAdapter(Context context, int resourceId, List<ParseObject> communities) {
         super(context, resourceId, communities);
         mContext = context;
         mCommunityList = communities;
+        mVisibleCommunityList = communities;
     }
 
 
@@ -36,13 +39,17 @@ public class CommunitySuggestionAdapter extends ArrayAdapter<ParseObject> {
         if (v == null) {
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = inflater.inflate(R.layout.suggestion_item, null);
-
         }
-        final ParseObject curCommunity = mCommunityList.get(position);
 
+        final ParseObject curCommunity = mCommunityList.get(position);
         if (curCommunity != null){
-            TextView tt = (TextView) v.findViewById(R.id.txt_suggetion_title);
-            tt.setText(curCommunity.getString("title"));
+            TextView communityTitle = (TextView) v.findViewById(R.id.txt_suggetion_title);
+            communityTitle.setText(curCommunity.getString("title"));
+
+            TextView communityDistance = (TextView) v.findViewById(R.id.txt_suggestion_distance);
+            communityDistance.setText(""+curCommunity.getInt("distance")/1000+" km");
+
+
         }
 
         v.setOnClickListener(new View.OnClickListener() {
