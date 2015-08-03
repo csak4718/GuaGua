@@ -5,11 +5,13 @@ import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.SearchView;
+import android.util.Log;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -36,11 +38,8 @@ public class CommunityListFragment extends Fragment implements OnMapReadyCallbac
     private GoogleMap mMap;
     private MapView mMapView;
     private CommunitySuggestionAdapter mAdapter;
-
+    private SearchView mSearchView;
     private ListView mSuggestionList;
-    private TextView mCommunityTitle;
-
-
 
     public CommunityListFragment() {
     }
@@ -51,7 +50,6 @@ public class CommunityListFragment extends Fragment implements OnMapReadyCallbac
         communitylistFragment.mContext = context;
         return communitylistFragment;
     }
-
 
 
     @Override
@@ -65,16 +63,23 @@ public class CommunityListFragment extends Fragment implements OnMapReadyCallbac
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_community_list, container, false);
-        mCommunityTitle = (TextView)rootView.findViewById(R.id.txt_community_title);
 
         mMapView = (MapView)rootView.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
         MapsInitializer.initialize(getActivity());
         mMapView.getMapAsync(this);
+        mMapView.setOnDragListener(new View.OnDragListener() {
+            @Override
+            public boolean onDrag(View v, DragEvent event) {
+                Log.d("onDrag", "retuning false");
+                return false;
+            }
+        });
+
 
         mSuggestionList = (ListView)rootView.findViewById(R.id.list_community_suggestion);
-        mAdapter = new CommunitySuggestionAdapter(mContext, android.R.layout.simple_spinner_item, ((CommunityActivity)mContext).getAllCommunities());
+        mAdapter = new CommunitySuggestionAdapter(mContext, R.layout.suggestion_item, ((CommunityActivity)mContext).getAllCommunities());
         mSuggestionList.setAdapter(mAdapter);
 
         return rootView;
@@ -112,8 +117,14 @@ public class CommunityListFragment extends Fragment implements OnMapReadyCallbac
                         .showInfoWindow();
             }
         });
-    }
 
+        mMapView.setOnDragListener(new View.OnDragListener() {
+            @Override
+            public boolean onDrag(View arg0, DragEvent arg1) {
+                return false;
+            }
+        });
+    }
 
     //make sure the curComunity is setup
     public void updateLocation(Location location, boolean showMarker){

@@ -91,6 +91,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         MapsInitializer.initialize(getActivity());
         mMapView.getMapAsync(this);
 
+        mSearchView = (SearchView)rootView.findViewById(R.id.search_community);
+        int rowHeight = mSearchView.getHeight();
 
         mSuggestionList = (ListView)rootView.findViewById(R.id.list_suggestion);
         mAdapter = new CommunitySuggestionAdapter(mContext, android.R.layout.simple_list_item_1, ((CommunityActivity)mContext).getAllCommunities());

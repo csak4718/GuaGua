@@ -4,7 +4,7 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -32,7 +32,7 @@ import de.greenrobot.event.EventBus;
  * Created by fanwang on 7/22/15.
  */
 
-public class CommunityActivity extends FragmentActivity implements GoogleApiClient.ConnectionCallbacks,
+public class CommunityActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private final String TAG = "CommunityActivity";

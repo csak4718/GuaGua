@@ -19,8 +19,10 @@ import java.util.List;
  */
 
 public class CommunitySuggestionAdapter extends ArrayAdapter<ParseObject> {
+    private final int MAX_SIZE = 3;
     private Context mContext;
     private List<ParseObject> mCommunityList;
+    private int mRowHeight;
 
     public CommunitySuggestionAdapter(Context context, int resourceId, List<ParseObject> communities) {
         super(context, resourceId, communities);
@@ -34,6 +36,7 @@ public class CommunitySuggestionAdapter extends ArrayAdapter<ParseObject> {
         if (v == null) {
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = inflater.inflate(R.layout.suggestion_item, null);
+
         }
         final ParseObject curCommunity = mCommunityList.get(position);
 
@@ -54,12 +57,20 @@ public class CommunitySuggestionAdapter extends ArrayAdapter<ParseObject> {
                 ((CommunityActivity)mContext).mCommunityListFragement.updateLocation(location, true);
                 ((CommunityActivity)mContext).findCurrentCommunity();
 
-
                 notifyDataSetChanged();
             }
         });
 
         return v;
+    }
+
+    @Override
+    public int getCount() {
+        int origSize = super.getCount();
+        if(origSize < MAX_SIZE)
+            return origSize;
+        else
+            return MAX_SIZE;
     }
 
 }
