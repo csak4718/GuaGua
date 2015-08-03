@@ -61,7 +61,7 @@ public class Common {
     public final static String QUESTION_CARD_QA_NUM = "voteA";
     public final static String QUESTION_CARD_QB_NUM = "voteB";
     public final static String QUESTION_CARD_IS_VOTED = "isVoted";
-    public final static String QUESTION_CARD_VOTE_FOR_A = "VotedForA";
+    public final static String QUESTION_CARD_VOTE_OPTION = "votedOption";
     public final static String QUESTION_CARD_COMMENTS_NUM = "commentsNum";
 
 

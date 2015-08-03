@@ -148,6 +148,18 @@ public class ParseUtils {
                 }
                 ParseRelation<ParseObject> relation = user.getRelation(Common.OBJECT_USER_MY_QUESTIONS);
                 relation.add(mPost);
+
+                final ParseObject votedQuestion = new ParseObject(Common.OBJECT_VOTED_QUESTION);
+                votedQuestion.put(Common.OBJECT_VOTED_QUESTION_QID, mPost.getObjectId());
+                votedQuestion.put(Common.OBJECT_VOTED_QUESTION_OPTION, "");
+                try {
+                    votedQuestion.save();
+                    ParseRelation<ParseObject> votedRelation = user.getRelation(Common.OBJECT_USER_VOTED_QUESTIONS);
+                    votedRelation.add(votedQuestion);
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+
                 user.saveInBackground();
 
                 getCommunityQuestions(community);
