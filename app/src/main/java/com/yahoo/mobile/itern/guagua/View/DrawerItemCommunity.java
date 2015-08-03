@@ -74,6 +74,7 @@ public class DrawerItemCommunity extends RelativeLayout {
             mImgIcon.setImageDrawable(mIcon);
         }
     }
+    public void setIconOnClickListener(OnClickListener l) { mImgIcon.setOnClickListener(l); }
     @Override
     public void setOnClickListener(OnClickListener l) {
         mRoot.setOnClickListener(l);

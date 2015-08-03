@@ -630,7 +630,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         //RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(xy[0],xy[1]);
         //RelativeLayout rl = (RelativeLayout) v.getRootView().findViewById(R.id.main_layout);
         final ViewGroup rl = (ViewGroup) v.getRootView();
-        View ap = rl.findViewById(R.id.action_profile);
+        View ap = rl.findViewById(R.id.action_search);
         ap.getLocationInWindow(fxy);
         int w = ap.getHeight();
         //img.setLayoutParams(params);

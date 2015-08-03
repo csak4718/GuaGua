@@ -248,6 +248,11 @@ public class ParseUtils {
                 getUserCommunity(ParseUser.getCurrentUser());
             }
         });
-
+    }
+    static public void removeCommunityFromCurrentUser(final ParseObject community) {
+        ParseUser user = ParseUser.getCurrentUser();
+        ParseRelation<ParseObject> relation = user.getRelation(Common.OBJECT_USER_COMMUNITY_RELATION);
+        relation.remove(community);
+        user.saveInBackground();
     }
 }

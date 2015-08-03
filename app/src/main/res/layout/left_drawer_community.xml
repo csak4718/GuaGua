@@ -23,11 +23,12 @@
                 android:layout_alignParentLeft="true"
                 android:text="Community"
                 style="?android:attr/textAppearanceMedium"/>
-            <ImageView
-                android:layout_width="17dp"
-                android:layout_height="17dp"
+            <ImageButton
+                android:id="@+id/img_btn_edit_mode"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:layout_alignParentRight="true"
-                android:src="@drawable/setting" />
+                android:background="@drawable/setting" />
         </RelativeLayout>
 
         <ImageView

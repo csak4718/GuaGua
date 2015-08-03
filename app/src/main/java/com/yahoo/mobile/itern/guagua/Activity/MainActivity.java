@@ -3,10 +3,6 @@ package com.yahoo.mobile.itern.guagua.Activity;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,23 +10,19 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.parse.GetDataCallback;
-import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -119,6 +111,24 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void setupEditModeButton() {
+        final ImageButton imgBtnEdit;
+        imgBtnEdit = (ImageButton) findViewById(R.id.img_btn_edit_mode);
+        imgBtnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mAdapter.getEditMode()) {
+                    imgBtnEdit.setBackgroundDrawable(getResources().getDrawable(R.drawable.setting));
+                }
+                else {
+                    imgBtnEdit.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_done_black_24dp));
+                }
+                mAdapter.toggleEditMode();
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
     private void setupDrawerLayout() {
 
         mActionBar.setHomeAsUpIndicator(R.drawable.ic_navigation_menu);
@@ -152,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
         setupDrawerProfile();
         setupDrawerFollowing();
         setupDrawerMyQuestion();
+        setupEditModeButton();
 
     }
 
@@ -264,10 +275,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.action_search) {
             return true;
-        }
-        if (id == R.id.action_profile) {
-            //startActivity(new Intent(this, ProfileSettingActivity.class));
-            startActivity(new Intent(this, PersonalPageActivity.class));
         }
 
         return super.onOptionsItemSelected(item);
