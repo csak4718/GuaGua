@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.yahoo.mobile.itern.guagua.R;
+import com.yahoo.mobile.itern.guagua.Util.Common;
 import com.yahoo.mobile.itern.guagua.View.SlidingTabLayout;
 
 import java.util.ArrayList;
@@ -36,6 +37,18 @@ import java.util.List;
 
 public class MyFavoriteFragment extends Fragment {
 
+    private int mtab;
+
+    public static MyFavoriteFragment newInstance(String str) {
+        MyFavoriteFragment myFragment = new MyFavoriteFragment();
+        Log.d("MFF1",str);
+
+        Bundle args = new Bundle();
+        args.putInt("someInt", (str.equals(Common.EXTRA_PERSONAL_MY_QUESTION))?1:0);
+        myFragment.setArguments(args);
+
+        return myFragment;
+    }
     /**
      * This class represents a tab to be displayed by {@link ViewPager} and it's associated
      * {@link SlidingTabLayout}.
@@ -116,6 +129,7 @@ public class MyFavoriteFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mtab = getArguments().getInt("someInt", 0);
 
         // BEGIN_INCLUDE (populate_tabs)
         /**
@@ -137,6 +151,7 @@ public class MyFavoriteFragment extends Fragment {
                 getString(R.string.my_favorite_tag),
                 getString(R.string.my_question_tag)
         ));
+
         // END_INCLUDE (populate_tabs)
     }
 
@@ -193,6 +208,7 @@ public class MyFavoriteFragment extends Fragment {
         });
         // END_INCLUDE (tab_colorizer)
         // END_INCLUDE (setup_slidingtablayout)
+        mViewPager.setCurrentItem(mtab);
     }
     // END_INCLUDE (fragment_onviewcreated)
 
