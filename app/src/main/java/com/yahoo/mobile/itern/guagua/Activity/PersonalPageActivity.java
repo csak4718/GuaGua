@@ -1,7 +1,6 @@
 package com.yahoo.mobile.itern.guagua.Activity;
 
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -11,9 +10,12 @@ import android.view.MenuItem;
 
 import com.yahoo.mobile.itern.guagua.Fragment.MyFavoriteFragment;
 import com.yahoo.mobile.itern.guagua.R;
+import com.yahoo.mobile.itern.guagua.Util.Common;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
 
 public class PersonalPageActivity extends ActionBarActivity {
+
+    public String tab;
 
     private void setupActionBar() {
         ActionBar actionBar = getSupportActionBar();
@@ -28,10 +30,19 @@ public class PersonalPageActivity extends ActionBarActivity {
         setupActionBar();
 
         if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                tab = null;
+            } else {
+                tab = extras.getString(Common.EXTRA_PERSONAL);
+            }
+
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            MyFavoriteFragment fragment = new MyFavoriteFragment();
+            MyFavoriteFragment fragment = MyFavoriteFragment.newInstance(tab);
             transaction.replace(R.id.sample_content_fragment, fragment);
             transaction.commit();
+        } else{
+            tab = (String) savedInstanceState.getSerializable(Common.EXTRA_PERSONAL);
         }
     }
 
