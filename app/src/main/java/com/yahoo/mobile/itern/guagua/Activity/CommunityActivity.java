@@ -1,11 +1,18 @@
 package com.yahoo.mobile.itern.guagua.Activity;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -13,6 +20,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.parse.ParseObject;
+import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.Event.CommunityEvent;
 import com.yahoo.mobile.itern.guagua.Fragment.CommunityFragment;
 import com.yahoo.mobile.itern.guagua.Fragment.CommunityListFragment;
@@ -44,11 +52,13 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     public ParseObject mCurCommunity;
     private List<ParseObject> mCommunities = new ArrayList<>();
 
+    private ActionBar mActionBar;
     private Location mCurLocation;
     private Location mLastLocation;
     private GoogleApiClient mGoogleApiClient;
     private LocationManager mLocationManager;
     private LocationRequest mLocationRequest;
+    private MainApplication mMainApplication;
 
     @Override
     public void onResume() {
@@ -75,6 +85,9 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_community);
 
+        setActionBar();
+
+        mMainApplication = (MainApplication)this.getApplication();
         mCommunityFragement = CommunityFragment.newInstance(this);
         mMapFragment = MapFragment.newInstance(this);
         mCommunityListFragement = CommunityListFragment.newInstance(this);
@@ -211,4 +224,57 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         updateCommunityList();
         return mCommunities;
     }
+
+    public void setActionBar(){
+        mActionBar = getSupportActionBar();
+        mActionBar.setTitle("Explore");
+        mActionBar.setHomeButtonEnabled(true);
+    }
+
+    public void showCommunityDialog(){
+        String curCommunityTitle = mCurCommunity.getString("title");
+
+        Dialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Community Selected")
+                .setMessage("You have selected \"" + curCommunityTitle + "\" community.\n" +
+                        "Please confirm if you want to join \"" + curCommunityTitle + "\" community.")
+                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ParseObject curCommunity = getCurCommunity();
+                        ParseUtils.addCommunityToUser(curCommunity.getObjectId());
+                        mMainApplication.currentViewingCommunity = curCommunity;
+                        Utils.gotoMainActivity(CommunityActivity.this);
+                    }
+                })
+                .setNegativeButton("resume", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // TODO Auto-generated method stub
+
+                    }
+                })
+                .create();
+        dialog.show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_explore, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.explore_done:
+                showCommunityDialog();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 }
