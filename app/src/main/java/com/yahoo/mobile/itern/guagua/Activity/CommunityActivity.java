@@ -4,7 +4,7 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -15,12 +15,15 @@ import com.google.android.gms.location.LocationServices;
 import com.parse.ParseObject;
 import com.yahoo.mobile.itern.guagua.Event.CommunityEvent;
 import com.yahoo.mobile.itern.guagua.Fragment.CommunityFragment;
+import com.yahoo.mobile.itern.guagua.Fragment.CommunityListFragment;
 import com.yahoo.mobile.itern.guagua.Fragment.MapFragment;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -29,17 +32,19 @@ import de.greenrobot.event.EventBus;
  * Created by fanwang on 7/22/15.
  */
 
-public class CommunityActivity extends FragmentActivity implements GoogleApiClient.ConnectionCallbacks,
+public class CommunityActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private final String TAG = "CommunityActivity";
 
-    CommunityFragment mCommunityFragement;
-    MapFragment mMapFragment;
+    public CommunityFragment mCommunityFragement;
+    public MapFragment mMapFragment;
+    public CommunityListFragment mCommunityListFragement;
 
     public ParseObject mCurCommunity;
     private List<ParseObject> mCommunities = new ArrayList<>();
 
+    private Location mCurLocation;
     private Location mLastLocation;
     private GoogleApiClient mGoogleApiClient;
     private LocationManager mLocationManager;
@@ -72,9 +77,10 @@ public class CommunityActivity extends FragmentActivity implements GoogleApiClie
 
         mCommunityFragement = CommunityFragment.newInstance(this);
         mMapFragment = MapFragment.newInstance(this);
+        mCommunityListFragement = CommunityListFragment.newInstance(this);
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.community_content, mCommunityFragement)
+                .replace(R.id.community_content, mCommunityListFragement)
                 .commit();
 
         mLocationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
@@ -98,9 +104,13 @@ public class CommunityActivity extends FragmentActivity implements GoogleApiClie
         mLocationRequest.setInterval(1000); // Update location every second
 
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        mCurLocation  = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         findCurrentCommunity();
+
+
         mMapFragment.setupMap();
+        mCommunityListFragement.setupMap();
     }
 
     @Override
@@ -123,27 +133,9 @@ public class CommunityActivity extends FragmentActivity implements GoogleApiClie
 
 
     public void findCurrentCommunity(){
-        if(mLastLocation == null)
-            return;
-
-        double minDistance = 10E15;
-
-        for(ParseObject com:mCommunities){
-            Location comLocation = new Location(LocationManager.GPS_PROVIDER);
-            comLocation.setLatitude(Double.parseDouble(com.getString("lat")));
-            comLocation.setLongitude(Double.parseDouble(com.getString("long")));
-
-            double distance = mLastLocation.distanceTo(comLocation);
-            Log.d("Community",""+distance+" meters to "+com.get("title"));
-
-            if(distance < minDistance) {
-                minDistance = distance;
-                mCurCommunity = com;
-            }
-        }
-
-        onCommunityChange();
-        return ;
+        updateCommunityList();
+        if(mCommunities.size()>0)
+            mCurCommunity = mCommunities.get(0);
     }
 
     public void onCommunityChange(){
@@ -164,7 +156,13 @@ public class CommunityActivity extends FragmentActivity implements GoogleApiClie
     }
 
     public ParseObject getCurCommunity(){
+        findCurrentCommunity();
         return mCurCommunity;
+    }
+
+    public Location getCurrentLocation(){
+        //findCurrentCommunity();
+        return mCurLocation;
     }
 
     public Location getLastLocation(){
@@ -186,5 +184,31 @@ public class CommunityActivity extends FragmentActivity implements GoogleApiClie
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.community_content, mCommunityFragement)
                 .commit();
+    }
+
+
+    //sort communities with distance to mLastLocation
+    public void updateCommunityList(){
+        for(ParseObject com:mCommunities){
+            Location comLocation = new Location(LocationManager.GPS_PROVIDER);
+            comLocation.setLatitude(Double.parseDouble(com.getString("lat")));
+            comLocation.setLongitude(Double.parseDouble(com.getString("long")));
+            if(mLastLocation != null)
+                com.put("distance", (int)mLastLocation.distanceTo(comLocation));
+            else
+                com.put("distance", (int)1E15);
+        }
+
+        Collections.sort(mCommunities, new Comparator<ParseObject>() {
+            @Override
+            public int compare(ParseObject lhs, ParseObject rhs) {
+                return lhs.getInt("distance") - rhs.getInt("distance");
+            }
+        });
+    }
+
+    public List<ParseObject> getAllCommunities(){
+        updateCommunityList();
+        return mCommunities;
     }
 }

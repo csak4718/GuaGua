@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -41,9 +40,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private Context mContext;
     private MapView mMapView;
     private SearchView mSearchView;
-    private ImageButton mNextButton;
     private GoogleMap mMap;
-
 
     public MapFragment() {
     }
@@ -70,23 +67,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
-
-        mNextButton = (ImageButton)rootView.findViewById(R.id.next_button);
-        mNextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (((CommunityActivity) mContext).getCurCommunity() != null) {
-                    ((CommunityActivity) mContext).switchToCommunityFragment();
-                }
-            }
-        });
-
         mMapView = (MapView)rootView.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
         MapsInitializer.initialize(getActivity());
         mMapView.getMapAsync(this);
-
 
         mSearchView = (SearchView)rootView.findViewById(R.id.map_search_view);
         setupSearchView();
@@ -99,18 +84,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             //set text color
             TextView searchText = (TextView) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
             if (searchText!=null) {
-                searchText.setTextColor(Color.WHITE);
-                searchText.setHintTextColor(Color.WHITE);
+                searchText.setTextColor(Color.BLACK);
+                searchText.setHintTextColor(Color.BLACK);
             }
 
             mSearchView.setQueryHint("Search Here");
             mSearchView.setSubmitButtonEnabled(false);
-            mSearchView.setIconified(true);
+            mSearchView.setIconified(false);
 
             mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
                     new SearchClicked(query).execute();
+
 
                     View view = ((CommunityActivity)mContext).getCurrentFocus();
                     if (view != null) {
@@ -175,6 +161,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         Location location = ((CommunityActivity)mContext).getLastLocation();
         LatLng lastLatLng = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 15));
+
+        mMap.clear();
+        mMap.addMarker(new MarkerOptions()
+                .position(lastLatLng)
+                .title(((CommunityActivity)mContext).getCurCommunity().getString("title")))
+                .showInfoWindow();
+
+        ((CommunityActivity)mContext).updateCommunityList();
     }
 
     public void onCommunityChange(){
@@ -230,15 +224,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         protected void onPostExecute(Boolean found) {
             if (found) {
-                Location location = ((CommunityActivity)mContext).getLastLocation();
-                LatLng lastLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 15));
+                updateLocation();
 
-                mMap.clear();
-                mMap.addMarker(new MarkerOptions()
-                        .position(lastLatLng)
-                        .title(((CommunityActivity)mContext).getCurCommunity().getString("title")))
-                        .showInfoWindow();;
             }
         }
     }
