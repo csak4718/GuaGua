@@ -49,6 +49,7 @@
                 android:background="@android:color/transparent"
                 android:text="VoteText"
                 />
+
         </LinearLayout>
     </FrameLayout>
 
@@ -56,10 +57,15 @@
         android:id="@+id/img_voted"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_toLeftOf="@+id/ghost"
         android:layout_marginLeft="3dp"
         android:src="@drawable/ic_vote"
         android:layout_marginTop="8dp"
         android:visibility="visible"/>
 
+    <View
+        android:id="@+id/ghost"
+        android:layout_alignParentRight="true"
+        android:layout_width="0dp"
+        android:layout_height="0dp"/>
 </RelativeLayout>

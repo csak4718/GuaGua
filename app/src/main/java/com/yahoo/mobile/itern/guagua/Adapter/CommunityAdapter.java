@@ -1,6 +1,5 @@
 package com.yahoo.mobile.itern.guagua.Adapter;
 
-import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -30,6 +29,18 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.View
     MainActivity mActivity;
     List<ParseObject> mList;
     ParseUser mUser;
+
+    boolean mEditMode = false;
+
+    public void setEditMode(boolean enabled) {
+        mEditMode = enabled;
+    }
+    public boolean getEditMode() {
+        return mEditMode;
+    }
+    public void toggleEditMode() {
+        mEditMode = !mEditMode;
+    }
 
     public CommunityAdapter(AppCompatActivity activity, List<ParseObject> list) {
         mActivity = (MainActivity) activity;
@@ -111,23 +122,49 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.View
             });
         }
         else {
-            final ParseObject community = mList.get(position - 2);
-            holder.item.setIcon(mActivity.getResources().getDrawable(R.drawable.pin));
+
+            final int index = position - 2;
+            final ParseObject community = mList.get(index);
+
+            if(!mEditMode) {
+                holder.item.setIcon(mActivity.getResources().getDrawable(R.drawable.pin));
+                holder.item.setIconOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {}
+                });
+                holder.item.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ParseUtils.getCommunityQuestions(community);
+                        mApp.currentViewingCommunity = community;
+                        mUser.put(Common.OBJECT_USER_LAST_VIEWING_COMMUNITY, community);
+                        mUser.saveInBackground();
+                        mActivity.getSupportActionBar().setTitle(community.getString(Common.OBJECT_COMMUNITY_TITLE));
+                        Utils.setCommunityActionBarColor(mActivity);
+                        mActivity.closeDrawer();
+                    }
+                });
+            }
+            else {
+                holder.item.setIcon(mActivity.getResources().getDrawable(R.drawable.delete));
+                holder.item.setIconOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ParseUtils.removeCommunityFromCurrentUser(community);
+                        mList.remove(index);
+                        notifyDataSetChanged();
+                    }
+                });
+                holder.item.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {}
+                });
+            }
+
+
             final String title = community.getString(Common.OBJECT_COMMUNITY_TITLE);
             holder.item.setTitle(title);
-            holder.item.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ParseUtils.getCommunityQuestions(community);
-                    mApp.currentViewingCommunity = community;
-                    mUser.put(Common.OBJECT_USER_LAST_VIEWING_COMMUNITY, community);
-                    mUser.saveInBackground();
 
-                    mActivity.getSupportActionBar().setTitle(community.getString(Common.OBJECT_COMMUNITY_TITLE));
-                    Utils.setCommunityActionBarColor(mActivity);
-                    mActivity.closeDrawer();
-                }
-            });
         }
 
     }
