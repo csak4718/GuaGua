@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingTop="15dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="5dp"
+                android:text="Community"
+                style="?android:attr/textAppearanceMedium"/>
+            <ImageView
+                android:layout_width="17dp"
+                android:layout_height="17dp"
+                android:layout_marginTop="5dp"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/setting" />
+        </RelativeLayout>
+
+        <ImageView
+            android:src="@drawable/divider"
+            android:layout_gravity="left"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view_community"
+            android:scrollbars="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical">
+        <LinearLayout
+            android:id="@+id/drawer_profile_root"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:clickable="true"
+            android:background="#EAEAEA"
+            android:padding="5dp"
+            android:gravity="center_vertical">
+
+            <com.pkmmte.view.CircularImageView
+                android:id="@+id/drawer_img_profile"
+                android:src="@drawable/ic_account_circle_black_48dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp" />
+
+            <TextView
+                android:id="@+id/drawer_txt_name"
+                style="?android:attr/textAppearanceMedium"
+                android:layout_gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#5E5B56"
+                android:text="Rosa Huang"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/drawer_following_root"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:background="#D6D6D6"
+            android:padding="5dp">
+            <ImageView
+                android:src="@drawable/following"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:padding="10dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp" />
+            <TextView
+                style="?android:attr/textAppearanceMedium"
+                android:layout_gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#5E5B56"
+                android:text="Following"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/drawer_my_question_root"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:background="#D6D6D6"
+            android:padding="5dp">
+            <ImageView
+                android:src="@drawable/my_question"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:padding="10dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp" />
+            <TextView
+                style="?android:attr/textAppearanceMedium"
+                android:layout_gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#5E5B56"
+                android:text="My Question"/>
+        </LinearLayout>
+    </LinearLayout>
+
+
+</LinearLayout>
