@@ -37,8 +37,7 @@ public class CommunitySuggestionAdapter extends ArrayAdapter<ParseObject> {
     public View getView(int position, View curView, ViewGroup parent){
         View v = curView;
         if (v == null) {
-            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = inflater.inflate(R.layout.suggestion_item, null);
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.suggestion_item, parent, false);
         }
 
         final ParseObject curCommunity = mCommunityList.get(position);
