@@ -59,13 +59,18 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.View
         if(position == 0) {
             holder.item.setTitle("呱呱");
             holder.item.setIcon(mActivity.getResources().getDrawable(R.drawable.pin));
-            if(mApp.currentViewingCommunity != null) {
-                ParseUtils.getAllQuestions();
-                mApp.currentViewingCommunity = null;
-                mActivity.getSupportActionBar().setTitle(mActivity.getString(R.string.app_name));
-                Utils.setCommunityActionBarColor(mActivity);
-                mActivity.closeDrawer();
-            }
+            holder.item.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(mApp.currentViewingCommunity != null) {
+                        ParseUtils.getAllQuestions();
+                        mApp.currentViewingCommunity = null;
+                        mActivity.getSupportActionBar().setTitle(mActivity.getString(R.string.app_name));
+                        Utils.setCommunityActionBarColor(mActivity);
+                        mActivity.closeDrawer();
+                    }
+                }
+            });
         }
         else if(position == 1) {
             holder.item.setTitle("Taiwan");
