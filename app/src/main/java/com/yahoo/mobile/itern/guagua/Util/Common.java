@@ -50,6 +50,10 @@ public class Common {
     public final static String EXTRA_USER_ID = "userId";
     public final static String EXTRA_USER_NICKNAME = "nickname";
     public final static String EXTRA_USER_PROFILE_IMG = "profile_img";
+    // extra data for launch PersonalPageActivity
+    public final static String EXTRA_PERSONAL = "personal_setting";
+    public final static String EXTRA_PERSONAL_FOLLOWING = "following";
+    public final static String EXTRA_PERSONAL_MY_QUESTION = "my_question";
 
     public final static String QUESTION_CARD_PARSE_USER = "parseUser";
     public final static String QUESTION_CARD_NICK = "nickname";
