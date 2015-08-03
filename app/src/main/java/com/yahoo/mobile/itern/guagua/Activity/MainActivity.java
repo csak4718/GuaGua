@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -24,13 +25,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
+import com.squareup.picasso.Picasso;
 import com.yahoo.mobile.itern.guagua.Adapter.CommunityAdapter;
 import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.Event.UserCommunityEvent;
@@ -52,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
 
+
     private RecyclerView communityRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private CommunityAdapter mAdapter;
@@ -64,6 +69,54 @@ public class MainActivity extends AppCompatActivity {
 
     public void closeDrawer() {
         mDrawerLayout.closeDrawers();
+    }
+
+
+    private void setupDrawerProfile() {
+        LinearLayout mRoot;
+        ImageView imgProfile;
+        TextView txtName;
+        ParseUser user = ParseUser.getCurrentUser();
+
+        mRoot = (LinearLayout) findViewById(R.id.drawer_profile_root);
+        imgProfile = (ImageView) findViewById(R.id.drawer_img_profile);
+        txtName = (TextView) findViewById(R.id.drawer_txt_name);
+
+        ParseFile imgFile = user.getParseFile(Common.OBJECT_USER_PROFILE_PIC);
+        Uri imgUri = Uri.parse(imgFile.getUrl());
+
+        txtName.setText(user.getString(Common.OBJECT_USER_NICK));
+        Picasso.with(this).load(imgUri.toString()).into(imgProfile);
+
+        mRoot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, ProfileSettingActivity.class));
+            }
+        });
+    }
+    private void setupDrawerFollowing() {
+        LinearLayout mRoot = (LinearLayout) findViewById(R.id.drawer_following_root);
+        mRoot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent it = new Intent(MainActivity.this, PersonalPageActivity.class);
+                it.putExtra(Common.EXTRA_PERSONAL, Common.EXTRA_PERSONAL_FOLLOWING);
+                startActivity(it);
+            }
+        });
+
+    }
+    private void setupDrawerMyQuestion() {
+        LinearLayout mRoot = (LinearLayout) findViewById(R.id.drawer_my_question_root);
+        mRoot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent it = new Intent(MainActivity.this, PersonalPageActivity.class);
+                it.putExtra(Common.EXTRA_PERSONAL, Common.EXTRA_PERSONAL_MY_QUESTION);
+                startActivity(it);
+            }
+        });
     }
 
     private void setupDrawerLayout() {
@@ -95,6 +148,10 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new CommunityAdapter(this, mList);
         communityRecyclerView.setLayoutManager(mLayoutManager);
         communityRecyclerView.setAdapter(mAdapter);
+
+        setupDrawerProfile();
+        setupDrawerFollowing();
+        setupDrawerMyQuestion();
 
     }
 
