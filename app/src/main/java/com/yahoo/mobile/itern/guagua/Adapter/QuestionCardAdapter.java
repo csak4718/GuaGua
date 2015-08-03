@@ -7,7 +7,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
@@ -36,7 +35,6 @@ import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -388,7 +386,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                 if (currentUser != null) {
                     // do stuff with the user
                     currentUser.getRelation("likes");
-                    ParseRelation<ParseObject> relation = currentUser.getRelation(Common.OBJECT_USER_LIKES);
+                    ParseRelation<ParseObject> relation = currentUser.getRelation(Common
+                            .OBJECT_USER_LIKES);
                     if (holder.liked == false) {
                         Log.d("On click", "get like");
                         relation.add(mQuestion);
@@ -577,7 +576,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
     public void startLikeButtonAnimation(View v){
         final ImageView img = new ImageView(mContext);
-        img.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+        img.setImageResource(R.drawable.ic_like);
         final int[] xy = new int[2];
         final int[] fxy = new int[2];
         v.getLocationInWindow(xy);
@@ -603,7 +602,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         fxy[1] = fxy[1]+w/4;
         img.setX(xy[0]);
         img.setY(xy[1]);
-        ValueAnimator am = ValueAnimator.ofFloat(0,1);
+        ValueAnimator am = ValueAnimator.ofFloat(0,(float)0.9);
         am.setDuration(1000);
         am.setRepeatCount(0);
         am.addListener(new AnimatorListenerAdapter() {
@@ -619,14 +618,15 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                 float value = ((Float) (animation.getAnimatedValue()))
                         .floatValue();
                 //img.setMaxWidth((int) (18 * value));
-                img.getLayoutParams().width = (int)(18*value);
-                img.getLayoutParams().height = 200;
-                img.requestLayout();
-                /*img.setTranslationX((float) (xy[0] + (fxy[0] - xy[0]) * value));
-                img.setTranslationY((float) (xy[1] + (fxy[1] - xy[1]) * Math.sin((value) * Math.PI / 2)));
+                //img.getLayoutParams().width = (int)(200*value);
+                //img.getLayoutParams().height = 200;
+                //img.requestLayout();
+                img.setTranslationX((float) (xy[0] + (fxy[0] - xy[0]) * value));
+                img.setTranslationY((float) (xy[1] + (fxy[1] - xy[1]) * Math.sin((value) * Math
+                .PI / 2)));
                 if (value < 0.8) {
                     img.setAlpha((int) (255 * (1 - value)));
-                }*/
+                }
                 // Set translation of your view here. Position can be calculated
                 // out of value. This code should move the view in a half circle.
 
@@ -639,6 +639,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         //am.startNow();
         am.start();
     }
+
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {

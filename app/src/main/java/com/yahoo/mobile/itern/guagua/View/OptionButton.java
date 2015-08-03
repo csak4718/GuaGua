@@ -1,6 +1,9 @@
 package com.yahoo.mobile.itern.guagua.View;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -87,7 +90,11 @@ public class OptionButton extends RelativeLayout {
             }
 
             if(voteMe) {
-                imgVoted.setVisibility(VISIBLE);
+                if (animation){
+                    startCheckAnimation();
+                }else {
+                    imgVoted.setVisibility(VISIBLE);
+                }
             }
             else {
                 imgVoted.setVisibility(INVISIBLE);
@@ -124,6 +131,34 @@ public class OptionButton extends RelativeLayout {
     @Override
     public void setOnClickListener(OnClickListener l) {
         mRoot.setOnClickListener(l);
+    }
+
+    public void startCheckAnimation(){
+        final Bitmap bm = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_foot);
+        final View vGhost = mView.findViewById(R.id.ghost);
+        imgVoted.setVisibility(VISIBLE);
+        //RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams();
+        ValueAnimator am = ValueAnimator.ofFloat((float)0.05,1);
+        am.setDuration(1000);
+        am.setRepeatCount(0);
+
+        //imgVoted.setVisibility(VISIBLE);
+        //Log.d("getCheckLoc", String.valueOf(xy[0] + " " + String.valueOf(xy[1])));
+
+        am.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = ((Float) (animation.getAnimatedValue()))
+                        .floatValue();
+                Bitmap temp = Bitmap.createBitmap(bm, 0, 0, (int) (value * bm.getWidth()), bm
+                        .getHeight());
+                imgVoted.setImageBitmap(temp);
+                vGhost.getLayoutParams().width = (int) ((1-value) * bm.getWidth());
+                //imgVoted.setImageBitmap(temp);
+            }
+        });
+
+        am.start();
     }
 
 }
