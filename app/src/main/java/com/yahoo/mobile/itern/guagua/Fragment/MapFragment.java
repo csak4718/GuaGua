@@ -40,6 +40,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private Context mContext;
     private MapView mMapView;
     private SearchView mSearchView;
+    private View mRootView;
     private GoogleMap mMap;
 
     public MapFragment() {
@@ -65,19 +66,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_map, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_map, container, false);
 
-        mMapView = (MapView)rootView.findViewById(R.id.map);
+        mMapView = (MapView)mRootView.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
         MapsInitializer.initialize(getActivity());
         mMapView.getMapAsync(this);
 
-        mSearchView = (SearchView)rootView.findViewById(R.id.map_search_view);
+        mSearchView = (SearchView)mRootView.findViewById(R.id.map_search_view);
         setupSearchView();
-
-        return rootView;
+        return mRootView;
     }
+
+
 
     public void setupSearchView(){
         if(mSearchView != null){
@@ -229,4 +231,5 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             }
         }
     }
+
 }

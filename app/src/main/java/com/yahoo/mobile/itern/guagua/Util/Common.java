@@ -27,6 +27,7 @@ public class Common {
     public final static String OBJECT_POST_QB_NUM = "B";
     public final static String OBJECT_POST_VOTED_USER = "votedUser";
     public final static String OBJECT_POST_COMMENTS = "comments";
+    public final static String OBJECT_POST_CHOICE_QUESTION = "choiceQuestion";
 
     public final static String OBJECT_COMMENT = "Comments";
     public final static String OBJECT_COMMENT_MSG = "msg";
@@ -68,6 +69,9 @@ public class Common {
     public final static String QUESTION_CARD_VOTE_OPTION = "votedOption";
     public final static String QUESTION_CARD_COMMENTS_NUM = "commentsNum";
     public final static String QUESTION_CARD_DATE = "date";
+
+    public final static String SHARED_COMMUNITY_NAME = "community";
+    public final static String SHARED_COMMUNITY_KEY_ORDER = "communityOrder";
 
 
 }

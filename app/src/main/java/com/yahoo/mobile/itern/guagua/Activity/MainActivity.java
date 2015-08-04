@@ -2,6 +2,7 @@ package com.yahoo.mobile.itern.guagua.Activity;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,6 +24,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.animator.RefactoredDefaultItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager;
+import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -38,7 +44,9 @@ import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import de.greenrobot.event.EventBus;
 
@@ -51,13 +59,16 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView communityRecyclerView;
     private LinearLayoutManager mLayoutManager;
-    private CommunityAdapter mAdapter;
+    private CommunityAdapter mCommunityAdapter;
+    private RecyclerView.Adapter mWrappedCommunityAdapter;
+    private RecyclerViewDragDropManager mRecyclerViewDragDropManager;
     private List<ParseObject> mList;
 
     private ActionBar mActionBar;
     private MainActivityFragment mainFragment;
     private Handler handler = new Handler();
     private Runnable filterRunnable;
+
 
     public void closeDrawer() {
         mDrawerLayout.closeDrawers();
@@ -117,14 +128,14 @@ public class MainActivity extends AppCompatActivity {
         imgBtnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mAdapter.getEditMode()) {
+                if(mCommunityAdapter.getEditMode()) {
                     imgBtnEdit.setBackgroundDrawable(getResources().getDrawable(R.drawable.setting));
                 }
                 else {
                     imgBtnEdit.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_done_black_24dp));
                 }
-                mAdapter.toggleEditMode();
-                mAdapter.notifyDataSetChanged();
+                mCommunityAdapter.toggleEditMode();
+                mCommunityAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -151,13 +162,21 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
-
         communityRecyclerView = (RecyclerView) findViewById(R.id.recycler_view_community);
+        mRecyclerViewDragDropManager = new RecyclerViewDragDropManager();
         mLayoutManager = new LinearLayoutManager(this);
+
         mList = new ArrayList<>();
-        mAdapter = new CommunityAdapter(this, mList);
+        mCommunityAdapter = new CommunityAdapter(this, mList);
+        mWrappedCommunityAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(mCommunityAdapter);
+
+        final GeneralItemAnimator animator = new RefactoredDefaultItemAnimator();
+
         communityRecyclerView.setLayoutManager(mLayoutManager);
-        communityRecyclerView.setAdapter(mAdapter);
+        communityRecyclerView.setAdapter(mWrappedCommunityAdapter);
+        communityRecyclerView.setItemAnimator(animator);
+
+        mRecyclerViewDragDropManager.attachRecyclerView(communityRecyclerView);
 
         setupDrawerProfile();
         setupDrawerFollowing();
@@ -188,7 +207,18 @@ public class MainActivity extends AppCompatActivity {
         Log.d("eventbus", "user community event" + event.communityList.size());
         mList.clear();
         mList.addAll(event.communityList);
-        mAdapter.notifyDataSetChanged();
+
+        Map<String, Integer> communityOrder = mCommunityAdapter.getCommunityOrder();
+        for(int i = 0; i < mList.size(); i++) {
+            ParseObject community = mList.get(i);
+            String key = community.getObjectId();
+            if(communityOrder.containsKey(key)) {
+                int toIndex = communityOrder.get(key);
+                Collections.swap(mList, i, toIndex);
+            }
+        }
+        mCommunityAdapter.updateCommunityOrder();
+        mCommunityAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -204,12 +234,41 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onPause() {
+        mRecyclerViewDragDropManager.cancelDrag();
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mRecyclerViewDragDropManager != null) {
+            mRecyclerViewDragDropManager.release();
+            mRecyclerViewDragDropManager = null;
+        }
+
+        if (communityRecyclerView != null) {
+            communityRecyclerView.setItemAnimator(null);
+            communityRecyclerView.setAdapter(null);
+            communityRecyclerView = null;
+        }
+
+        if (mWrappedCommunityAdapter != null) {
+            WrapperAdapterUtils.releaseAll(mWrappedCommunityAdapter);
+            mWrappedCommunityAdapter = null;
+        }
+        mCommunityAdapter = null;
+        mLayoutManager = null;
+        super.onDestroy();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         setupActionBar();
         setupDrawerLayout();
+
         mainFragment = new MainActivityFragment();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.content_frame, mainFragment)

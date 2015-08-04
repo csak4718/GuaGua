@@ -212,8 +212,13 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
         int progressA = (int)(voteA * 100.0 / (voteA + voteB));
         int progressB = (int)(voteB * 100.0 / (voteA + voteB));
-        mQuestion.put("A", voteA);
-        mQuestion.put("B", voteB);
+
+        if(option == "A") {
+            mQuestion.increment(Common.OBJECT_POST_QA_NUM);
+        }
+        if(option == "B") {
+            mQuestion.increment(Common.OBJECT_POST_QB_NUM);
+        }
         holder.btnA.setVoteNum(voteA);
         holder.btnB.setVoteNum(voteB);
 

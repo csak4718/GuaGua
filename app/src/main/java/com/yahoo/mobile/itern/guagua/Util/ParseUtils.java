@@ -128,7 +128,7 @@ public class ParseUtils {
         });
     }
 
-    static public void postQuestions(String question, String optionA, String optionB, final ParseObject community) {
+    static public void postQuestions(String question, String optionA, String optionB, final ParseObject community, final boolean choiceQuestion) {
         final ParseObject mPost = new ParseObject(Common.OBJECT_POST);
         final ParseUser user = ParseUser.getCurrentUser();
         mPost.put(Common.OBJECT_POST_CONTENT, question);
@@ -137,6 +137,7 @@ public class ParseUtils {
         mPost.put(Common.OBJECT_POST_QA_NUM, 0);
         mPost.put(Common.OBJECT_POST_QB_NUM, 0);
         mPost.put(Common.OBJECT_POST_USER, ParseUser.getCurrentUser());
+        mPost.put(Common.OBJECT_POST_CHOICE_QUESTION, choiceQuestion);
 
         mPost.saveInBackground(new SaveCallback() {
             @Override

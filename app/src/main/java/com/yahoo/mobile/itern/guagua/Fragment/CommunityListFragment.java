@@ -7,7 +7,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SearchView;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -128,12 +127,7 @@ public class CommunityListFragment extends Fragment implements OnMapReadyCallbac
             }
         });
 
-        mMapView.setOnDragListener(new View.OnDragListener() {
-            @Override
-            public boolean onDrag(View arg0, DragEvent arg1) {
-                return false;
-            }
-        });
+
     }
 
     //make sure the curComunity is setup
