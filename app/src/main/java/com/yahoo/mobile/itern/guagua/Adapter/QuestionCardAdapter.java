@@ -365,16 +365,6 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         return false;
     }
 
-    private boolean isQuestionVotedForA(ParseObject mQuestion) {
-        final String qid = mQuestion.getObjectId();
-
-        for(ParseObject votedQuestion : mVotedQuestionList) {
-            if(votedQuestion.getString(Common.OBJECT_VOTED_QUESTION_QID).equals(qid)) {
-                return votedQuestion.getString("option").equals("A");
-            }
-        }
-        return false;
-    }
     private String questionVotedOption(ParseObject mQuestion) {
         final String qid = mQuestion.getObjectId();
 
@@ -385,7 +375,6 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         }
         return "";
     }
-
 
 
     private void setupCardVotedAction(final ViewHolder holder, final ParseObject mQuestion, final ParseRelation<ParseUser> relation,
@@ -470,7 +459,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
     private void setupProfileImgListener(final ViewHolder holder, final ParseUser user,
                                          final String userName, final Bitmap profileImg, final String userId) {
-        holder.imgProfile.setOnClickListener(new View.OnClickListener(){
+        holder.imgProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Utils.gotoOtherUserProfileActivity(mContext, userId, userName, profileImg);
@@ -706,6 +695,16 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         final String objectId = mQuestion.getObjectId();
 
         resetCard(holder);
+
+        final boolean choiceQuestion = mQuestion.getBoolean(Common.OBJECT_POST_CHOICE_QUESTION);
+        if(choiceQuestion) {
+            holder.btnA.setVisibility(View.VISIBLE);
+            holder.btnB.setVisibility(View.VISIBLE);
+        }
+        else {
+            holder.btnA.setVisibility(View.GONE);
+            holder.btnB.setVisibility(View.GONE);
+        }
 
         if(cachedQuestion.get(objectId) == null) {
             Map<String, Object> cache = new HashMap<>();
