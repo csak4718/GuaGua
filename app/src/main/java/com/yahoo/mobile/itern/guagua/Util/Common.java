@@ -27,6 +27,7 @@ public class Common {
     public final static String OBJECT_POST_QB_NUM = "B";
     public final static String OBJECT_POST_VOTED_USER = "votedUser";
     public final static String OBJECT_POST_COMMENTS = "comments";
+    public final static String OBJECT_POST_CHOICE_QUESTION = "choiceQuestion";
 
     public final static String OBJECT_COMMENT = "Comments";
     public final static String OBJECT_COMMENT_MSG = "msg";

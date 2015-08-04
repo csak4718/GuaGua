@@ -4,7 +4,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:divider="?android:dividerHorizontal"
-    tools:context="com.yahoo.mobile.itern.guagua.Fragment.AddPostActivityFragment">
+    tools:context="com.yahoo.mobile.itern.guagua.Fragment.AddPostActivityFragment"
+    android:animateLayoutChanges="true">
 
     <EditText
         android:id="@+id/edt_question"
@@ -19,11 +20,11 @@
         android:paddingLeft="10dp"/>
     <View
         android:layout_width="match_parent"
-        android:layout_height="5px"
+        android:layout_height="1dp"
         android:background= "#cccccc" />
 
     <LinearLayout
-        android:id="@+id/ab_buttons"
+        android:id="@+id/option_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -35,7 +36,7 @@
             <EditText
                 android:id="@+id/edt_optA"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_weight="1"
                 android:hint="選項1"
                 android:background="@null"
@@ -55,7 +56,7 @@
         </LinearLayout>
         <View
             android:layout_width="match_parent"
-            android:layout_height="5px"
+            android:layout_height="1dp"
             android:background= "#cccccc" />
         <LinearLayout
             android:layout_width="match_parent"
@@ -64,7 +65,7 @@
             <EditText
                 android:id="@+id/edt_optB"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_weight="1"
                 android:hint="選項2"
                 android:background="@null"
@@ -83,23 +84,46 @@
                 android:background="@android:color/transparent"/>
             <!--android:background="@drawable/ic_local_see_black_48dp"-->
         </LinearLayout>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="20px"
-            android:background= "#cccccc" />
-
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:background= "#cccccc" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <ImageView
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Ask 2 choices question"
+            android:paddingTop="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp"/>
+        <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/fb_imageView"
-            android:src="@drawable/ic_facebook_24dp" />
+            android:checked="true"
+            android:id="@+id/switch_two_choice" />
+
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background= "#cccccc" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
         <TextView
             android:id="@+id/share_text"
             android:layout_width="0dp"
@@ -111,13 +135,15 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:paddingBottom="10dp"/>
-
         <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/share_switch" />
 
-
     </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background= "#cccccc" />
 
 </LinearLayout>

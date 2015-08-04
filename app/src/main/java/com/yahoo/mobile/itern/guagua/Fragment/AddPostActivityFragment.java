@@ -1,6 +1,5 @@
 package com.yahoo.mobile.itern.guagua.Fragment;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,7 +10,6 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
@@ -19,28 +17,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.share.Sharer;
-import com.facebook.share.model.ShareLinkContent;
-import com.facebook.share.widget.ShareDialog;
 import com.parse.ParseObject;
 import com.yahoo.mobile.itern.guagua.Application.MainApplication;
-import com.yahoo.mobile.itern.guagua.Event.ShareDuringPostEvent;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
-
-import de.greenrobot.event.EventBus;
 
 
 /**
@@ -52,14 +39,19 @@ public class AddPostActivityFragment extends Fragment {
 
     View mView;
     EditText edtQuestion;
+
+    LinearLayout optionContainer;
     EditText edtOptA;
     EditText edtOptB;
 
     ImageButton btnCameraA;
     ImageButton btnCameraB;
-    Switch btnSwitch;
+    Switch btnShareFbSwitch;
+    Switch btnTwoChoiceSwitch;
     boolean enableFBshare=false;
     boolean aorb;
+
+    private Boolean mTwoChoiceQuestion = true;
 
     public AddPostActivityFragment() {
     }
@@ -73,6 +65,7 @@ public class AddPostActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_add_post, container, false);
         edtQuestion = (EditText) mView.findViewById(R.id.edt_question);
+        optionContainer = (LinearLayout) mView.findViewById(R.id.option_container);
         edtOptA = (EditText) mView.findViewById(R.id.edt_optA);
         edtOptB = (EditText) mView.findViewById(R.id.edt_optB);
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_local_see_black_48dp);
@@ -80,7 +73,8 @@ public class AddPostActivityFragment extends Fragment {
         btnCameraA.setImageBitmap(sqr2circle(adjustBitmap(bm,bm.getHeight())));
         btnCameraB = (ImageButton) mView.findViewById(R.id.btn_cameraB);
         btnCameraB.setImageBitmap(sqr2circle(adjustBitmap(bm,bm.getHeight())));
-        btnSwitch = (Switch) mView.findViewById(R.id.share_switch);
+        btnTwoChoiceSwitch = (Switch) mView.findViewById(R.id.switch_two_choice);
+        btnShareFbSwitch = (Switch) mView.findViewById(R.id.share_switch);
 
         btnCameraA.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,11 +96,23 @@ public class AddPostActivityFragment extends Fragment {
             }
         });
 
-        btnSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        btnShareFbSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) enableFBshare = true;
                 else enableFBshare = false;
+            }
+        });
+        btnTwoChoiceSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mTwoChoiceQuestion = isChecked;
+                if(mTwoChoiceQuestion) {
+                    optionContainer.setVisibility(View.VISIBLE);
+                }
+                else {
+                    optionContainer.setVisibility(View.GONE);
+                }
             }
         });
 
@@ -191,13 +197,16 @@ public class AddPostActivityFragment extends Fragment {
 
     public void addPost(){
         final String question = edtQuestion.getText().toString();
-        final String optionA = edtOptA.getText().toString();
-        final String optionB = edtOptB.getText().toString();
+        String optionA = "";
+        String optionB = "";
 
-
+        if(mTwoChoiceQuestion) {
+            optionA = edtOptA.getText().toString();
+            optionB = edtOptB.getText().toString();
+        }
 
         final ParseObject community = ((MainApplication) getActivity().getApplication()).currentViewingCommunity;
-        ParseUtils.postQuestions(question, optionA, optionB, community);
+        ParseUtils.postQuestions(question, optionA, optionB, community, mTwoChoiceQuestion);
         Utils.hideSoftKeyboard(getActivity());
     }
 }

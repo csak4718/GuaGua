@@ -157,7 +157,7 @@ public class MainActivityFragment extends Fragment {
             }
         });
         mBtnAddPost.setColorNormal(Utils.getCurrentActionBarColor(getActivity()));
-        
+
         ParseUtils.getCurrentCommunityQuestions(getActivity());
     }
 }
