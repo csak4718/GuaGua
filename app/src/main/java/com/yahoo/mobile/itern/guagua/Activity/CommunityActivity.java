@@ -19,11 +19,17 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.ParseObject;
 import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.Event.CommunityEvent;
 import com.yahoo.mobile.itern.guagua.Fragment.CommunityFragment;
-import com.yahoo.mobile.itern.guagua.Fragment.CommunityListFragment;
+import com.yahoo.mobile.itern.guagua.Fragment.ExploreFragment;
 import com.yahoo.mobile.itern.guagua.Fragment.MapFragment;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
@@ -40,14 +46,14 @@ import de.greenrobot.event.EventBus;
  * Created by fanwang on 7/22/15.
  */
 
-public class CommunityActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks,
+public class CommunityActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks, OnMapReadyCallback,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private final String TAG = "CommunityActivity";
 
     public CommunityFragment mCommunityFragement;
     public MapFragment mMapFragment;
-    public CommunityListFragment mCommunityListFragement;
+    public ExploreFragment mExploreFragement;
 
     public ParseObject mCurCommunity;
     private List<ParseObject> mCommunities = new ArrayList<>();
@@ -60,6 +66,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     private LocationRequest mLocationRequest;
     private MainApplication mMainApplication;
     private MenuItem mExploreDone;
+    private GoogleMap mMap;
 
     @Override
     public void onResume() {
@@ -91,10 +98,10 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         mMainApplication = (MainApplication)this.getApplication();
         mCommunityFragement = CommunityFragment.newInstance(this);
         mMapFragment = MapFragment.newInstance(this);
-        mCommunityListFragement = CommunityListFragment.newInstance(this);
+        mExploreFragement = ExploreFragment.newInstance(this);
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.community_content, mCommunityListFragement)
+                .replace(R.id.community_content, mExploreFragement)
                 .commit();
 
         mLocationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
@@ -119,12 +126,11 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
 
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         mCurLocation  = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         findCurrentCommunity();
 
 
         mMapFragment.setupMap();
-        mCommunityListFragement.setupMap();
+        mExploreFragement.setupMap();
     }
 
     @Override
@@ -141,7 +147,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     public void onLocationChanged(Location location) {
         Log.d(TAG, "Location changed: " + location.toString());
         if(getLastLocation() == null)
-            setLastLocation(location);
+            setCurrentLocation(location);
         findCurrentCommunity();
     }
 
@@ -187,6 +193,11 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         mLastLocation = location;
     }
 
+    public void setCurrentLocation(Location location){
+        mCurLocation = location;
+    }
+
+
 
     public void switchToMapFragment(){
         mExploreDone.setVisible(true);
@@ -198,7 +209,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     public void switchToCommunityFragment(){
         mExploreDone.setVisible(false);
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.community_content, mCommunityListFragement)
+                .replace(R.id.community_content, mExploreFragement)
                 .commit();
     }
 
@@ -282,4 +293,72 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         }
     }
 
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        this.mMap = googleMap;
+
+        //mMap.clear();
+        mMap.setMyLocationEnabled(true);
+
+        if(getLastLocation() == null) {
+            setLastLocation(getCurrentLocation());
+            Location location = this.getLastLocation();
+            updateLocationOnMap(location, false);
+        }
+        else {
+            Location location = this.getLastLocation();
+            updateLocationOnMap(location, false);
+        }
+
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng point) {
+                return;
+                /*Location location = new Location("dummyprovider");
+                location.setLatitude(point.latitude);
+                location.setLongitude(point.longitude);
+                setLastLocation(location);
+                mExploreFragement.mAdapter.notifyDataSetChanged();
+
+                mMap.clear();
+                mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(point.latitude, point.longitude))
+                        .title(getCurCommunity().getString("title")))
+                        .showInfoWindow();
+                */
+            }
+        });
+
+        mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition position) {
+                Log.d("explore","camera change "+ position);
+                LatLng point = position.target;
+                Location location = new Location("dummyprovider");
+                location.setLatitude(point.latitude);
+                location.setLongitude(point.longitude);
+                setLastLocation(location);
+            }
+        });
+
+    }
+
+    public void updateLocationOnMap(Location location, boolean showMarker){
+        if(location != null) {
+            LatLng locationLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLatLng, 15));//zoom level(0-19)
+            mExploreFragement.mAdapter.notifyDataSetChanged();
+
+            if(showMarker) {
+                mMap.clear();
+                mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                        .title(this.getCurCommunity().getString("title")))
+                        .showInfoWindow();
+            }
+
+        }
+
+
+    }
 }

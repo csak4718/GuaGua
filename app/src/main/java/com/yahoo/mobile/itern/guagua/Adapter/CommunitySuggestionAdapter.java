@@ -59,7 +59,7 @@ public class CommunitySuggestionAdapter extends ArrayAdapter<ParseObject> {
                 location.setLongitude(Double.parseDouble(curCommunity.getString("long")));
 
                 ((CommunityActivity)mContext).setLastLocation(location);
-                ((CommunityActivity)mContext).mCommunityListFragement.updateLocation(location, true);
+                ((CommunityActivity)mContext).updateLocationOnMap(location, false);
                 ((CommunityActivity)mContext).findCurrentCommunity();
 
                 //notifyDataSetChanged();
