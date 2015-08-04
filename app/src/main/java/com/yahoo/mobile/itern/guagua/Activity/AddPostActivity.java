@@ -3,6 +3,7 @@ package com.yahoo.mobile.itern.guagua.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 
@@ -142,7 +143,7 @@ public class AddPostActivity extends ActionBarActivity {
         Log.d("Photo", "in result");
         Log.d("Photo", String.valueOf(data == null));
         Log.d("Photo", String.valueOf(requestCode));
-        if (data != null && requestCode == 1234) {
+        if (data != null &&  resultCode == RESULT_OK && requestCode == AddPostActivityFragment.ACTIVITY_SELECT_IMAGE) {
             Log.d("Photo", "in result");
             Uri selectedImageUri = data.getData();
             Log.d("Photo", "getdata");
@@ -162,22 +163,10 @@ public class AddPostActivity extends ActionBarActivity {
             AddPostActivityFragment myf = (AddPostActivityFragment) getSupportFragmentManager().findFragmentById(R.id.add_post_content_frame);
             myf.change_Image(picturePath);
 
-        }else if(data != null && requestCode == 12345){
-            //Bundle extras = data.getExtras();
-            //Bitmap imageBitmap = (Bitmap) extras.get("data");
-            //mImageView.setImageBitmap(imageBitmap);
-            Uri imageUri = data.getData();
-            String[] fileColumn = { MediaStore.Images.Media.DATA };
-            Cursor imageCursor = getContentResolver().query(imageUri,fileColumn, null, null, null);
-            imageCursor.moveToFirst();
-            int ori = imageCursor.getInt(0);
-            Log.d("Photo",String.valueOf(ori));
-            int fileColumnIndex = imageCursor.getColumnIndex(fileColumn[0]);
-            String picturePath = imageCursor.getString(fileColumnIndex);
-            Log.d("Photo", picturePath);
-            Log.d("Photo",String.valueOf(imageUri));
+        }else if(data != null &&  resultCode == RESULT_OK && requestCode == AddPostActivityFragment.CAMERA_REQUEST){
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
             AddPostActivityFragment myf = (AddPostActivityFragment) getSupportFragmentManager().findFragmentById(R.id.add_post_content_frame);
-            myf.change_Image(picturePath);
+            myf.change_Image(photo);
         }
     }
 }

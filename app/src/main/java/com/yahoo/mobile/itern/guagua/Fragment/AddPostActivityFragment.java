@@ -34,8 +34,8 @@ import com.yahoo.mobile.itern.guagua.Util.Utils;
  * A placeholder fragment containing a simple view.
  */
 public class AddPostActivityFragment extends Fragment {
-    final int CAMERA_REQUEST = 12345;
-    final int ACTIVITY_SELECT_IMAGE = 1234;
+    public static final int CAMERA_REQUEST = 12345;
+    public static final int ACTIVITY_SELECT_IMAGE = 1234;
 
     View mView;
     EditText edtQuestion;
@@ -131,6 +131,16 @@ public class AddPostActivityFragment extends Fragment {
             btnCameraB.setImageBitmap(bm);
         }
     }
+    public void change_Image(Bitmap bm){
+        Log.d("Photo", "here");
+        if (aorb == false) {
+            bm = adjustBitmap(bm, btnCameraA.getHeight());
+            btnCameraA.setImageBitmap(bm);
+        }else{
+            bm = adjustBitmap(bm, btnCameraB.getHeight());
+            btnCameraB.setImageBitmap(bm);
+        }
+    }
 
     //Adjust bitmap
     private Bitmap adjustBitmap(Bitmap srcBmp, int side){
@@ -172,8 +182,8 @@ public class AddPostActivityFragment extends Fragment {
 
     private void cameraORgallery(){
         new AlertDialog.Builder(getActivity())
-                .setTitle("Delete entry")
-                .setMessage("Are you sure you want to delete this entry?")
+                .setTitle("Select a picture to upload")
+                .setMessage("From camera or gallery?")
                 .setPositiveButton("Camera", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // continue with delete
