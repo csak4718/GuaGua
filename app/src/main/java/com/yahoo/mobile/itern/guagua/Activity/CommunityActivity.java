@@ -2,17 +2,21 @@ package com.yahoo.mobile.itern.guagua.Activity;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -22,10 +26,10 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.ParseObject;
+import com.pkmmte.view.CircularImageView;
 import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.Event.CommunityEvent;
 import com.yahoo.mobile.itern.guagua.Fragment.CommunityFragment;
@@ -47,7 +51,7 @@ import de.greenrobot.event.EventBus;
  */
 
 public class CommunityActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks, OnMapReadyCallback,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.SnapshotReadyCallback {
 
     private final String TAG = "CommunityActivity";
 
@@ -71,12 +75,12 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     @Override
     public void onResume() {
         super.onResume();
-        mGoogleApiClient.connect();
     }
 
     @Override
     public void onStart() {
         EventBus.getDefault().register(this);
+        mGoogleApiClient.connect();
         super.onStart();
     }
 
@@ -119,15 +123,15 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.d(TAG, "onConnected");
+        Log.d(TAG, "GoogleApiClient connection has been established");
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setInterval(1000); // Update location every second
 
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         mCurLocation  = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        Log.d(TAG, "curLocation is " + mCurLocation);
         findCurrentCommunity();
-
 
         mMapFragment.setupMap();
         mExploreFragement.setupMap();
@@ -146,9 +150,16 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     @Override
     public void onLocationChanged(Location location) {
         Log.d(TAG, "Location changed: " + location.toString());
-        if(getLastLocation() == null)
-            setCurrentLocation(location);
+
+        Location prevLocation = getCurrentLocation();
+        setCurrentLocation(location);
         findCurrentCommunity();
+        mExploreFragement.mAdapter.notifyDataSetChanged();
+
+        if(prevLocation==null && location!=null) {
+            mMapFragment.setupMap();
+            mExploreFragement.setupMap();
+        }
     }
 
 
@@ -173,6 +184,8 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         mCommunities.clear();
         mCommunities.addAll(list);
         findCurrentCommunity();
+        mExploreFragement.mAdapter.notifyDataSetChanged();
+
     }
 
     public ParseObject getCurCommunity(){
@@ -245,30 +258,12 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     }
 
     public void showCommunityDialog(){
-        String curCommunityTitle = mCurCommunity.getString("title");
-
-        Dialog dialog = new AlertDialog.Builder(this)
-                .setTitle("Community Selected")
-                .setMessage("You have selected \"" + curCommunityTitle + "\" community.\n" +
-                        "Please confirm if you want to join \"" + curCommunityTitle + "\" community.")
-                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        ParseObject curCommunity = getCurCommunity();
-                        ParseUtils.addCommunityToUser(curCommunity.getObjectId());
-                        mMainApplication.currentViewingCommunity = curCommunity;
-                        Utils.gotoMainActivity(CommunityActivity.this);
-                    }
-                })
-                .setNegativeButton("resume", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // TODO Auto-generated method stub
-
-                    }
-                })
-                .create();
-        dialog.show();
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        mMap.snapshot(this);
     }
 
     @Override
@@ -307,14 +302,14 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         }
         else {
             Location location = this.getLastLocation();
-            updateLocationOnMap(location, false);
+            updateLocationOnMap(location, true);
         }
-
+/*
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng point) {
                 return;
-                /*Location location = new Location("dummyprovider");
+                Location location = new Location("dummyprovider");
                 location.setLatitude(point.latitude);
                 location.setLongitude(point.longitude);
                 setLastLocation(location);
@@ -325,14 +320,13 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
                         .position(new LatLng(point.latitude, point.longitude))
                         .title(getCurCommunity().getString("title")))
                         .showInfoWindow();
-                */
             }
         });
 
         mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
             public void onCameraChange(CameraPosition position) {
-                Log.d("explore","camera change "+ position);
+                //Log.d("explore","camera change "+ position);
                 LatLng point = position.target;
                 Location location = new Location("dummyprovider");
                 location.setLatitude(point.latitude);
@@ -340,7 +334,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
                 setLastLocation(location);
             }
         });
-
+        */
     }
 
     public void updateLocationOnMap(Location location, boolean showMarker){
@@ -352,13 +346,69 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
             if(showMarker) {
                 mMap.clear();
                 mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(location.getLatitude(), location.getLongitude()))
-                        .title(this.getCurCommunity().getString("title")))
-                        .showInfoWindow();
+                        .position(new LatLng(location.getLatitude(), location.getLongitude())));
+                        //.title(this.getCurCommunity().getString("title")))
+                        //.showInfoWindow();
             }
+        }
+    }
 
+    @Override
+    public void onSnapshotReady(Bitmap bitmap) {
+
+
+        String curCommunityTitle = mCurCommunity.getString("title");
+       //View v = getLayoutInflater().inflate(R.layout.dialog_community_selected, null);
+
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_community_selected);
+
+        CircularImageView image = (CircularImageView) dialog.findViewById(R.id.img_dialog_community_miniature);
+        image.setImageBitmap(cropBmpToRect(bitmap));
+
+        TextView text = (TextView) dialog.findViewById(R.id.txt_dialog_content);
+        text.setText("You have selected \"" + curCommunityTitle + "\".");
+
+        Button dialogButton = (Button) dialog.findViewById(R.id.btn_dialog_confirm_cummunity);
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParseObject curCommunity = getCurCommunity();
+                ParseUtils.addCommunityToUser(curCommunity.getObjectId());
+                mMainApplication.currentViewingCommunity = curCommunity;
+                Utils.gotoMainActivity(CommunityActivity.this);
+                dialog.dismiss();
+            }
+        });
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.R.color.transparent));
+        dialog.show();
+    }
+    public Bitmap cropBmpToRect(Bitmap srcBmp){
+        Bitmap dstBmp;
+        if (srcBmp.getWidth() >= srcBmp.getHeight()){
+
+            dstBmp = Bitmap.createBitmap(
+                    srcBmp,
+                    srcBmp.getWidth()/2 - srcBmp.getHeight()/2,
+                    0,
+                    srcBmp.getHeight(),
+                    srcBmp.getHeight()
+            );
+
+        }else{
+
+            dstBmp = Bitmap.createBitmap(
+                    srcBmp,
+                    0,
+                    srcBmp.getHeight()/2 - srcBmp.getWidth()/2,
+                    srcBmp.getWidth(),
+                    srcBmp.getWidth()
+            );
         }
 
 
+        return dstBmp;
     }
+
 }

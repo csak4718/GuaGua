@@ -70,7 +70,6 @@ public class ExploreFragment extends Fragment {
             }
         });
 
-
         mMapView = (MapView)rootView.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
@@ -122,4 +121,6 @@ public class ExploreFragment extends Fragment {
             });
         }
     }
+
+
 }

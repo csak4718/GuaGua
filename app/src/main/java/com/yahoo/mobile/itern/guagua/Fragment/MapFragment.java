@@ -176,7 +176,7 @@ public class MapFragment extends Fragment {
         protected void onPostExecute(Boolean found) {
             if (found) {
                 Location location = ((CommunityActivity)mContext).getLastLocation();
-                ((CommunityActivity)mContext).updateLocationOnMap(location, false);
+                ((CommunityActivity)mContext).updateLocationOnMap(location, true);
                 ((CommunityActivity)mContext).setLastLocation(location);
             }
         }
