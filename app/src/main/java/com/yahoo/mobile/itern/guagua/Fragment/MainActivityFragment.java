@@ -1,5 +1,6 @@
 package com.yahoo.mobile.itern.guagua.Fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,11 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
+import com.melnykov.fab.FloatingActionButton;
 import com.parse.ParseObject;
 import com.yahoo.mobile.itern.guagua.Adapter.QuestionCardAdapter;
 import com.yahoo.mobile.itern.guagua.Event.QuestionEvent;
@@ -79,6 +80,8 @@ public class MainActivityFragment extends Fragment {
         mAdapter.flushFilter();
         mAdapter.notifyDataSetChangedWithCache();
         mPullToRefreshView.setRefreshing(false);
+
+        mBtnAddPost.setColorNormal(Utils.getCurrentActionBarColor(getActivity()));
         if(Utils.isBrowsingAllCommunity(getActivity())) {
             mBtnAddPost.setVisibility(View.GONE);
         }
@@ -145,13 +148,16 @@ public class MainActivityFragment extends Fragment {
                 });
             }
         });
+
+        mBtnAddPost.attachToRecyclerView(mRecyclerView);
         mBtnAddPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Utils.gotoAddPostActivity(getActivity());
             }
         });
-
+        mBtnAddPost.setColorNormal(Utils.getCurrentActionBarColor(getActivity()));
+        
         ParseUtils.getCurrentCommunityQuestions(getActivity());
     }
 }

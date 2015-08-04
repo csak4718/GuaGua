@@ -61,14 +61,6 @@ public class AddPostActivityFragment extends Fragment {
     boolean enableFBshare=false;
     boolean aorb;
 
-
-    // To do
-    private HorizontalScrollView mScrollBannerBadge;
-    private LinearLayout mBannerBadge;
-    private ImageButton mImgBtnBadgeSearch;
-    private boolean badgeBannerVisible = false;
-
-
     public AddPostActivityFragment() {
     }
 
@@ -89,12 +81,6 @@ public class AddPostActivityFragment extends Fragment {
         btnCameraB = (ImageButton) mView.findViewById(R.id.btn_cameraB);
         btnCameraB.setImageBitmap(sqr2circle(adjustBitmap(bm,bm.getHeight())));
         btnSwitch = (Switch) mView.findViewById(R.id.share_switch);
-
-
-        mScrollBannerBadge = (HorizontalScrollView) mView.findViewById(R.id.scroll_banner_badge);
-        mBannerBadge = (LinearLayout) mView.findViewById(R.id.banner_badge);
-        mImgBtnBadgeSearch = (ImageButton) mView.findViewById(R.id.img_btn_badge_search);
-
 
         btnCameraA.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,6 +193,9 @@ public class AddPostActivityFragment extends Fragment {
         final String question = edtQuestion.getText().toString();
         final String optionA = edtOptA.getText().toString();
         final String optionB = edtOptB.getText().toString();
+
+
+
         final ParseObject community = ((MainApplication) getActivity().getApplication()).currentViewingCommunity;
         ParseUtils.postQuestions(question, optionA, optionB, community);
         Utils.hideSoftKeyboard(getActivity());
