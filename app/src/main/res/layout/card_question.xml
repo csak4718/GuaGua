@@ -68,14 +68,14 @@
 
         <com.yahoo.mobile.itern.guagua.View.OptionButton
             android:id="@+id/btnA"
-            android:layout_width="250dp"
+            android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="10dp"
             />
         <com.yahoo.mobile.itern.guagua.View.OptionButton
             android:id="@+id/btnB"
-            android:layout_width="250dp"
+            android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="15dp"/>
