@@ -59,6 +59,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     private LocationManager mLocationManager;
     private LocationRequest mLocationRequest;
     private MainApplication mMainApplication;
+    private MenuItem mExploreDone;
 
     @Override
     public void onResume() {
@@ -85,7 +86,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_community);
 
-        setActionBar();
+        setupActionBar();
 
         mMainApplication = (MainApplication)this.getApplication();
         mCommunityFragement = CommunityFragment.newInstance(this);
@@ -188,17 +189,18 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
 
 
     public void switchToMapFragment(){
+        mExploreDone.setVisible(true);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.community_content, mMapFragment)
                 .commit();
     }
 
     public void switchToCommunityFragment(){
+        mExploreDone.setVisible(false);
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.community_content, mCommunityFragement)
+                .replace(R.id.community_content, mCommunityListFragement)
                 .commit();
     }
-
 
     //sort communities with distance to mLastLocation
     public void updateCommunityList(){
@@ -225,7 +227,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         return mCommunities;
     }
 
-    public void setActionBar(){
+    public void setupActionBar(){
         mActionBar = getSupportActionBar();
         mActionBar.setTitle("Explore");
         mActionBar.setHomeButtonEnabled(true);
@@ -263,14 +265,17 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_explore, menu);
+
+        mExploreDone = menu.findItem(R.id.item_explore_done);
+        mExploreDone.setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.explore_done:
-                showCommunityDialog();
+            case R.id.item_explore_done:
+                switchToCommunityFragment();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
