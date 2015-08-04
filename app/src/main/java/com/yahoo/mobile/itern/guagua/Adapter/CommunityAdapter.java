@@ -1,11 +1,15 @@
 package com.yahoo.mobile.itern.guagua.Adapter;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableItemViewHolder;
@@ -22,8 +26,11 @@ import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
 import com.yahoo.mobile.itern.guagua.View.DrawerItemCommunity;
 
+import java.lang.reflect.Type;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by cmwang on 8/3/15.
@@ -35,6 +42,10 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.View
     MainActivity mActivity;
     List<ParseObject> mList;
     ParseUser mUser;
+
+    Map<String, Integer> communityOrder;
+    Gson gson;
+    SharedPreferences mPref;
 
     boolean mEditMode = false;
 
@@ -48,11 +59,38 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.View
         mEditMode = !mEditMode;
     }
 
+    public Map<String, Integer> getCommunityOrder() {
+        return communityOrder;
+    }
+
+    public void updateCommunityOrder() {
+        communityOrder.clear();
+        for(int i = 0; i < mList.size(); i++) {
+            ParseObject community = mList.get(i);
+            communityOrder.put(community.getObjectId(), i);
+        }
+        String serializedCommunityOrder = gson.toJson(communityOrder);
+        mPref.edit()
+                .putString(Common.SHARED_COMMUNITY_KEY_ORDER, serializedCommunityOrder)
+                .commit();
+    }
+
     public CommunityAdapter(AppCompatActivity activity, List<ParseObject> list) {
         mActivity = (MainActivity) activity;
         mApp = (MainApplication) mActivity.getApplication();
         mUser = ParseUser.getCurrentUser();
         mList = list;
+
+        mPref = mActivity.getSharedPreferences(Common.SHARED_COMMUNITY_NAME, Context.MODE_PRIVATE);
+        gson = new Gson();
+        if(mPref.contains(Common.SHARED_COMMUNITY_KEY_ORDER)) {
+            String record = mPref.getString(Common.SHARED_COMMUNITY_KEY_ORDER, "");
+            Type type = new TypeToken<HashMap<String, Integer>>(){}.getType();
+            communityOrder = gson.fromJson(record, type);
+        }
+        else {
+            communityOrder = new HashMap<>();
+        }
 
         setHasStableIds(true);
     }
@@ -108,6 +146,7 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.View
             }
             mList.set(toIndex, from);
         }
+        updateCommunityOrder();
         notifyItemMoved(fromPosition, toPosition);
     }
 
@@ -214,11 +253,13 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.View
             else {
                 holder.item.setIcon(mActivity.getResources().getDrawable(R.drawable.delete));
                 holder.item.showHandle();
+                // delete a community
                 holder.item.setIconOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         ParseUtils.removeCommunityFromCurrentUser(community);
                         mList.remove(index);
+                        updateCommunityOrder();
                         notifyItemRemoved(position);
                     }
                 });

@@ -2,6 +2,7 @@ package com.yahoo.mobile.itern.guagua.Activity;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.RefactoredDefaultItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager;
@@ -42,7 +44,9 @@ import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import de.greenrobot.event.EventBus;
 
@@ -64,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     private MainActivityFragment mainFragment;
     private Handler handler = new Handler();
     private Runnable filterRunnable;
+
 
     public void closeDrawer() {
         mDrawerLayout.closeDrawers();
@@ -202,6 +207,17 @@ public class MainActivity extends AppCompatActivity {
         Log.d("eventbus", "user community event" + event.communityList.size());
         mList.clear();
         mList.addAll(event.communityList);
+
+        Map<String, Integer> communityOrder = mCommunityAdapter.getCommunityOrder();
+        for(int i = 0; i < mList.size(); i++) {
+            ParseObject community = mList.get(i);
+            String key = community.getObjectId();
+            if(communityOrder.containsKey(key)) {
+                int toIndex = communityOrder.get(key);
+                Collections.swap(mList, i, toIndex);
+            }
+        }
+        mCommunityAdapter.updateCommunityOrder();
         mCommunityAdapter.notifyDataSetChanged();
     }
 
@@ -252,6 +268,7 @@ public class MainActivity extends AppCompatActivity {
 
         setupActionBar();
         setupDrawerLayout();
+
         mainFragment = new MainActivityFragment();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.content_frame, mainFragment)
