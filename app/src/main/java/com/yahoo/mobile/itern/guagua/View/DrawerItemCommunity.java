@@ -25,6 +25,14 @@ public class DrawerItemCommunity extends RelativeLayout {
     LinearLayout mRoot;
     ImageView mImgIcon;
     TextView mTxtTitle;
+    ImageView mImgHandle;
+
+    public View getContainerView() {
+        return mRoot;
+    }
+    public View getHandleView() {
+        return mImgHandle;
+    }
 
     public DrawerItemCommunity(Context context) {
         super(context);
@@ -61,6 +69,7 @@ public class DrawerItemCommunity extends RelativeLayout {
         mRoot = (LinearLayout) mView.findViewById(R.id.drawer_item_root);
         mTxtTitle = (TextView) mView.findViewById(R.id.drawer_item_title);
         mImgIcon = (ImageView) mView.findViewById(R.id.drawer_item_icon);
+        mImgHandle = (ImageView) mView.findViewById(R.id.drawer_item_handle);
     }
     public void setTitle(final String title) {
         mTitle = title;
@@ -74,6 +83,13 @@ public class DrawerItemCommunity extends RelativeLayout {
             mImgIcon.setImageDrawable(mIcon);
         }
     }
+    public void showHandle() {
+        mImgHandle.setVisibility(VISIBLE);
+    }
+    public void hideHandle() {
+        mImgHandle.setVisibility(INVISIBLE);
+    }
+
     public void setIconOnClickListener(OnClickListener l) { mImgIcon.setOnClickListener(l); }
     @Override
     public void setOnClickListener(OnClickListener l) {
