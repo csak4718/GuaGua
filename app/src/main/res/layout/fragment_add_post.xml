@@ -6,17 +6,13 @@
     android:divider="?android:dividerHorizontal"
     tools:context="com.yahoo.mobile.itern.guagua.Fragment.AddPostActivityFragment">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="20px"
-        android:background= "#cccccc" />
     <EditText
         android:id="@+id/edt_question"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:minLines="6"
-        android:hint="Ask something ......"
+        android:hint="I want to ask...."
         android:gravity="top"
         android:background = "@null"
         android:paddingTop="10dp"
@@ -93,31 +89,6 @@
             android:background= "#cccccc" />
 
     </LinearLayout>
-
-    <HorizontalScrollView
-        android:id="@+id/scroll_banner_badge"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#A6000000"
-        android:visibility="visible">
-        <LinearLayout
-            android:id="@+id/banner_badge"
-            android:padding="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:animateLayoutChanges="true">
-            <ImageButton
-                android:layout_marginRight="5dp"
-                android:id="@+id/img_btn_badge_search"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_margin="5dp"
-                android:background="@android:color/transparent"
-                android:src="@drawable/badge_search" />
-
-        </LinearLayout>
-    </HorizontalScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"
