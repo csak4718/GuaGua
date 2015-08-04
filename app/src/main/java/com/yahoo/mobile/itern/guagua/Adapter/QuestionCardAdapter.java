@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,9 +46,11 @@ import com.yahoo.mobile.itern.guagua.View.CommentButton;
 import com.yahoo.mobile.itern.guagua.View.OptionButton;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by cmwang on 7/16/15.
@@ -430,7 +433,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.imgBtnLike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseUser currentUser = ParseUser.getCurrentUser();;
+                ParseUser currentUser = ParseUser.getCurrentUser();
+                ;
                 if (currentUser != null) {
                     // do stuff with the user
                     currentUser.getRelation("likes");
@@ -490,7 +494,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         resetCard(holder);
 
         final String objectId = mQuestion.getObjectId();
-        final ParseRelation<ParseUser> relation = mQuestion.getRelation(Common.OBJECT_POST_VOTED_USER);
+        final ParseRelation<ParseUser> relation = mQuestion.getRelation(Common
+                .OBJECT_POST_VOTED_USER);
         final ParseUser postUser = mQuestion.getParseUser(Common.OBJECT_POST_USER);
         final String questionContent = mQuestion.getString(Common.OBJECT_POST_CONTENT);
         final String optionA = mQuestion.getString(Common.OBJECT_POST_QA);
@@ -498,6 +503,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         final int voteA = mQuestion.getInt(Common.OBJECT_POST_QA_NUM);
         final int voteB = mQuestion.getInt(Common.OBJECT_POST_QB_NUM);
         final String voteOption = questionVotedOption(mQuestion);
+        final Date mDate = mQuestion.getCreatedAt();
 
         if(postUser != null) {
             postUser.fetchInBackground(new GetCallback<ParseUser>() {
@@ -527,6 +533,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             cache.put(Common.QUESTION_CARD_PROFILE_IMG, bmp);
         }
         holder.txtTitle.setText(questionContent);
+        holder.txtDate.setText(date2String(mDate));
         holder.btnA.setVoteText(optionA);
         holder.btnB.setVoteText(optionB);
         holder.btnA.setVoteNum(voteA);
@@ -538,6 +545,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         cache.put(Common.QUESTION_CARD_QA_NUM, voteA);
         cache.put(Common.QUESTION_CARD_QB_NUM, voteB);
         cache.put(Common.QUESTION_CARD_VOTE_OPTION, voteOption);
+        cache.put(Common.QUESTION_CARD_DATE, mDate);
 
         holder.shareBtnPost.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -590,6 +598,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         final Boolean isVoted = (Boolean) cache.get(Common.QUESTION_CARD_IS_VOTED);
         final String voteOption = (String) cache.get(Common.QUESTION_CARD_VOTE_OPTION);
         final int commentNum = (cache.containsKey(Common.QUESTION_CARD_COMMENTS_NUM))?(int) cache.get(Common.QUESTION_CARD_COMMENTS_NUM):0;
+        final Date mDate = (Date) cache.get(Common.QUESTION_CARD_DATE);
 
         holder.txtName.setText(nickName);
         if(profileImg != null) {
@@ -601,6 +610,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                     BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_account_circle_black_48dp));
         }
         holder.txtTitle.setText(questionContent);
+        holder.txtDate.setText(date2String(mDate));
         holder.btnA.setVoteText(optionA);
         holder.btnB.setVoteText(optionB);
         holder.btnA.setVoteNum(voteA);
@@ -671,7 +681,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                 //img.requestLayout();
                 img.setTranslationX((float) (xy[0] + (fxy[0] - xy[0]) * value));
                 img.setTranslationY((float) (xy[1] + (fxy[1] - xy[1]) * Math.sin((value) * Math
-                .PI / 2)));
+                        .PI / 2)));
                 if (value < 0.8) {
                     img.setAlpha((int) (255 * (1 - value)));
                 }
@@ -739,6 +749,20 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         mAmin = b;
     }
 
+    public String date2String(Date d){
+        Date now = new Date();
+        String str_date;
+        int day = (int) TimeUnit.DAYS.convert(now.getTime()-d.getTime(),TimeUnit.MILLISECONDS);
+        if (day > 1){
+            str_date = DateUtils.formatDateTime(mContext,d.getTime(),DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE );
+        }else if(d.getYear()!= now.getYear()){
+            str_date = DateUtils.formatDateTime(mContext,d.getTime(),DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR);
+        }else {
+            str_date = DateUtils.getRelativeTimeSpanString(d.getTime()).toString();
+        }
+        return str_date;
+    }
+
 
 
     public static class ViewHolder extends AbstractSwipeableItemViewHolder {
@@ -746,6 +770,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         public ImageView imgProfile;
         public TextView txtName;
         public TextView txtTitle;
+        public TextView txtDate;
         public OptionButton btnA;
         public OptionButton btnB;
         public ImageButton shareBtnPost;
@@ -762,6 +787,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             imgProfile = (ImageView) v.findViewById(R.id.imgProfile);
             txtName = (TextView) v.findViewById(R.id.txtName);
             txtTitle = (TextView) v.findViewById(R.id.title);
+            txtDate = (TextView) v.findViewById(R.id.date);
             btnA = (OptionButton) v.findViewById(R.id.btnA);
             btnB = (OptionButton) v.findViewById(R.id.btnB);
             shareBtnPost = (ImageButton)v.findViewById(R.id.shareBtnPost);
