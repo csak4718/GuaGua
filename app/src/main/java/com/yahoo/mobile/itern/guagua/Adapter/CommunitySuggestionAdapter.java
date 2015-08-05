@@ -2,7 +2,6 @@ package com.yahoo.mobile.itern.guagua.Adapter;
 
 import android.content.Context;
 import android.location.Location;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,8 +25,7 @@ public class CommunitySuggestionAdapter extends ArrayAdapter<ParseObject> {
     private Context mContext;
     private List<ParseObject> mAllCommunityList;
     private List<ParseObject> mVisibleCommunityList;
-
-    private int mRowHeight;
+    private String mFilter="";
 
     public CommunitySuggestionAdapter(Context context, int resourceId, List<ParseObject> communities) {
         super(context, resourceId, communities);
@@ -45,32 +43,27 @@ public class CommunitySuggestionAdapter extends ArrayAdapter<ParseObject> {
             mVisibleCommunityList.addAll(mAllCommunityList);
             v = LayoutInflater.from(parent.getContext()).inflate(R.layout.suggestion_item, parent, false);
         }
-        Log.d("Vis","pos:"+position);
-        Log.d("Vis","size:"+mAllCommunityList.size());
-        Log.d("Vis","size:"+mVisibleCommunityList.size());
+
         final ParseObject curCommunity = mVisibleCommunityList.get(position);
         if (curCommunity != null){
             TextView communityTitle = (TextView) v.findViewById(R.id.txt_suggetion_title);
             communityTitle.setText(curCommunity.getString("title"));
 
             TextView communityDistance = (TextView) v.findViewById(R.id.txt_suggestion_distance);
-            communityDistance.setText(""+curCommunity.getInt("distance")/1000+" km");
+            communityDistance.setText("" + curCommunity.getInt("distance") / 1000 + " km");
+
         }
 
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Location location = new Location("dummyprovider");
                 location.setLatitude(Double.parseDouble(curCommunity.getString("lat")));
                 location.setLongitude(Double.parseDouble(curCommunity.getString("long")));
 
                 ((CommunityActivity)mContext).setLastLocation(location);
                 ((CommunityActivity)mContext).updateLocationOnMap(location, true);
-                ((CommunityActivity)mContext).findCurrentCommunity();
-
-                //notifyDataSetChanged();
-
+                ((CommunityActivity)mContext).mCurCommunity = curCommunity;
                 ((CommunityActivity)mContext).showCommunityDialog();
             }
         });
@@ -88,19 +81,30 @@ public class CommunitySuggestionAdapter extends ArrayAdapter<ParseObject> {
     }
 
     public void flushFilter() {
-        mVisibleCommunityList.clear();
-        mVisibleCommunityList.addAll(mAllCommunityList);
+        mFilter = "";
         notifyDataSetChanged();
     }
 
     public void setFilter(String queryText) {
-        mVisibleCommunityList.clear();
-        for(ParseObject community : mAllCommunityList) {
-            if(community.getString(Common.OBJECT_COMMUNITY_TITLE).toLowerCase().contains( queryText.toLowerCase() )) {
-                mVisibleCommunityList.add(community);
-            }
-        }
+        mFilter = queryText;
         notifyDataSetChanged();
     }
-    
+
+    @Override
+    public void notifyDataSetChanged(){
+        if(mFilter.equals("")){
+            mVisibleCommunityList.clear();
+            mVisibleCommunityList.addAll(mAllCommunityList);
+        }
+        else{
+            mVisibleCommunityList.clear();
+            for(ParseObject community : mAllCommunityList) {
+                if(community.getString(Common.OBJECT_COMMUNITY_TITLE).toLowerCase().contains( mFilter.toLowerCase() )) {
+                    mVisibleCommunityList.add(community);
+                }
+            }
+        }
+        super.notifyDataSetChanged();
+    }
+
 }
