@@ -274,7 +274,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     private void resetCard(final ViewHolder holder) {
         //String option = getString(Common.OBJECT_VOTED_QUESTION_OPTION);
         //Boolean voteA = option.equals("A");
-
+        holder.imgViewQuestionPicture.setVisibility(View.GONE);
         holder.btnA.setVoted(false, false, false);
         holder.btnB.setVoted(false, false, false);
         holder.btnA.setOnClickListener(new View.OnClickListener() {
@@ -391,8 +391,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         }
     }
 
-    private void displayParseImage(final ViewHolder holder, final String userName, final ParseUser user,
-                                   final ImageView imgView, final Map<String, Object> cache) {
+    private void displayUserParseImage(final ViewHolder holder, final String userName, final ParseUser user,
+                                       final ImageView imgView, final Map<String, Object> cache) {
         ParseFile imgFile = user.getParseFile(Common.OBJECT_USER_PROFILE_PIC);
         imgFile.getDataInBackground(new GetDataCallback() {
             @Override
@@ -408,6 +408,26 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                 }
             }
         });
+    }
+
+    private void displayQuestionPictureParseImage(final ParseObject mQuestion, final ViewHolder holder, final Map<String, Object> cache) {
+        ParseFile questionPicture = mQuestion.getParseFile(Common.OBJECT_POST_PICTURE);
+        if(questionPicture != null) {
+            questionPicture.getDataInBackground(new GetDataCallback() {
+                @Override
+                public void done(byte[] bytes, ParseException e) {
+                    if (e == null) {
+                        Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0,
+                                bytes.length);
+                        if(bmp != null) {
+                            holder.imgViewQuestionPicture.setImageBitmap(bmp);
+                            holder.imgViewQuestionPicture.setVisibility(View.VISIBLE);
+                            cache.put(Common.QUESTION_CARD_QUESTION_PICTURE, bmp);
+                        }
+                    }
+                }
+            });
+        }
     }
 
     private void setupLikeButton(final ParseObject mQuestion, final ViewHolder holder) {
@@ -502,7 +522,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                         String nickName = user.getString(Common.OBJECT_USER_NICK);
                         holder.txtName.setText(nickName);
 
-                        displayParseImage(holder, nickName, user, holder.imgProfile, cache);
+                        displayUserParseImage(holder, nickName, user, holder.imgProfile, cache);
 
                         cache.put(Common.QUESTION_CARD_PARSE_USER, user);
                         cache.put(Common.QUESTION_CARD_NICK, nickName);
@@ -521,6 +541,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             cache.put(Common.QUESTION_CARD_NICK, "Fan Fan");
             cache.put(Common.QUESTION_CARD_PROFILE_IMG, bmp);
         }
+        displayQuestionPictureParseImage(mQuestion, holder, cache);
         holder.txtTitle.setText(questionContent);
         holder.txtDate.setText(date2String(mDate));
         holder.btnA.setVoteText(optionA);
@@ -580,6 +601,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         final String nickName = (String) cache.get(Common.QUESTION_CARD_NICK);
         final Bitmap profileImg = (Bitmap) cache.get(Common.QUESTION_CARD_PROFILE_IMG);
         final String questionContent = (String) cache.get(Common.QUESTION_CARD_CONTENT);
+        final Bitmap questionPicture = (Bitmap) cache.get(Common.QUESTION_CARD_QUESTION_PICTURE);
         final String optionA = (String) cache.get(Common.QUESTION_CARD_QA);
         final String optionB = (String) cache.get(Common.QUESTION_CARD_QB);
         final int voteA = (int) cache.get(Common.QUESTION_CARD_QA_NUM);
@@ -597,6 +619,10 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         else {
             holder.imgProfile.setImageBitmap(
                     BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_account_circle_black_48dp));
+        }
+        if(questionPicture != null) {
+            holder.imgViewQuestionPicture.setImageBitmap(questionPicture);
+            holder.imgViewQuestionPicture.setVisibility(View.VISIBLE);
         }
         holder.txtTitle.setText(questionContent);
         holder.txtDate.setText(date2String(mDate));
@@ -769,6 +795,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         public ImageView imgProfile;
         public TextView txtName;
         public TextView txtTitle;
+        public ImageView imgViewQuestionPicture;
         public TextView txtDate;
         public OptionButton btnA;
         public OptionButton btnB;
@@ -786,6 +813,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             imgProfile = (ImageView) v.findViewById(R.id.imgProfile);
             txtName = (TextView) v.findViewById(R.id.txtName);
             txtTitle = (TextView) v.findViewById(R.id.title);
+            imgViewQuestionPicture = (ImageView) v.findViewById(R.id.img_view_question_picture);
             txtDate = (TextView) v.findViewById(R.id.date);
             btnA = (OptionButton) v.findViewById(R.id.btnA);
             btnB = (OptionButton) v.findViewById(R.id.btnB);
