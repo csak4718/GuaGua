@@ -31,6 +31,8 @@ import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
 
+import java.io.IOException;
+
 
 /**
  * A placeholder fragment containing a simple view.
@@ -118,8 +120,11 @@ public class AddPostActivityFragment extends Fragment {
 
     public void setImgViewUpload(Uri uri) {
 
+
         Picasso.with(getActivity())
                 .load(uri)
+                .resize(640, 640)
+                .centerInside()
                 .into(imgViewUpload);
         imgViewUpload.setVisibility(View.VISIBLE);
         postWithPicture = true;

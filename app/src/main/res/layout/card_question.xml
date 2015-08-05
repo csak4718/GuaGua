@@ -33,13 +33,26 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_marginLeft="3dp">
-                <TextView
-                    android:id="@+id/txtName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Fan Fan"/>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/txtName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="Fan Fan"/>
+                    <TextView
+                        android:id="@+id/date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/txtName"
+                        android:text="5 mins ago"
+                        android:textSize="12sp"
+                        android:textAppearance="?android:attr/textAppearanceSmall"/>
+                </RelativeLayout>
+
                 <TextView
                     android:id="@+id/title"
                     android:layout_width="match_parent"
@@ -52,23 +65,16 @@
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="5dp"
                     android:text="samples samples samples samples "/>
-                <ImageView
-                    android:id="@+id/img_view_question_picture"
-                    android:layout_width="wrap_content"
-                    android:layout_height="100dp"
-                    android:visibility="gone"/>
-                <TextView
-                    android:id="@+id/date"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:layout_marginBottom="3dp"
-                    android:text="5 mins ago"
-                    android:textSize="12sp"
-                    android:textAppearance="?android:attr/textAppearanceSmall"/>
+
 
             </LinearLayout>
+
         </LinearLayout>
+        <ImageView
+            android:id="@+id/img_view_question_picture"
+            android:layout_width="300dp"
+            android:layout_height="100dp"
+            android:visibility="visible"/>
 
 
         <com.yahoo.mobile.itern.guagua.View.OptionButton
