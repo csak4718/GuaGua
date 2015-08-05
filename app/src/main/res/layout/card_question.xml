@@ -45,6 +45,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:lineSpacingMultiplier="1.2"
+                    android:textColor="@android:color/black"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:gravity="left"
 
@@ -56,9 +57,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="left"
-
                     android:layout_marginBottom="3dp"
                     android:text="5 mins ago"
+                    android:textSize="12sp"
                     android:textAppearance="?android:attr/textAppearanceSmall"/>
 
             </LinearLayout>
@@ -67,14 +68,14 @@
 
         <com.yahoo.mobile.itern.guagua.View.OptionButton
             android:id="@+id/btnA"
-            android:layout_width="200dp"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="10dp"
             />
         <com.yahoo.mobile.itern.guagua.View.OptionButton
             android:id="@+id/btnB"
-            android:layout_width="200dp"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="15dp"/>
@@ -110,14 +111,6 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="25dp" />
 
-            <!--<ImageButton-->
-                <!--android:id="@+id/imgBtnComment"-->
-                <!--android:layout_width="24dp"-->
-                <!--android:layout_height="24dp"-->
-                <!--android:scaleType="fitCenter"-->
-                <!--android:adjustViewBounds="true"-->
-                <!--android:src="@drawable/ic_comment_black_24dp"-->
-                <!--android:background="@android:color/transparent"/>-->
             <com.yahoo.mobile.itern.guagua.View.CommentButton
                 android:id="@+id/imgBtnComment"
                 android:layout_width="wrap_content"
