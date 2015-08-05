@@ -1,0 +1,14 @@
+{
+  "global": {
+    "parseVersion": "1.5.0"
+  },
+  "applications": {
+    "Community": {
+      "applicationId": "iMyUdfPQnXeU1bTHi3f8jhRw5oCx40UxvMfcicno",
+      "masterKey": "VcScmAIIt34O6gINcmuy6WbgorWoIq2LaVqfaPMU"
+    },
+    "_default": {
+      "link": "Community"
+    }
+  }
+}

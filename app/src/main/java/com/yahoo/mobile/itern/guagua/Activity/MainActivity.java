@@ -20,8 +20,10 @@ import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
+import com.parse.FunctionCallback;
 import com.parse.GetCallback;
 import com.parse.GetDataCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -36,6 +38,8 @@ import com.yahoo.mobile.itern.guagua.Util.Common;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
 import com.yahoo.mobile.itern.guagua.View.ActionBarTitle;
+
+import java.util.HashMap;
 
 import de.greenrobot.event.EventBus;
 
@@ -252,6 +256,16 @@ public class MainActivity extends ActionBarActivity {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.content_frame, mainFragment)
                 .commit();
+
+        // Example: call hello function
+        ParseCloud.callFunctionInBackground("hello", new HashMap<String, Object>(), new FunctionCallback<String>() {
+            public void done(String result, ParseException e) {
+                if (e == null) {
+                    // result is "Hello world!"
+                    Log.d("WORLD --------> ", result);
+                }
+            }
+        });
     }
 
 
