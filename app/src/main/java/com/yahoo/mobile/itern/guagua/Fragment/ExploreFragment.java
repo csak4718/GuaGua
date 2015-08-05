@@ -9,6 +9,7 @@ import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -94,8 +95,6 @@ public class ExploreFragment extends Fragment {
         return;
     }
 
-
-
     public void setupCommunitySearchView(){
         if(mCommunitySearchView != null){
             //set text color
@@ -111,14 +110,26 @@ public class ExploreFragment extends Fragment {
             mCommunitySearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
+                    hideSoftKeyboard();
+                    //mCommunitySearchView.setIconified(true);
                     return true;
                 }
 
                 @Override
                 public boolean onQueryTextChange(String newText) {
+                    mAdapter.setFilter(newText);
                     return false;
                 }
+
+
             });
+        }
+    }
+
+    public void hideSoftKeyboard() {
+        if(((CommunityActivity)mContext).getCurrentFocus()!=null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) mContext.getSystemService(mContext.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(((CommunityActivity)mContext).getCurrentFocus().getWindowToken(), 0);
         }
     }
 

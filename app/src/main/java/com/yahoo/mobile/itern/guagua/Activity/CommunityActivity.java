@@ -184,8 +184,8 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         mCommunities.clear();
         mCommunities.addAll(list);
         findCurrentCommunity();
+        mExploreFragement.mAdapter.flushFilter();
         mExploreFragement.mAdapter.notifyDataSetChanged();
-
     }
 
     public ParseObject getCurCommunity(){
@@ -397,7 +397,6 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
             );
 
         }else{
-
             dstBmp = Bitmap.createBitmap(
                     srcBmp,
                     0,
