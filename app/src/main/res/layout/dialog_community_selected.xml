@@ -28,12 +28,12 @@
                 app:border="true"
                 app:border_width="5dp"
                 app:border_color="@color/gray"/>
+
             <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_gravity="center_horizontal"
-                android:paddingTop="175dp"
-                android:src="@drawable/ic_community_pin"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/dialog_community_pin"/>
         </FrameLayout>
 
         <TextView
