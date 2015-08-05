@@ -40,10 +40,10 @@ public class Common {
 
     public final static String OBJECT_COMMUNITY = "Community";
     public final static String OBJECT_COMMUNITY_TITLE = "title";
+    public final static String OBJECT_COMMUNITY_LAT = "lat";
+    public final static String OBJECT_COMMUNITY_LONG = "long";
     public final static String OBJECT_COMMUNITY_POSTS = "posts";
     public final static String OBJECT_COMMUNITY_COLOR = "communityColor";
-    public final static String OBJECT_COMMUNITY_LOGO = "logo";
-    public final static String OBJECT_COMMUNITY_LOGO_SMALL = "logoSmall";
 
     public final static String OBJECT_VOTED_QUESTION = "VotedQuestion";
     public final static String OBJECT_VOTED_QUESTION_QID = "questionId";
@@ -55,6 +55,7 @@ public class Common {
     public final static String EXTRA_USER_ID = "userId";
     public final static String EXTRA_USER_NICKNAME = "nickname";
     public final static String EXTRA_USER_PROFILE_IMG = "profile_img";
+
     // extra data for launch PersonalPageActivity
     public final static String EXTRA_PERSONAL = "personal_setting";
     public final static String EXTRA_PERSONAL_FOLLOWING = "following";
@@ -77,6 +78,5 @@ public class Common {
 
     public final static String SHARED_COMMUNITY_NAME = "community";
     public final static String SHARED_COMMUNITY_KEY_ORDER = "communityOrder";
-
 
 }

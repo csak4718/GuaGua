@@ -62,6 +62,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     public ParseObject mCurCommunity;
     private List<ParseObject> mCommunities = new ArrayList<>();
 
+    private Context mContext;
     private ActionBar mActionBar;
     private Location mCurLocation;
     private Location mLastLocation;
@@ -70,6 +71,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     private LocationRequest mLocationRequest;
     private MainApplication mMainApplication;
     private MenuItem mExploreDone;
+    private MenuItem mCreateDone;
     private GoogleMap mMap;
 
     @Override
@@ -96,7 +98,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_community);
-
+        mContext = this;
         setupActionBar();
 
         mMainApplication = (MainApplication)this.getApplication();
@@ -131,7 +133,9 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         mCurLocation  = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         Log.d(TAG, "curLocation is " + mCurLocation);
-        findCurrentCommunity();
+
+        sortCommunityList();
+
 
         mMapFragment.setupMap();
         mExploreFragement.setupMap();
@@ -149,11 +153,12 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d(TAG, "Location changed: " + location.toString());
+        //Log.d(TAG, "Location changed: " + location.toString());
 
         Location prevLocation = getCurrentLocation();
         setCurrentLocation(location);
-        findCurrentCommunity();
+        sortCommunityList();
+
         mExploreFragement.mAdapter.notifyDataSetChanged();
 
         if(prevLocation==null && location!=null) {
@@ -162,18 +167,10 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         }
     }
 
-
-    public void findCurrentCommunity(){
-        updateCommunityList();
-        if(mCommunities.size()>0)
-            mCurCommunity = mCommunities.get(0);
-    }
-
     public void onCommunityChange(){
         mCommunityFragement.onCommunityChange();
         mMapFragment.onCommunityChange();
     }
-
 
     public void onEvent(CommunityEvent event) {
         Log.d("eventbus", "" + event.communityList.size());
@@ -183,18 +180,17 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     private void refreshList(List<ParseObject> list) {
         mCommunities.clear();
         mCommunities.addAll(list);
-        findCurrentCommunity();
-        mExploreFragement.mAdapter.notifyDataSetChanged();
+        sortCommunityList();
 
+        mExploreFragement.mAdapter.flushFilter();
+        mExploreFragement.mAdapter.notifyDataSetChanged();
     }
 
     public ParseObject getCurCommunity(){
-        findCurrentCommunity();
         return mCurCommunity;
     }
 
     public Location getCurrentLocation(){
-        //findCurrentCommunity();
         return mCurLocation;
     }
 
@@ -219,6 +215,13 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
                 .commit();
     }
 
+    public void swtichToCreateCommunity(){
+        mCreateDone.setVisible(true);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.community_content, mMapFragment)
+                .commit();
+    }
+
     public void switchToCommunityFragment(){
         mExploreDone.setVisible(false);
         getSupportFragmentManager().beginTransaction()
@@ -227,7 +230,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     }
 
     //sort communities with distance to mLastLocation
-    public void updateCommunityList(){
+    public void sortCommunityList(){
         for(ParseObject com:mCommunities){
             Location comLocation = new Location(LocationManager.GPS_PROVIDER);
             comLocation.setLatitude(Double.parseDouble(com.getString("lat")));
@@ -244,10 +247,11 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
                 return lhs.getInt("distance") - rhs.getInt("distance");
             }
         });
+
     }
 
     public List<ParseObject> getAllCommunities(){
-        updateCommunityList();
+        sortCommunityList();
         return mCommunities;
     }
 
@@ -274,6 +278,10 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
 
         mExploreDone = menu.findItem(R.id.item_explore_done);
         mExploreDone.setVisible(false);
+
+        mCreateDone = menu.findItem(R.id.item_create_done);
+        mCreateDone.setVisible(false);
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -282,6 +290,13 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         switch (item.getItemId()) {
             case R.id.item_explore_done:
                 switchToCommunityFragment();
+                return true;
+            case R.id.item_create_done:
+                //[TODO]
+                String newCommunityTitle = (String)mExploreFragement.mNewCommunityTitle.getText();
+                ParseObject newCommunity = ParseUtils.createCommunity(newCommunityTitle , mLastLocation);
+                mCurCommunity = newCommunity;
+                showCommunityDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -355,8 +370,6 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
 
     @Override
     public void onSnapshotReady(Bitmap bitmap) {
-
-
         String curCommunityTitle = mCurCommunity.getString("title");
        //View v = getLayoutInflater().inflate(R.layout.dialog_community_selected, null);
 
@@ -379,15 +392,16 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
                 mMainApplication.currentViewingCommunity = curCommunity;
                 Utils.gotoMainActivity(CommunityActivity.this);
                 dialog.dismiss();
+                ((CommunityActivity)mContext).finish();
             }
         });
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
         dialog.show();
     }
+
     public Bitmap cropBmpToRect(Bitmap srcBmp){
         Bitmap dstBmp;
         if (srcBmp.getWidth() >= srcBmp.getHeight()){
-
             dstBmp = Bitmap.createBitmap(
                     srcBmp,
                     srcBmp.getWidth()/2 - srcBmp.getHeight()/2,
@@ -397,7 +411,6 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
             );
 
         }else{
-
             dstBmp = Bitmap.createBitmap(
                     srcBmp,
                     0,
@@ -406,9 +419,6 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
                     srcBmp.getWidth()
             );
         }
-
-
         return dstBmp;
     }
-
 }
