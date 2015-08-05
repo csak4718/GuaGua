@@ -128,7 +128,22 @@ public class ParseUtils {
         });
     }
 
-    static public void postQuestions(String question, String optionA, String optionB, final ParseObject community) {
+    static public void savePictureToPostSync(ParseObject mPost, Bitmap picture) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        picture.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] bytearray= stream.toByteArray();
+        ParseFile questionPicture = new ParseFile(mPost.getObjectId() + "_picture.jpg", bytearray);
+        try {
+            questionPicture.save();
+            mPost.put(Common.OBJECT_POST_PICTURE, questionPicture);
+            mPost.save();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    static public void postQuestions(String question, String optionA, String optionB, final ParseObject community,
+                                     final boolean choiceQuestion, final Bitmap picture) {
         final ParseObject mPost = new ParseObject(Common.OBJECT_POST);
         final ParseUser user = ParseUser.getCurrentUser();
         mPost.put(Common.OBJECT_POST_CONTENT, question);
@@ -137,6 +152,7 @@ public class ParseUtils {
         mPost.put(Common.OBJECT_POST_QA_NUM, 0);
         mPost.put(Common.OBJECT_POST_QB_NUM, 0);
         mPost.put(Common.OBJECT_POST_USER, ParseUser.getCurrentUser());
+        mPost.put(Common.OBJECT_POST_CHOICE_QUESTION, choiceQuestion);
 
         mPost.saveInBackground(new SaveCallback() {
             @Override
@@ -161,6 +177,10 @@ public class ParseUtils {
                 }
 
                 user.saveInBackground();
+
+                if(picture != null) {
+                    savePictureToPostSync(mPost, picture);
+                }
 
                 getCommunityQuestions(community);
 
@@ -248,6 +268,11 @@ public class ParseUtils {
                 getUserCommunity(ParseUser.getCurrentUser());
             }
         });
-
+    }
+    static public void removeCommunityFromCurrentUser(final ParseObject community) {
+        ParseUser user = ParseUser.getCurrentUser();
+        ParseRelation<ParseObject> relation = user.getRelation(Common.OBJECT_USER_COMMUNITY_RELATION);
+        relation.remove(community);
+        user.saveInBackground();
     }
 }

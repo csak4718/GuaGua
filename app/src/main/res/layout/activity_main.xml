@@ -1,53 +1,20 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:animateLayoutChanges="true">
-    <HorizontalScrollView
-        android:id="@+id/scroll_banner_badge"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#A6000000"
-        android:visibility="gone">
-        <LinearLayout
-            android:id="@+id/banner_badge"
-            android:padding="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:animateLayoutChanges="true">
-            <Button
-                android:id="@+id/img_btn_badge_search"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="0dp"
-                android:background="@drawable/badge_search" />
-            <Button
-                android:id="@+id/btn_badge_all"
-                android:padding="0dp"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:textColor="@android:color/white"
-                android:layout_margin="5dp"
-                android:gravity="center"
-                android:text="呱呱"
-                android:layout_gravity="top"
-                android:background="@drawable/badge"/>
-            <Button
-                android:id="@+id/btn_badge_taiwan"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:gravity="center"
-                android:layout_margin="5dp"
-                android:layout_gravity="top"
-                android:background="@drawable/badge_taiwan"/>
-        </LinearLayout>
-    </HorizontalScrollView>
+    android:layout_height="match_parent">
+
     <FrameLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?android:attr/colorBackground" />
-</LinearLayout>
+
+
+    <include layout="@layout/left_drawer_community"
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        />
+
+</android.support.v4.widget.DrawerLayout>

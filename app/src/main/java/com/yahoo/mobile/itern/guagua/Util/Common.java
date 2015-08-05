@@ -27,6 +27,8 @@ public class Common {
     public final static String OBJECT_POST_QB_NUM = "B";
     public final static String OBJECT_POST_VOTED_USER = "votedUser";
     public final static String OBJECT_POST_COMMENTS = "comments";
+    public final static String OBJECT_POST_CHOICE_QUESTION = "choiceQuestion";
+    public final static String OBJECT_POST_PICTURE = "picture";
 
     public final static String OBJECT_COMMENT = "Comments";
     public final static String OBJECT_COMMENT_MSG = "msg";
@@ -50,6 +52,10 @@ public class Common {
     public final static String EXTRA_USER_ID = "userId";
     public final static String EXTRA_USER_NICKNAME = "nickname";
     public final static String EXTRA_USER_PROFILE_IMG = "profile_img";
+    // extra data for launch PersonalPageActivity
+    public final static String EXTRA_PERSONAL = "personal_setting";
+    public final static String EXTRA_PERSONAL_FOLLOWING = "following";
+    public final static String EXTRA_PERSONAL_MY_QUESTION = "my_question";
 
     public final static String QUESTION_CARD_PARSE_USER = "parseUser";
     public final static String QUESTION_CARD_NICK = "nickname";
@@ -63,6 +69,11 @@ public class Common {
     public final static String QUESTION_CARD_IS_VOTED = "isVoted";
     public final static String QUESTION_CARD_VOTE_OPTION = "votedOption";
     public final static String QUESTION_CARD_COMMENTS_NUM = "commentsNum";
+    public final static String QUESTION_CARD_DATE = "date";
+    public final static String QUESTION_CARD_QUESTION_PICTURE = "picture";
+
+    public final static String SHARED_COMMUNITY_NAME = "community";
+    public final static String SHARED_COMMUNITY_KEY_ORDER = "communityOrder";
 
 
 }

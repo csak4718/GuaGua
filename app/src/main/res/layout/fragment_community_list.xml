@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:id="@+id/layout_edit_community"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_location"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textSize="20dp"
+            android:text="Edit Current Location"
+            android:textColor="@color/darkblue"
+            android:id="@+id/txt_edit_location"/>
+    </LinearLayout>
+
+
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:saveEnabled="false"/>
+
+    <android.support.v7.widget.SearchView
+        android:id="@+id/search_community"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:textSize="24dp"
+        android:gravity="center_vertical"
+        android:queryHint="搜尋附近社區"/>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:paddingLeft="3dp"
+        android:gravity="center_vertical"
+
+        android:text="Community Nearby"
+        android:textSize="20dp"
+        android:background="@color/cyan"
+        android:textColor="@color/white"/>
+
+
+    <ListView
+        android:id="@+id/list_community_suggestion"
+        android:textSize="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:layout_gravity="center"
+        android:layout_below="@+id/map_search_view"
+        android:dividerHeight="10dp"
+        android:divider="@color/white"
+        android:fitsSystemWindows="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"/>
+
+</LinearLayout>

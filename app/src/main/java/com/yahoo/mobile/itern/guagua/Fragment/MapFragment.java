@@ -14,14 +14,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.yahoo.mobile.itern.guagua.Activity.CommunityActivity;
@@ -35,15 +32,14 @@ import java.util.Locale;
  * Created by fanwang on 7/16/15.
  */
 
-public class MapFragment extends Fragment implements OnMapReadyCallback {
+public class MapFragment extends Fragment {
     private final String TAG = "MapFragment";
 
     private Context mContext;
     private MapView mMapView;
     private SearchView mSearchView;
-    private ImageButton mNextButton;
+    private View mRootView;
     private GoogleMap mMap;
-
 
     public MapFragment() {
     }
@@ -68,53 +64,43 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_map, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_map, container, false);
 
-
-        mNextButton = (ImageButton)rootView.findViewById(R.id.next_button);
-        mNextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (((CommunityActivity) mContext).getCurCommunity() != null) {
-                    ((CommunityActivity) mContext).switchToCommunityFragment();
-                }
-            }
-        });
-
-        mMapView = (MapView)rootView.findViewById(R.id.map);
+        mMapView = (MapView)mRootView.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
         MapsInitializer.initialize(getActivity());
-        mMapView.getMapAsync(this);
+        mMapView.getMapAsync((CommunityActivity)mContext);
 
-
-        mSearchView = (SearchView)rootView.findViewById(R.id.map_search_view);
+        mSearchView = (SearchView)mRootView.findViewById(R.id.map_search_view);
         setupSearchView();
-
-        return rootView;
+        return mRootView;
     }
+
+
 
     public void setupSearchView(){
         if(mSearchView != null){
             //set text color
             TextView searchText = (TextView) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
             if (searchText!=null) {
-                searchText.setTextColor(Color.WHITE);
-                searchText.setHintTextColor(Color.WHITE);
+                searchText.setTextColor(Color.BLACK);
+                searchText.setHintTextColor(Color.BLACK);
             }
 
             mSearchView.setQueryHint("Search Here");
             mSearchView.setSubmitButtonEnabled(false);
-            mSearchView.setIconified(true);
+            mSearchView.setIconified(false);
 
             mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
                     new SearchClicked(query).execute();
 
-                    View view = ((CommunityActivity)mContext).getCurrentFocus();
+
+                    View view = ((CommunityActivity) mContext).getCurrentFocus();
                     if (view != null) {
-                        InputMethodManager imm = (InputMethodManager)mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
                     return true;
@@ -125,63 +111,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     return false;
                 }
             });
+
         }
     }
 
     public void setupMap() {
         if(mMapView != null)
-            mMapView.getMapAsync(this);
+            mMapView.getMapAsync((CommunityActivity)mContext);
         return;
     }
 
-    //callback of getMapAsync()
-    @Override
-    public void onMapReady(final GoogleMap map) {
-        this.mMap = map;
 
-        mMap.clear();
-        mMap.setMyLocationEnabled(true);
-
-        Location lastLocation = ((CommunityActivity)mContext).getLastLocation();
-        if(lastLocation != null) {
-            Log.d(TAG, "my location:" + lastLocation.toString());
-            LatLng lastLatLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
-            mMap.addMarker(new MarkerOptions()
-                    .position(lastLatLng)
-                    .title(((CommunityActivity)mContext).getCurCommunity().getString("title")))
-                    .showInfoWindow();
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 18));//zoom level(0-19)
-        }
-
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng point) {
-                mMap.clear();
-                mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(point.latitude, point.longitude))
-                        .title(((CommunityActivity)mContext).getCurCommunity().getString("title")))
-                        .showInfoWindow();
-
-                Location location = new Location("dummyprovider");
-                location.setLatitude(point.latitude);
-                location.setLongitude(point.longitude);
-                ((CommunityActivity)mContext).setLastLocation(location);
-            }
-        });
-    }
-
-    //call for search result
-    public void updateLocation(){
-        Location location = ((CommunityActivity)mContext).getLastLocation();
-        LatLng lastLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 15));
-    }
-
-    public void onCommunityChange(){
-        Location location = ((CommunityActivity)mContext).getLastLocation();
+    public void onCommunityChange() {
+        Location location = ((CommunityActivity) mContext).getLastLocation();
         LatLng lastLatLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-        if(mMap != null) {
+        if (mMap != null) {
             mMap.clear();
             mMap.addMarker(new MarkerOptions()
                     .position(lastLatLng)
@@ -231,14 +176,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         protected void onPostExecute(Boolean found) {
             if (found) {
                 Location location = ((CommunityActivity)mContext).getLastLocation();
-                LatLng lastLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLatLng, 15));
-
-                mMap.clear();
-                mMap.addMarker(new MarkerOptions()
-                        .position(lastLatLng)
-                        .title(((CommunityActivity)mContext).getCurCommunity().getString("title")))
-                        .showInfoWindow();;
+                ((CommunityActivity)mContext).updateLocationOnMap(location, true);
+                ((CommunityActivity)mContext).setLastLocation(location);
             }
         }
     }
