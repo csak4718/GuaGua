@@ -3,7 +3,6 @@ package com.yahoo.mobile.itern.guagua.Fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SearchView;
@@ -14,13 +13,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.yahoo.mobile.itern.guagua.Activity.CommunityActivity;
 import com.yahoo.mobile.itern.guagua.Adapter.CommunitySuggestionAdapter;
 import com.yahoo.mobile.itern.guagua.Application.MainApplication;
@@ -31,25 +26,25 @@ import com.yahoo.mobile.itern.guagua.R;
  * Created by fanwang on 7/22/15.
  */
 
-public class CommunityListFragment extends Fragment implements OnMapReadyCallback {
+public class ExploreFragment extends Fragment {
     private final String TAG = "CommunityFragment";
     private MainApplication mMainApplication;
     private Context mContext;
 
     private GoogleMap mMap;
     private MapView mMapView;
-    private CommunitySuggestionAdapter mAdapter;
+    public CommunitySuggestionAdapter mAdapter;
     private SearchView mCommunitySearchView;
     private ListView mSuggestionList;
     private LinearLayout mEditLocationLayout;
 
 
-    public CommunityListFragment() {
+    public ExploreFragment() {
     }
 
-    public static CommunityListFragment newInstance(Context context)
+    public static ExploreFragment newInstance(Context context)
     {
-        CommunityListFragment communitylistFragment = new CommunityListFragment();
+        ExploreFragment communitylistFragment = new ExploreFragment();
         communitylistFragment.mContext = context;
         return communitylistFragment;
     }
@@ -75,13 +70,12 @@ public class CommunityListFragment extends Fragment implements OnMapReadyCallbac
             }
         });
 
-
         mMapView = (MapView)rootView.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
 
         MapsInitializer.initialize(getActivity());
-        mMapView.getMapAsync(this);
+        mMapView.getMapAsync((CommunityActivity)mContext);
 
 
         mCommunitySearchView = (SearchView)rootView.findViewById(R.id.search_community);
@@ -96,60 +90,11 @@ public class CommunityListFragment extends Fragment implements OnMapReadyCallbac
 
     public void setupMap() {
         if(mMapView != null)
-            mMapView.getMapAsync(this);//onMapReadyCallback
+            mMapView.getMapAsync((CommunityActivity)mContext);//onMapReadyCallback
         return;
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        this.mMap = googleMap;
 
-        mMap.clear();
-        mMap.setMyLocationEnabled(true);
-
-        Location curLocation = ((CommunityActivity)mContext).getCurrentLocation();
-        updateLocation(curLocation, false);
-
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng point) {
-                Location location = new Location("dummyprovider");
-                location.setLatitude(point.latitude);
-                location.setLongitude(point.longitude);
-                ((CommunityActivity)mContext).setLastLocation(location);
-                mAdapter.notifyDataSetChanged();
-
-                mMap.clear();
-                mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(point.latitude, point.longitude))
-                        .title(((CommunityActivity)mContext).getCurCommunity().getString("title")))
-                        .showInfoWindow();
-            }
-        });
-
-
-    }
-
-    //make sure the curComunity is setup
-    public void updateLocation(Location location, boolean showMarker){
-        if(location != null) {
-
-            LatLng curLocationLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(curLocationLatLng, 15));//zoom level(0-19)
-            mAdapter.notifyDataSetChanged();
-
-            if(showMarker) {
-                mMap.clear();
-                mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(location.getLatitude(), location.getLongitude()))
-                        .title(((CommunityActivity) mContext).getCurCommunity().getString("title")))
-                        .showInfoWindow();
-            }
-
-        }
-
-
-    }
 
     public void setupCommunitySearchView(){
         if(mCommunitySearchView != null){
@@ -176,4 +121,6 @@ public class CommunityListFragment extends Fragment implements OnMapReadyCallbac
             });
         }
     }
+
+
 }

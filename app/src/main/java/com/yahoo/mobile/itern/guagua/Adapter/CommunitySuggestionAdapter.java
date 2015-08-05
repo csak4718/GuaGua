@@ -47,7 +47,6 @@ public class CommunitySuggestionAdapter extends ArrayAdapter<ParseObject> {
 
             TextView communityDistance = (TextView) v.findViewById(R.id.txt_suggestion_distance);
             communityDistance.setText(""+curCommunity.getInt("distance")/1000+" km");
-
         }
 
         v.setOnClickListener(new View.OnClickListener() {
@@ -59,7 +58,7 @@ public class CommunitySuggestionAdapter extends ArrayAdapter<ParseObject> {
                 location.setLongitude(Double.parseDouble(curCommunity.getString("long")));
 
                 ((CommunityActivity)mContext).setLastLocation(location);
-                ((CommunityActivity)mContext).mCommunityListFragement.updateLocation(location, true);
+                ((CommunityActivity)mContext).updateLocationOnMap(location, true);
                 ((CommunityActivity)mContext).findCurrentCommunity();
 
                 //notifyDataSetChanged();
