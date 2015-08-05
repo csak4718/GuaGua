@@ -421,7 +421,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.imgViewQuestionPicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Dialog dialog = new Dialog(mContext);
+                final Dialog dialog = new Dialog(mContext);
                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 dialog.setContentView(R.layout.dialog_image);
 
@@ -434,6 +434,13 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                 Bitmap bmp = ((BitmapDrawable)holder.imgViewQuestionPicture.getDrawable()).getBitmap();
 
                 ImageView picture = (ImageView) dialog.findViewById(R.id.img_view_dialog_picture);
+                ImageButton btnClose = (ImageButton) dialog.findViewById(R.id.img_btn_close);
+                btnClose.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
                 picture.setImageBitmap(bmp);
                 dialog.show();
                 dialog.getWindow().setAttributes(lp);
