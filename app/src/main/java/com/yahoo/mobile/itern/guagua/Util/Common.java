@@ -17,6 +17,7 @@ public class Common {
     public final static String OBJECT_USER_MY_QUESTIONS = "myQuestions";
     public final static String OBJECT_USER_VOTED_QUESTIONS = "votedQuestions";
     public final static String OBJECT_USER_FB_ID = "fbId";
+    public final static String OBJECT_USER_COMMENT_LIKES = "commentLikes";
 
     public final static String OBJECT_POST = "Prayer";
     public final static String OBJECT_POST_USER = "user";
@@ -35,6 +36,8 @@ public class Common {
     public final static String OBJECT_COMMENT_POSTID = "PostId";
     public final static String OBJECT_COMMENT_USER = "user";
     public final static String OBJECT_COMMENT_USER_ID = "userId";
+    public final static String OBJECT_COMMENT_LIKES = "Likes";
+
     public final static String OBJECT_COMMUNITY = "Community";
     public final static String OBJECT_COMMUNITY_TITLE = "title";
     public final static String OBJECT_COMMUNITY_POSTS = "posts";
