@@ -67,8 +67,8 @@
         android:layout_below="@+id/map_search_view"
         android:dividerHeight="10dp"
         android:divider="@color/white"
-        android:fitsSystemWindows="true"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"/>
+        android:fitsSystemWindows="true"/>
+
+
 
 </LinearLayout>
