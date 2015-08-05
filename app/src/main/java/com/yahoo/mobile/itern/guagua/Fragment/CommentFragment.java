@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,17 +18,13 @@ import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-import com.yahoo.mobile.itern.guagua.Adapter.CommentAdapter;
-import com.yahoo.mobile.itern.guagua.Event.CommentEvent;
+import com.yahoo.mobile.itern.guagua.Adapter.CommentAdapter2;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.Common;
-import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * Created by cmwang on 7/20/15.
@@ -43,9 +38,9 @@ public class CommentFragment extends Fragment {
     private Button mBtnCommentSend;
     private String mPostObjectId;
     private RecyclerView mRecyclerView;
-    private CommentAdapter mAdapter;
+    private CommentAdapter2 mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private List<ParseObject> mList;
+    private List<ParseObject> mList,mLikeList;
 
     public static Fragment newInstance(String objectId) {
         Fragment fragment = new CommentFragment();
@@ -81,14 +76,21 @@ public class CommentFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        try {
+            mLikeList = ParseUser.getCurrentUser().getRelation(Common.OBJECT_USER_COMMENT_LIKES).getQuery().find();
+        } catch (ParseException e){
+            e.printStackTrace();
+            getActivity().finish();
+        }
 
-        mView = inflater.inflate(R.layout.fragment_comment, container, false);
+        mView = inflater.inflate(R.layout.fragment_comment2, container, false);
         mEdtCommentText = (EditText) mView.findViewById(R.id.edt_comment_text);
         mBtnCommentSend = (Button) mView.findViewById(R.id.btn_comment_send);
         mRecyclerView = (RecyclerView) mView.findViewById(R.id.recycler_view_comment);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mList = new ArrayList<>();
-        mAdapter = new CommentAdapter(getActivity(), mList);
+
+        mAdapter = new CommentAdapter2(getActivity(), mList, mLikeList);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -117,6 +119,7 @@ public class CommentFragment extends Fragment {
                     mComment.put(Common.OBJECT_COMMENT_MSG, commentMsg);
                     mComment.put(Common.OBJECT_COMMENT_USER, currentUser);
                     mComment.put(Common.OBJECT_COMMENT_USER_ID, currentUser.getObjectId());
+                    mComment.put(Common.OBJECT_COMMENT_LIKES, 0);
 
                     mComment.saveInBackground(new SaveCallback() {
                         @Override

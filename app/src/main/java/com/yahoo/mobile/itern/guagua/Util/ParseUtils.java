@@ -79,8 +79,10 @@ public class ParseUtils {
         Collections.sort(questionList, new Comparator<ParseObject>() {
             @Override
             public int compare(ParseObject lhs, ParseObject rhs) {
-                int lhs_key = lhs.getInt(Common.OBJECT_POST_QA_NUM) + lhs.getInt(Common.OBJECT_POST_QB_NUM);
-                int rhs_key = rhs.getInt(Common.OBJECT_POST_QA_NUM) + rhs.getInt(Common.OBJECT_POST_QB_NUM);
+                int lhs_key = lhs.getInt(Common.OBJECT_POST_QA_NUM) + lhs.getInt(Common
+                        .OBJECT_POST_QB_NUM);
+                int rhs_key = rhs.getInt(Common.OBJECT_POST_QA_NUM) + rhs.getInt(Common
+                        .OBJECT_POST_QB_NUM);
                 return rhs_key - lhs_key;
             }
         });
@@ -158,11 +160,13 @@ public class ParseUtils {
             @Override
             public void done(ParseException e) {
                 if (community != null) {
-                    ParseRelation<ParseObject> relation = community.getRelation(Common.OBJECT_COMMUNITY_POSTS);
+                    ParseRelation<ParseObject> relation = community.getRelation(Common
+                            .OBJECT_COMMUNITY_POSTS);
                     relation.add(mPost);
                     community.saveInBackground();
                 }
-                ParseRelation<ParseObject> relation = user.getRelation(Common.OBJECT_USER_MY_QUESTIONS);
+                ParseRelation<ParseObject> relation = user.getRelation(Common
+                        .OBJECT_USER_MY_QUESTIONS);
                 relation.add(mPost);
 
                 final ParseObject votedQuestion = new ParseObject(Common.OBJECT_VOTED_QUESTION);
@@ -170,7 +174,8 @@ public class ParseUtils {
                 votedQuestion.put(Common.OBJECT_VOTED_QUESTION_OPTION, "");
                 try {
                     votedQuestion.save();
-                    ParseRelation<ParseObject> votedRelation = user.getRelation(Common.OBJECT_USER_VOTED_QUESTIONS);
+                    ParseRelation<ParseObject> votedRelation = user.getRelation(Common
+                            .OBJECT_USER_VOTED_QUESTIONS);
                     votedRelation.add(votedQuestion);
                 } catch (Exception e1) {
                     e1.printStackTrace();
@@ -276,7 +281,7 @@ public class ParseUtils {
         user.saveInBackground();
     }
 
-    static public ParseObject createCommunity(String title, Location location){
+    static public ParseObject createCommunity(String title, Location location) {
         ParseObject newCommunity = new ParseObject(Common.OBJECT_COMMUNITY);
         newCommunity.put(Common.OBJECT_COMMUNITY_TITLE, title);
         newCommunity.put(Common.OBJECT_COMMUNITY_LAT, String.valueOf(location.getLatitude()));
@@ -284,5 +289,10 @@ public class ParseUtils {
         newCommunity.saveInBackground();
 
         return newCommunity;
+    }
+
+    static public void likeComment(final ParseObject mComment, boolean add){
+        mComment.put(Common.OBJECT_COMMENT_LIKES,mComment.getInt(Common.OBJECT_COMMENT_LIKES)+((add)?1:-1));
+        mComment.saveInBackground();
     }
 }
