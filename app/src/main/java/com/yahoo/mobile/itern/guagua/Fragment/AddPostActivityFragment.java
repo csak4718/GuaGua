@@ -11,6 +11,8 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 
 import android.util.Log;
@@ -23,6 +25,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import com.parse.ParseObject;
 import com.squareup.picasso.Picasso;
@@ -31,6 +34,7 @@ import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
 
+import java.io.File;
 import java.io.IOException;
 
 
@@ -49,6 +53,7 @@ public class AddPostActivityFragment extends Fragment {
     EditText edtOptB;
 
     ImageView imgViewUpload;
+    Uri mImageUri;
 
     ImageButton imgBtnCamera;
     ImageButton imgBtnPicture;
@@ -120,25 +125,54 @@ public class AddPostActivityFragment extends Fragment {
 
     public void setImgViewUpload(Uri uri) {
 
+        mImageUri = uri;
 
         Picasso.with(getActivity())
                 .load(uri)
-                .resize(640, 640)
+                .resize(640, 480)
                 .centerInside()
                 .into(imgViewUpload);
         imgViewUpload.setVisibility(View.VISIBLE);
         postWithPicture = true;
     }
 
-    public void setImgViewUpload(Bitmap bitmap) {
-        imgViewUpload.setImageBitmap(bitmap);
+    public void setImgViewUpload() {
+
+        getActivity().getContentResolver().notifyChange(mImageUri, null);
+
+        Picasso.with(getActivity())
+                .load(mImageUri)
+                .resize(640, 480)
+                .centerInside()
+                .into(imgViewUpload);
         imgViewUpload.setVisibility(View.VISIBLE);
         postWithPicture = true;
     }
 
+    private File createTemporaryFile(String part, String ext) throws Exception
+    {
+        File tempDir= getActivity().getExternalCacheDir();
+        return File.createTempFile(part, ext, tempDir);
+    }
+
     private void getPictureFromCamera() {
         Intent i = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        getActivity().startActivityForResult(i, CAMERA_REQUEST);
+
+        File photo;
+        try
+        {
+            // place where to store camera taken picture
+            photo = this.createTemporaryFile("picture", ".jpg");
+            photo.delete();
+            mImageUri = Uri.fromFile(photo);
+            i.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
+            getActivity().startActivityForResult(i, CAMERA_REQUEST);
+        }
+        catch(Exception e)
+        {
+            Log.v("guagua", "Can't create file to take picture!");
+            Toast.makeText(getActivity(), "Please check SD card! Image shot is impossible!", Toast.LENGTH_SHORT);
+        }
     }
     private void getPictureFromGallery() {
         Intent i = new Intent(Intent.ACTION_PICK,

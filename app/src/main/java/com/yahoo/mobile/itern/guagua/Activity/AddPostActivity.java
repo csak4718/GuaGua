@@ -139,14 +139,12 @@ public class AddPostActivity extends ActionBarActivity {
     // For changing camera_btn img
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (data != null &&  resultCode == RESULT_OK && requestCode == AddPostActivityFragment.ACTIVITY_SELECT_IMAGE) {
             Uri selectedImageUri = data.getData();
             addPostFragment.setImgViewUpload(selectedImageUri);
         }
-        else if(data != null &&  resultCode == RESULT_OK && requestCode == AddPostActivityFragment.CAMERA_REQUEST) {
-            Bitmap photo = (Bitmap) data.getExtras().get("data");
-            addPostFragment.setImgViewUpload(photo);
+        else if(resultCode == RESULT_OK && requestCode == AddPostActivityFragment.CAMERA_REQUEST) {
+            addPostFragment.setImgViewUpload();
         }
     }
 }
