@@ -160,13 +160,11 @@ public class AddPostActivity extends ActionBarActivity {
             Log.d("Photo", picturePath);
             //Bitmap pictureObject = BitmapFactory.decodeFile(picturePath);
 
-            AddPostActivityFragment myf = (AddPostActivityFragment) getSupportFragmentManager().findFragmentById(R.id.add_post_content_frame);
-            myf.change_Image(picturePath);
+
 
         }else if(data != null &&  resultCode == RESULT_OK && requestCode == AddPostActivityFragment.CAMERA_REQUEST){
             Bitmap photo = (Bitmap) data.getExtras().get("data");
-            AddPostActivityFragment myf = (AddPostActivityFragment) getSupportFragmentManager().findFragmentById(R.id.add_post_content_frame);
-            myf.change_Image(photo);
+
         }
     }
 }

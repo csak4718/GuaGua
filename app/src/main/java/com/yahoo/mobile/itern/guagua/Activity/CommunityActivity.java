@@ -381,7 +381,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
                 dialog.dismiss();
             }
         });
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.R.color.transparent));
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
         dialog.show();
     }
     public Bitmap cropBmpToRect(Bitmap srcBmp){
