@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingTop="25dp"
-            android:paddingLeft="25dp"
+            android:paddingLeft="10dp"
             android:paddingRight="25dp">
             <com.pkmmte.view.CircularImageView
                 android:id="@+id/imgProfile"
@@ -72,8 +72,12 @@
         </LinearLayout>
         <ImageView
             android:id="@+id/img_view_question_picture"
-            android:layout_width="300dp"
-            android:layout_height="100dp"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/badge_ntu_big"
+            android:scaleType="centerCrop"
             android:visibility="visible"/>
 
 
