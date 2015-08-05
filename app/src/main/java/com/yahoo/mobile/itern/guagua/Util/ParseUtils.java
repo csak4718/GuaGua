@@ -128,7 +128,22 @@ public class ParseUtils {
         });
     }
 
-    static public void postQuestions(String question, String optionA, String optionB, final ParseObject community, final boolean choiceQuestion) {
+    static public void savePictureToPostSync(ParseObject mPost, Bitmap picture) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        picture.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] bytearray= stream.toByteArray();
+        ParseFile questionPicture = new ParseFile(mPost.getObjectId() + "_picture.jpg", bytearray);
+        try {
+            questionPicture.save();
+            mPost.put(Common.OBJECT_POST_PICTURE, questionPicture);
+            mPost.save();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    static public void postQuestions(String question, String optionA, String optionB, final ParseObject community,
+                                     final boolean choiceQuestion, final Bitmap picture) {
         final ParseObject mPost = new ParseObject(Common.OBJECT_POST);
         final ParseUser user = ParseUser.getCurrentUser();
         mPost.put(Common.OBJECT_POST_CONTENT, question);
@@ -162,6 +177,10 @@ public class ParseUtils {
                 }
 
                 user.saveInBackground();
+
+                if(picture != null) {
+                    savePictureToPostSync(mPost, picture);
+                }
 
                 getCommunityQuestions(community);
 

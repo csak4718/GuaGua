@@ -139,32 +139,14 @@ public class AddPostActivity extends ActionBarActivity {
     // For changing camera_btn img
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // To Handle Gallery Result
-        Log.d("Photo", "in result");
-        Log.d("Photo", String.valueOf(data == null));
-        Log.d("Photo", String.valueOf(requestCode));
+
         if (data != null &&  resultCode == RESULT_OK && requestCode == AddPostActivityFragment.ACTIVITY_SELECT_IMAGE) {
-            Log.d("Photo", "in result");
             Uri selectedImageUri = data.getData();
-            Log.d("Photo", "getdata");
-            String[] fileColumn = { MediaStore.Images.Media.DATA };
-            Log.d("Photo", "1");
-            Cursor imageCursor = getContentResolver().query(selectedImageUri,
-                    fileColumn, null, null, null);
-            imageCursor.moveToFirst();
-            int ori = imageCursor.getInt(0);
-            Log.d("Photo",String.valueOf(ori));
-            Log.d("Photo", "2");
-            int fileColumnIndex = imageCursor.getColumnIndex(fileColumn[0]);
-            String picturePath = imageCursor.getString(fileColumnIndex);
-            Log.d("Photo", picturePath);
-            //Bitmap pictureObject = BitmapFactory.decodeFile(picturePath);
-
-
-
-        }else if(data != null &&  resultCode == RESULT_OK && requestCode == AddPostActivityFragment.CAMERA_REQUEST){
+            addPostFragment.setImgViewUpload(selectedImageUri);
+        }
+        else if(data != null &&  resultCode == RESULT_OK && requestCode == AddPostActivityFragment.CAMERA_REQUEST) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
-
+            addPostFragment.setImgViewUpload(photo);
         }
     }
 }
