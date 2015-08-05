@@ -2,28 +2,38 @@ package com.yahoo.mobile.itern.guagua.Activity;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.ParseObject;
+import com.pkmmte.view.CircularImageView;
 import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.Event.CommunityEvent;
 import com.yahoo.mobile.itern.guagua.Fragment.CommunityFragment;
-import com.yahoo.mobile.itern.guagua.Fragment.CommunityListFragment;
+import com.yahoo.mobile.itern.guagua.Fragment.ExploreFragment;
 import com.yahoo.mobile.itern.guagua.Fragment.MapFragment;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
@@ -40,14 +50,14 @@ import de.greenrobot.event.EventBus;
  * Created by fanwang on 7/22/15.
  */
 
-public class CommunityActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class CommunityActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks, OnMapReadyCallback,
+        GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.SnapshotReadyCallback {
 
     private final String TAG = "CommunityActivity";
 
     public CommunityFragment mCommunityFragement;
     public MapFragment mMapFragment;
-    public CommunityListFragment mCommunityListFragement;
+    public ExploreFragment mExploreFragement;
 
     public ParseObject mCurCommunity;
     private List<ParseObject> mCommunities = new ArrayList<>();
@@ -60,16 +70,17 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     private LocationRequest mLocationRequest;
     private MainApplication mMainApplication;
     private MenuItem mExploreDone;
+    private GoogleMap mMap;
 
     @Override
     public void onResume() {
         super.onResume();
-        mGoogleApiClient.connect();
     }
 
     @Override
     public void onStart() {
         EventBus.getDefault().register(this);
+        mGoogleApiClient.connect();
         super.onStart();
     }
 
@@ -91,10 +102,10 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         mMainApplication = (MainApplication)this.getApplication();
         mCommunityFragement = CommunityFragment.newInstance(this);
         mMapFragment = MapFragment.newInstance(this);
-        mCommunityListFragement = CommunityListFragment.newInstance(this);
+        mExploreFragement = ExploreFragment.newInstance(this);
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.community_content, mCommunityListFragement)
+                .replace(R.id.community_content, mExploreFragement)
                 .commit();
 
         mLocationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
@@ -112,19 +123,18 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.d(TAG, "onConnected");
+        Log.d(TAG, "GoogleApiClient connection has been established");
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setInterval(1000); // Update location every second
 
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         mCurLocation  = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        Log.d(TAG, "curLocation is " + mCurLocation);
         findCurrentCommunity();
 
-
         mMapFragment.setupMap();
-        mCommunityListFragement.setupMap();
+        mExploreFragement.setupMap();
     }
 
     @Override
@@ -140,9 +150,16 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     @Override
     public void onLocationChanged(Location location) {
         Log.d(TAG, "Location changed: " + location.toString());
-        if(getLastLocation() == null)
-            setLastLocation(location);
+
+        Location prevLocation = getCurrentLocation();
+        setCurrentLocation(location);
         findCurrentCommunity();
+        mExploreFragement.mAdapter.notifyDataSetChanged();
+
+        if(prevLocation==null && location!=null) {
+            mMapFragment.setupMap();
+            mExploreFragement.setupMap();
+        }
     }
 
 
@@ -167,6 +184,8 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         mCommunities.clear();
         mCommunities.addAll(list);
         findCurrentCommunity();
+        mExploreFragement.mAdapter.notifyDataSetChanged();
+
     }
 
     public ParseObject getCurCommunity(){
@@ -187,6 +206,11 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         mLastLocation = location;
     }
 
+    public void setCurrentLocation(Location location){
+        mCurLocation = location;
+    }
+
+
 
     public void switchToMapFragment(){
         mExploreDone.setVisible(true);
@@ -198,7 +222,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     public void switchToCommunityFragment(){
         mExploreDone.setVisible(false);
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.community_content, mCommunityListFragement)
+                .replace(R.id.community_content, mExploreFragement)
                 .commit();
     }
 
@@ -234,30 +258,12 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     }
 
     public void showCommunityDialog(){
-        String curCommunityTitle = mCurCommunity.getString("title");
-
-        Dialog dialog = new AlertDialog.Builder(this)
-                .setTitle("Community Selected")
-                .setMessage("You have selected \"" + curCommunityTitle + "\" community.\n" +
-                        "Please confirm if you want to join \"" + curCommunityTitle + "\" community.")
-                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        ParseObject curCommunity = getCurCommunity();
-                        ParseUtils.addCommunityToUser(curCommunity.getObjectId());
-                        mMainApplication.currentViewingCommunity = curCommunity;
-                        Utils.gotoMainActivity(CommunityActivity.this);
-                    }
-                })
-                .setNegativeButton("resume", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // TODO Auto-generated method stub
-
-                    }
-                })
-                .create();
-        dialog.show();
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        mMap.snapshot(this);
     }
 
     @Override
@@ -280,6 +286,129 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        this.mMap = googleMap;
+
+        //mMap.clear();
+        mMap.setMyLocationEnabled(true);
+
+        if(getLastLocation() == null) {
+            setLastLocation(getCurrentLocation());
+            Location location = this.getLastLocation();
+            updateLocationOnMap(location, false);
+        }
+        else {
+            Location location = this.getLastLocation();
+            updateLocationOnMap(location, true);
+        }
+/*
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng point) {
+                return;
+                Location location = new Location("dummyprovider");
+                location.setLatitude(point.latitude);
+                location.setLongitude(point.longitude);
+                setLastLocation(location);
+                mExploreFragement.mAdapter.notifyDataSetChanged();
+
+                mMap.clear();
+                mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(point.latitude, point.longitude))
+                        .title(getCurCommunity().getString("title")))
+                        .showInfoWindow();
+            }
+        });
+
+        mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition position) {
+                //Log.d("explore","camera change "+ position);
+                LatLng point = position.target;
+                Location location = new Location("dummyprovider");
+                location.setLatitude(point.latitude);
+                location.setLongitude(point.longitude);
+                setLastLocation(location);
+            }
+        });
+        */
+    }
+
+    public void updateLocationOnMap(Location location, boolean showMarker){
+        if(location != null) {
+            LatLng locationLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLatLng, 15));//zoom level(0-19)
+            mExploreFragement.mAdapter.notifyDataSetChanged();
+
+            if(showMarker) {
+                mMap.clear();
+                mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(location.getLatitude(), location.getLongitude())));
+                        //.title(this.getCurCommunity().getString("title")))
+                        //.showInfoWindow();
+            }
+        }
+    }
+
+    @Override
+    public void onSnapshotReady(Bitmap bitmap) {
+
+
+        String curCommunityTitle = mCurCommunity.getString("title");
+       //View v = getLayoutInflater().inflate(R.layout.dialog_community_selected, null);
+
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_community_selected);
+
+        CircularImageView image = (CircularImageView) dialog.findViewById(R.id.img_dialog_community_miniature);
+        image.setImageBitmap(cropBmpToRect(bitmap));
+
+        TextView text = (TextView) dialog.findViewById(R.id.txt_dialog_content);
+        text.setText("You have selected \"" + curCommunityTitle + "\".");
+
+        Button dialogButton = (Button) dialog.findViewById(R.id.btn_dialog_confirm_cummunity);
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParseObject curCommunity = getCurCommunity();
+                ParseUtils.addCommunityToUser(curCommunity.getObjectId());
+                mMainApplication.currentViewingCommunity = curCommunity;
+                Utils.gotoMainActivity(CommunityActivity.this);
+                dialog.dismiss();
+            }
+        });
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+        dialog.show();
+    }
+    public Bitmap cropBmpToRect(Bitmap srcBmp){
+        Bitmap dstBmp;
+        if (srcBmp.getWidth() >= srcBmp.getHeight()){
+
+            dstBmp = Bitmap.createBitmap(
+                    srcBmp,
+                    srcBmp.getWidth()/2 - srcBmp.getHeight()/2,
+                    0,
+                    srcBmp.getHeight(),
+                    srcBmp.getHeight()
+            );
+
+        }else{
+
+            dstBmp = Bitmap.createBitmap(
+                    srcBmp,
+                    0,
+                    srcBmp.getHeight()/2 - srcBmp.getWidth()/2,
+                    srcBmp.getWidth(),
+                    srcBmp.getWidth()
+            );
+        }
+
+
+        return dstBmp;
     }
 
 }

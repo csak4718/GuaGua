@@ -6,6 +6,6 @@
     <item android:id="@+id/action_post"
         android:title="@string/add_post"
         android:orderInCategory="100"
-        android:icon="@drawable/ic_post_35dp"
+        android:icon="@drawable/send_gray"
         app:showAsAction="ifRoom"/>
 </menu>

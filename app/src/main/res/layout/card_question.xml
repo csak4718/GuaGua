@@ -52,6 +52,11 @@
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="5dp"
                     android:text="samples samples samples samples "/>
+                <ImageView
+                    android:id="@+id/img_view_question_picture"
+                    android:layout_width="wrap_content"
+                    android:layout_height="100dp"
+                    android:visibility="gone"/>
                 <TextView
                     android:id="@+id/date"
                     android:layout_width="match_parent"
@@ -68,14 +73,14 @@
 
         <com.yahoo.mobile.itern.guagua.View.OptionButton
             android:id="@+id/btnA"
-            android:layout_width="250dp"
+            android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="10dp"
             />
         <com.yahoo.mobile.itern.guagua.View.OptionButton
             android:id="@+id/btnB"
-            android:layout_width="250dp"
+            android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="15dp"/>

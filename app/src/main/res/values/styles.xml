@@ -30,4 +30,5 @@
         <item name="background">@color/action_bar_background</item>
         <item name="elevation">0dp</item>
     </style>
+
 </resources>

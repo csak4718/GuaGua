@@ -1,7 +1,5 @@
 package com.yahoo.mobile.itern.guagua.Fragment;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +8,8 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
@@ -20,10 +20,12 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 
 import com.parse.ParseObject;
+import com.squareup.picasso.Picasso;
 import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
@@ -34,8 +36,8 @@ import com.yahoo.mobile.itern.guagua.Util.Utils;
  * A placeholder fragment containing a simple view.
  */
 public class AddPostActivityFragment extends Fragment {
-    final int CAMERA_REQUEST = 12345;
-    final int ACTIVITY_SELECT_IMAGE = 1234;
+    public static final int CAMERA_REQUEST = 12345;
+    public static final int ACTIVITY_SELECT_IMAGE = 1234;
 
     View mView;
     EditText edtQuestion;
@@ -44,17 +46,16 @@ public class AddPostActivityFragment extends Fragment {
     EditText edtOptA;
     EditText edtOptB;
 
-    ImageButton btnCameraA;
-    ImageButton btnCameraB;
+    ImageView imgViewUpload;
+
+    ImageButton imgBtnCamera;
+    ImageButton imgBtnPicture;
     Switch btnShareFbSwitch;
     Switch btnTwoChoiceSwitch;
-    boolean enableFBshare=false;
-    boolean aorb;
+    boolean enableFBshare = false;
+    boolean postWithPicture = false;
 
     private Boolean mTwoChoiceQuestion = true;
-
-    public AddPostActivityFragment() {
-    }
 
     public boolean getEnableFBshare(){
         return enableFBshare;
@@ -68,31 +69,25 @@ public class AddPostActivityFragment extends Fragment {
         optionContainer = (LinearLayout) mView.findViewById(R.id.option_container);
         edtOptA = (EditText) mView.findViewById(R.id.edt_optA);
         edtOptB = (EditText) mView.findViewById(R.id.edt_optB);
-        Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_local_see_black_48dp);
-        btnCameraA = (ImageButton) mView.findViewById(R.id.btn_cameraA);
-        btnCameraA.setImageBitmap(sqr2circle(adjustBitmap(bm,bm.getHeight())));
-        btnCameraB = (ImageButton) mView.findViewById(R.id.btn_cameraB);
-        btnCameraB.setImageBitmap(sqr2circle(adjustBitmap(bm,bm.getHeight())));
+
+        imgViewUpload = (ImageView) mView.findViewById(R.id.img_view_upload);
+
+        imgBtnCamera = (ImageButton) mView.findViewById(R.id.img_btn_camera);
+        imgBtnPicture = (ImageButton) mView.findViewById(R.id.img_btn_picture);
+
         btnTwoChoiceSwitch = (Switch) mView.findViewById(R.id.switch_two_choice);
         btnShareFbSwitch = (Switch) mView.findViewById(R.id.share_switch);
 
-        btnCameraA.setOnClickListener(new View.OnClickListener() {
+        imgBtnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                aorb = false;
-                cameraORgallery();
-                //Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_account_circle_black_48dp);
-                //btnCamera.setImageBitmap(bm);
+                getPictureFromCamera();
             }
         });
-        btnCameraB.setOnClickListener(new View.OnClickListener() {
+        imgBtnPicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                aorb = true;
-                cameraORgallery();
-                //Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_account_circle_black_48dp);
-                //btnCamera.setImageBitmap(bm);
-
+                getPictureFromGallery();
             }
         });
 
@@ -116,83 +111,34 @@ public class AddPostActivityFragment extends Fragment {
             }
         });
 
+        postWithPicture = false;
+
         return mView;
     }
 
-    //Change button pic after select a picture
-    public void change_Image(String url){
-        Bitmap bm = BitmapFactory.decodeFile(url);
-        Log.d("Photo", "here");
-        if (aorb == false) {
-            bm = adjustBitmap(bm, btnCameraA.getHeight());
-            btnCameraA.setImageBitmap(bm);
-        }else{
-            bm = adjustBitmap(bm, btnCameraB.getHeight());
-            btnCameraB.setImageBitmap(bm);
-        }
+    public void setImgViewUpload(Uri uri) {
+
+        Picasso.with(getActivity())
+                .load(uri)
+                .into(imgViewUpload);
+        imgViewUpload.setVisibility(View.VISIBLE);
+        postWithPicture = true;
     }
 
-    //Adjust bitmap
-    private Bitmap adjustBitmap(Bitmap srcBmp, int side){
-        Bitmap dstBmp;
-        if (srcBmp.getWidth() >= srcBmp.getHeight()){
-
-            dstBmp = Bitmap.createBitmap(srcBmp, srcBmp.getWidth()/2 - srcBmp.getHeight()/2, 0, srcBmp.getHeight(), srcBmp.getHeight());
-
-        }else{
-            dstBmp = Bitmap.createBitmap(srcBmp, 0,srcBmp.getHeight()/2 - srcBmp.getWidth()/2, srcBmp.getWidth(),srcBmp.getWidth());
-        }
-        if (srcBmp.getWidth() >= srcBmp.getHeight()){
-            dstBmp = Bitmap.createBitmap(srcBmp,srcBmp.getWidth()/2 - srcBmp.getHeight()/2,0,srcBmp.getHeight(),srcBmp.getHeight());
-
-        }else{
-            dstBmp = Bitmap.createBitmap(srcBmp,0,srcBmp.getHeight()/2 - srcBmp.getWidth()/2,srcBmp.getWidth(),srcBmp.getWidth());
-        }
-        dstBmp = Bitmap.createScaledBitmap(dstBmp,side,side,true);
-        return sqr2circle(dstBmp);
+    public void setImgViewUpload(Bitmap bitmap) {
+        imgViewUpload.setImageBitmap(bitmap);
+        imgViewUpload.setVisibility(View.VISIBLE);
+        postWithPicture = true;
     }
 
-    //Turn it to cirlcle
-    private Bitmap sqr2circle(Bitmap bm){
-        Bitmap output = Bitmap.createBitmap(bm.getWidth(), bm.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(output);
-
-        final int color = 0xff424242;
-        final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bm.getWidth(),bm.getHeight());
-
-        paint.setAntiAlias(true);
-        canvas.drawARGB(0, 0, 0, 0);
-        paint.setColor(color);
-        canvas.drawCircle(bm.getWidth() / 2, bm.getHeight() / 2, bm.getWidth() / 2, paint);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(bm, rect, rect, paint);
-        return output;
+    private void getPictureFromCamera() {
+        Intent i = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        getActivity().startActivityForResult(i, CAMERA_REQUEST);
     }
-
-    private void cameraORgallery(){
-        new AlertDialog.Builder(getActivity())
-                .setTitle("Delete entry")
-                .setMessage("Are you sure you want to delete this entry?")
-                .setPositiveButton("Camera", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // continue with delete
-                        Intent i = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                        getActivity().startActivityForResult(i ,CAMERA_REQUEST);
-                    }
-                })
-                .setNegativeButton("Gallery", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // do nothing
-                        Intent i = new Intent(Intent.ACTION_PICK,
-                                android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-                        Log.d("Photo", "before act");
-                        getActivity().startActivityForResult(i, ACTIVITY_SELECT_IMAGE);
-                        Log.d("Photo", "after act");
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
+    private void getPictureFromGallery() {
+        Intent i = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        getActivity().startActivityForResult(i, ACTIVITY_SELECT_IMAGE);
     }
 
     public void addPost(){
@@ -205,8 +151,12 @@ public class AddPostActivityFragment extends Fragment {
             optionB = edtOptB.getText().toString();
         }
 
-        final ParseObject community = ((MainApplication) getActivity().getApplication()).currentViewingCommunity;
-        ParseUtils.postQuestions(question, optionA, optionB, community, mTwoChoiceQuestion);
+        ParseObject community = ((MainApplication) getActivity().getApplication()).currentViewingCommunity;
+        Bitmap bitmap = null;
+        if(postWithPicture) {
+            bitmap = ((BitmapDrawable) imgViewUpload.getDrawable()).getBitmap();
+        }
+        ParseUtils.postQuestions(question, optionA, optionB, community, mTwoChoiceQuestion, bitmap);
         Utils.hideSoftKeyboard(getActivity());
     }
 }
