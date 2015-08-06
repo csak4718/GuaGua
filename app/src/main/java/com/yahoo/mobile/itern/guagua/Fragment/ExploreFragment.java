@@ -61,7 +61,6 @@ public class ExploreFragment extends Fragment {
         super.onCreate(savedBundle);
         mContext = getActivity();
         mMainApplication = (MainApplication)((Activity)mContext).getApplication();
-
     }
 
     @Override
@@ -98,12 +97,27 @@ public class ExploreFragment extends Fragment {
         mNewCommunityCreateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((CommunityActivity)mContext).swtichToCreateCommunity();
+                ((CommunityActivity)mContext).switchToCreateCommunity();
             }
         });
 
         return rootView;
     }
+
+    public void hideMap(){
+        ((CommunityActivity)mContext).switchToSearch();
+        mCreateCommunityLayout.setVisibility(View.VISIBLE);
+        mEditLocationLayout.setVisibility(View.GONE);
+        mMapView.setVisibility(View.GONE);
+    }
+
+    public void showMap(){
+        mCreateCommunityLayout.setVisibility(View.GONE);
+
+        mEditLocationLayout.setVisibility(View.VISIBLE);
+        mMapView.setVisibility(View.VISIBLE);
+    }
+
 
     public void setupMap() {
         if(mMapView != null)
@@ -126,9 +140,7 @@ public class ExploreFragment extends Fragment {
             mCommunitySearchView.setOnSearchClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mCreateCommunityLayout.setVisibility(View.VISIBLE);
-                    mEditLocationLayout.setVisibility(View.GONE);
-                    mMapView.setVisibility(View.GONE);
+                    hideMap();
                 }
             });
 
@@ -154,11 +166,7 @@ public class ExploreFragment extends Fragment {
             mCommunitySearchView.setOnCloseListener(new SearchView.OnCloseListener() {
                 @Override
                 public boolean onClose() {
-                    mCreateCommunityLayout.setVisibility(View.GONE);
-
-                    mEditLocationLayout.setVisibility(View.VISIBLE);
-                    mMapView.setVisibility(View.VISIBLE);
-                    Utils.hideSoftKeyboard((CommunityActivity) mContext);
+                    showMap();
                     return false;
                 }
             });
