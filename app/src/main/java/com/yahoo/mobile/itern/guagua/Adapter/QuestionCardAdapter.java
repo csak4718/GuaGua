@@ -4,9 +4,13 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +19,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -188,6 +194,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_question, parent, false);
         ViewHolder vh = new ViewHolder(v);
+        setQuestionPictureOnClickListener(vh);
 
         return vh;
     }
@@ -410,6 +417,44 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         });
     }
 
+    private void setQuestionPictureOnClickListener(final ViewHolder holder) {
+        holder.imgViewQuestionPicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Dialog dialog = new Dialog(mContext);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.dialog_image);
+
+                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                lp.copyFrom(dialog.getWindow().getAttributes());
+                lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                lp.height = WindowManager.LayoutParams.MATCH_PARENT;
+
+
+                Bitmap bmp = ((BitmapDrawable)holder.imgViewQuestionPicture.getDrawable()).getBitmap();
+
+                ImageView picture = (ImageView) dialog.findViewById(R.id.img_view_dialog_picture);
+                ImageButton btnClose = (ImageButton) dialog.findViewById(R.id.img_btn_close);
+                btnClose.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+                picture.setImageBitmap(bmp);
+                dialog.show();
+                dialog.getWindow().setAttributes(lp);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#80000000")));
+            }
+        });
+    }
+
+    private void setQuestionPictureHeight(ViewHolder holder) {
+        int width = holder.imgViewQuestionPicture.getWidth();
+        int height = (int) (width * (9.0 / 16));
+        holder.imgViewQuestionPicture.setMinimumHeight(height);
+    }
+
     private void displayQuestionPictureParseImage(final ParseObject mQuestion, final ViewHolder holder, final Map<String, Object> cache) {
         ParseFile questionPicture = mQuestion.getParseFile(Common.OBJECT_POST_PICTURE);
         if(questionPicture != null) {
@@ -422,6 +467,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                         if(bmp != null) {
                             holder.imgViewQuestionPicture.setImageBitmap(bmp);
                             holder.imgViewQuestionPicture.setVisibility(View.VISIBLE);
+                            setQuestionPictureHeight(holder);
                             cache.put(Common.QUESTION_CARD_QUESTION_PICTURE, bmp);
                         }
                     }
@@ -623,6 +669,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         if(questionPicture != null) {
             holder.imgViewQuestionPicture.setImageBitmap(questionPicture);
             holder.imgViewQuestionPicture.setVisibility(View.VISIBLE);
+            setQuestionPictureHeight(holder);
         }
         holder.txtTitle.setText(questionContent);
         holder.txtDate.setText(date2String(mDate));

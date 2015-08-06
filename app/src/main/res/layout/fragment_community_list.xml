@@ -9,7 +9,7 @@
     <LinearLayout
         android:id="@+id/layout_edit_community"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="50dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:layout_marginLeft="5dp"
@@ -39,15 +39,16 @@
     <android.support.v7.widget.SearchView
         android:id="@+id/search_community"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="50dp"
         android:textSize="24dp"
+        android:iconifiedByDefault="true"
         android:gravity="center_vertical"
         android:queryHint="搜尋附近社區"/>
 
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="25dp"
         android:paddingLeft="3dp"
         android:gravity="center_vertical"
 
@@ -56,6 +57,47 @@
         android:background="@color/cyan"
         android:textColor="@color/white"/>
 
+
+    <RelativeLayout
+        android:id="@+id/layout_create_community"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:focusable="true"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/img_create_community"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_community_pin"/>
+
+        <TextView
+            android:id="@+id/txt_create_community_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/img_create_community"
+            android:layout_marginLeft="5dp"
+            android:textSize="20dp"/>
+
+
+        <TextView
+            android:id="@+id/txt_create_community_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:paddingLeft="3dp"
+            android:gravity="center_vertical"
+            android:text="Create>"
+            android:textSize="20dp"
+            android:textColor="@color/gray"
+            android:layout_alignParentRight="true"
+            android:paddingRight="10dp"/>
+
+
+    </RelativeLayout>
 
     <ListView
         android:id="@+id/list_community_suggestion"
@@ -67,8 +109,8 @@
         android:layout_below="@+id/map_search_view"
         android:dividerHeight="10dp"
         android:divider="@color/white"
-        android:fitsSystemWindows="true"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"/>
+        android:fitsSystemWindows="true"/>
+
+
 
 </LinearLayout>
