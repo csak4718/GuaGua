@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     tools:context=".CollectionFragment">
 
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -16,7 +15,7 @@
             android:layout_height="match_parent"/>
 
         <LinearLayout
-            android:id="@+id/empty_following_root"
+            android:id="@+id/empty_my_question_root"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
@@ -24,13 +23,13 @@
             <ImageView
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:src="@drawable/empty_following"
+                android:src="@drawable/empty_question"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="80dp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="STAR A QUESTION"
+                android:text="NO QUESTION YET"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="20dp"
                 android:textSize="25sp"
@@ -44,7 +43,7 @@
                 android:layout_marginLeft="40dp"
                 android:layout_marginRight="40dp"
                 android:gravity="center"
-                android:text="It’s easy to find the question you are following."
+                android:text="Ask a question in your community right now."
                 android:textSize="20sp"
                 android:textColor="#BAB7B7" />
         </LinearLayout>

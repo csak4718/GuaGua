@@ -79,7 +79,7 @@ public class MainActivityFragment extends Fragment {
     private void refreshList(List<ParseObject> list) {
         mList.clear();
         mList.addAll(list);
-        
+
         mAdapter.flushFilter();
         mAdapter.notifyDataSetChangedWithCache();
         mPullToRefreshView.setRefreshing(false);
