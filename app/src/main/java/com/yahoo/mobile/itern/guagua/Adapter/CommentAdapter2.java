@@ -9,7 +9,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.parse.GetCallback;
@@ -63,6 +65,9 @@ public class CommentAdapter2 extends RecyclerView.Adapter<CommentAdapter2.MainVi
         public TextView txtDate;
         public TextView numLikes;
         public boolean liked = false;
+
+        public ListView mlist;
+
         public OtherViewHolder(View itemView) {
             super(itemView);
             imgCommentProfile = (ImageView) itemView.findViewById(R.id.img_comment_profile);
@@ -72,6 +77,7 @@ public class CommentAdapter2 extends RecyclerView.Adapter<CommentAdapter2.MainVi
             boxLike = itemView.findViewById(R.id.comment_like_box);
             numLikes = (TextView) itemView.findViewById(R.id.num_comment_likes);
             imgCommentLike = (ImageView) itemView.findViewById(R.id.img_comment_like);
+            mlist = (ListView) itemView.findViewById(R.id.testlistView);
         }
     }
 
@@ -150,6 +156,14 @@ public class CommentAdapter2 extends RecyclerView.Adapter<CommentAdapter2.MainVi
         holder.numLikes.setText(String.valueOf(likes));
 
         setUpBoxLike(holder, comment);
+
+
+        String[] list = {"鉛筆","原子筆","鋼筆","毛筆","彩色筆"};
+        ArrayAdapter<String> listAdapter;
+
+        listAdapter = new ArrayAdapter(mContext,android.R.layout.simple_list_item_1,list);
+        holder.mlist.setAdapter(listAdapter);
+
     }
 
     @Override
@@ -180,7 +194,8 @@ public class CommentAdapter2 extends RecyclerView.Adapter<CommentAdapter2.MainVi
                     ParseUtils.likeComment(comment, false);
                     holder.numLikes.setTextColor(Color.GRAY);
                     holder.imgCommentLike.setImageResource(R.drawable.ic_like1);
-                    holder.numLikes.setText(String.valueOf(Integer.valueOf(holder.numLikes.getText().toString
+                    holder.numLikes.setText(String.valueOf(Integer.valueOf(holder.numLikes
+                            .getText().toString
                             ()) - 1));
                     relation.remove(comment);
                     currentUser.saveInBackground();
@@ -190,7 +205,8 @@ public class CommentAdapter2 extends RecyclerView.Adapter<CommentAdapter2.MainVi
                     ParseUtils.likeComment(comment, true);
                     holder.numLikes.setTextColor(Color.RED);
                     holder.imgCommentLike.setImageResource(R.drawable.ic_like);
-                    holder.numLikes.setText(String.valueOf(Integer.valueOf(holder.numLikes.getText().toString
+                    holder.numLikes.setText(String.valueOf(Integer.valueOf(holder.numLikes
+                            .getText().toString
                             ()) + 1));
                     relation.add(comment);
                     currentUser.saveInBackground();
