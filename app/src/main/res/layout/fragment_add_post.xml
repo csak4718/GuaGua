@@ -22,12 +22,26 @@
             android:paddingTop="10dp"
             android:paddingLeft="10dp"/>
 
-        <ImageView
-            android:id="@+id/img_view_upload"
-            android:scaleType="centerCrop"
+        <FrameLayout
+            android:id="@+id/img_preview_root"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:visibility="gone"/>
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+            <ImageView
+                android:id="@+id/img_view_upload"
+                android:scaleType="centerCrop"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="5dp" />
+            <ImageButton
+                android:id="@+id/img_btn_preview_delete"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/photo_delete"
+                android:layout_gravity="right|top"/>
+        </FrameLayout>
+
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -38,13 +52,13 @@
             <ImageButton
                 android:id="@+id/img_btn_camera"
                 android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_height="25dp"
                 android:layout_margin="5dp"
                 android:background="@drawable/camera"/>
             <ImageButton
                 android:id="@+id/img_btn_picture"
                 android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_height="25dp"
                 android:layout_margin="5dp"
                 android:background="@drawable/pictures"/>
 

@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -33,6 +34,8 @@ public class CollectionFragment extends Fragment {
     private RecyclerView.LayoutManager mLayoutManager;
     private List<ParseObject> mCollection;
     private QuestionCardAdapter mAdapter;
+
+    private LinearLayout emptyFollowingRoot;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,6 +76,8 @@ public class CollectionFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
+        emptyFollowingRoot = (LinearLayout)mRootView.findViewById(R.id.empty_following_root);
+
         //ParseUtils.getAllCollections(mUserId);
     }
 
@@ -86,5 +91,12 @@ public class CollectionFragment extends Fragment {
         mCollection.addAll(list);
         mAdapter.flushFilter();
         mAdapter.notifyDataSetChangedWithCache();
+
+        if(mCollection.size() == 0) {
+            emptyFollowingRoot.setVisibility(View.VISIBLE);
+        }
+        else {
+            emptyFollowingRoot.setVisibility(View.GONE);
+        }
     }
 }

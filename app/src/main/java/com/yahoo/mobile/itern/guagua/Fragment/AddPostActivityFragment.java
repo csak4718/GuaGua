@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -52,7 +53,9 @@ public class AddPostActivityFragment extends Fragment {
     EditText edtOptA;
     EditText edtOptB;
 
+    FrameLayout imgPreviewRoot;
     ImageView imgViewUpload;
+    ImageButton imgBtnPreviewDelete;
     Uri mImageUri;
 
     ImageButton imgBtnCamera;
@@ -77,7 +80,9 @@ public class AddPostActivityFragment extends Fragment {
         edtOptA = (EditText) mView.findViewById(R.id.edt_optA);
         edtOptB = (EditText) mView.findViewById(R.id.edt_optB);
 
+        imgPreviewRoot = (FrameLayout) mView.findViewById(R.id.img_preview_root);
         imgViewUpload = (ImageView) mView.findViewById(R.id.img_view_upload);
+        imgBtnPreviewDelete = (ImageButton) mView.findViewById(R.id.img_btn_preview_delete);
 
         imgBtnCamera = (ImageButton) mView.findViewById(R.id.img_btn_camera);
         imgBtnPicture = (ImageButton) mView.findViewById(R.id.img_btn_picture);
@@ -118,6 +123,14 @@ public class AddPostActivityFragment extends Fragment {
             }
         });
 
+        imgBtnPreviewDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                postWithPicture = false;
+                imgPreviewRoot.setVisibility(View.GONE);
+            }
+        });
+
         postWithPicture = false;
 
         return mView;
@@ -132,7 +145,7 @@ public class AddPostActivityFragment extends Fragment {
                 .resize(640, 480)
                 .centerInside()
                 .into(imgViewUpload);
-        imgViewUpload.setVisibility(View.VISIBLE);
+        imgPreviewRoot.setVisibility(View.VISIBLE);
         postWithPicture = true;
     }
 
@@ -145,7 +158,7 @@ public class AddPostActivityFragment extends Fragment {
                 .resize(640, 480)
                 .centerInside()
                 .into(imgViewUpload);
-        imgViewUpload.setVisibility(View.VISIBLE);
+        imgPreviewRoot.setVisibility(View.VISIBLE);
         postWithPicture = true;
     }
 

@@ -1,40 +1,31 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivityFragment">
-
-
+    tools:context=".CollectionFragment">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.yalantis.phoenix.PullToRefreshView
-            android:id="@+id/pull_to_refresh"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/collection_recycler_view"
+            android:scrollbars="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recycler_view"
-                android:scrollbars="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-        </com.yalantis.phoenix.PullToRefreshView>
+            android:layout_height="match_parent"/>
 
         <LinearLayout
-            android:id="@+id/empty_community_root"
+            android:id="@+id/empty_my_question_root"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:visibility="gone">
             <ImageView
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:src="@drawable/empty_community"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/empty_question"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="50dp"
-                android:layout_marginLeft="30dp"/>
+                android:layout_marginTop="80dp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -52,25 +43,11 @@
                 android:layout_marginLeft="40dp"
                 android:layout_marginRight="40dp"
                 android:gravity="center"
-                android:text="Be the first one to ask a question right here!"
+                android:text="Ask a question in your community right now."
                 android:textSize="20sp"
                 android:textColor="#BAB7B7" />
         </LinearLayout>
-
     </FrameLayout>
 
-
-
-    <com.melnykov.fab.FloatingActionButton
-        android:id="@+id/btn_add_post"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:layout_margin="16dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:src="@drawable/ic_add_white_24dp"
-        fab:fab_colorNormal="#5AD3D2"/>
 
 </RelativeLayout>
