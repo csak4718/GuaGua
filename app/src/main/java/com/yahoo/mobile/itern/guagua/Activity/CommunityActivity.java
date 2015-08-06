@@ -53,6 +53,12 @@ import de.greenrobot.event.EventBus;
 public class CommunityActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks, OnMapReadyCallback,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.SnapshotReadyCallback {
 
+    private final int STATE_EXPLORE = 0;
+    private final int STATE_MAP = 1;
+    private final int STATE_SEARCH = 2;
+    private final int STATE_CREATE = 3;
+    private int mCurState;
+
     private final String TAG = "CommunityActivity";
 
     public CommunityFragment mCommunityFragement;
@@ -97,6 +103,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mCurState = STATE_EXPLORE;
         setContentView(R.layout.activity_community);
         mContext = this;
         setupActionBar();
@@ -135,7 +142,6 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         Log.d(TAG, "curLocation is " + mCurLocation);
 
         sortCommunityList();
-
 
         mMapFragment.setupMap();
         mExploreFragement.setupMap();
@@ -206,24 +212,37 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         mCurLocation = location;
     }
 
-
-
     public void switchToMapFragment(){
+        mCurState = STATE_MAP;
+        mCreateDone.setVisible(false);
         mExploreDone.setVisible(true);
+
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.community_content, mMapFragment)
                 .commit();
     }
 
-    public void swtichToCreateCommunity(){
-        mCreateDone.setVisible(true);
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.community_content, mMapFragment)
-                .commit();
-    }
-
-    public void switchToCommunityFragment(){
+    public void switchToCreateCommunity(){
+        mCurState = STATE_CREATE;
         mExploreDone.setVisible(false);
+        mCreateDone.setVisible(true);
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.community_content, mMapFragment)
+                .commit();
+    }
+
+    public void switchToSearch(){
+        mCurState = STATE_SEARCH;
+    }
+
+
+    public void switchToExploreFragment(){
+        mCurState = STATE_EXPLORE;
+        mExploreDone.setVisible(false);
+        mCreateDone.setVisible(false);
+        mExploreFragement.showMap();
+        //mActionBar.setDisplayHomeAsUpEnabled(true);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.community_content, mExploreFragement)
                 .commit();
@@ -258,7 +277,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     public void setupActionBar(){
         mActionBar = getSupportActionBar();
         mActionBar.setTitle("Explore");
-        mActionBar.setHomeButtonEnabled(true);
+        mActionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     public void showCommunityDialog(){
@@ -288,16 +307,24 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.item_explore_done:
-                switchToCommunityFragment();
+            case android.R.id.home:
+                if(mCurState == STATE_EXPLORE)
+                    this.finish();
+                else
+                    switchToExploreFragment();
                 return true;
+
+            case R.id.item_explore_done:
+                switchToExploreFragment();
+                return true;
+
             case R.id.item_create_done:
-                //[TODO]
                 String newCommunityTitle = (String)mExploreFragement.mNewCommunityTitle.getText();
                 ParseObject newCommunity = ParseUtils.createCommunity(newCommunityTitle , mLastLocation);
                 mCurCommunity = newCommunity;
                 showCommunityDialog();
                 return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
