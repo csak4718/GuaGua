@@ -70,7 +70,7 @@
             android:background="@drawable/dialog_confirm_btn_bg"
             android:textColor="@color/white"
             android:textSize="16dp"
-            android:text='CONFIRM'
+            android:text='@string/explore_community_confirm'
             android:layout_marginTop="10dp"/>
 
     </LinearLayout>
