@@ -32,6 +32,7 @@ public class Common {
     public final static String OBJECT_POST_PICTURE = "picture";
     public final static String OBJECT_POST_QLIKES = "QLikes";
     public final static String OBJECT_POST_SHARE_NUM = "shareNum";
+    public final static String OBJECT_POST_COMMUNITY = "community";
 
     public final static String OBJECT_COMMENT = "Comments";
     public final static String OBJECT_COMMENT_MSG = "msg";
