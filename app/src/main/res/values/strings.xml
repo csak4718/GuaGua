@@ -32,16 +32,21 @@
     <string name="profile_logout_fb">Log Out</string>
 
     <string name="see_result">See Results</string>
-    <string name="explore_edit_loc">Edit Current Location</string>
+    <string name="explore_edit_current_location">Edit current location</string>
     <string name="explore_community_nearby">Community Nearby</string>
     <string name="explore_community_create">Create</string>
     <string name="explore_community_select">Community Selected</string>
     <string name="explore_community_confirm">CONFIRM</string>
 
-    <string name="drawer_view_guagau">GuaGua</string>
+    <string name="drawer_view_guagua">GuaGua</string>
     <string name="drawer_view_taiwan">Taiwan</string>
     <string name="drawer_view_personal_page">View Personal Page</string>
     <string name="drawer_view_community">Community</string>
     <string name="drawer_view_explore">Explore</string>
+
+    <string name="community_select_title">Community Selected</string>
+    <string name="community_create_title">Community Created</string>
+    <string name="community_select">You have selected</string>
+    <string name="community_create">You have created</string>
 
 </resources>
