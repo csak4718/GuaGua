@@ -1,0 +1,46 @@
+<resources>
+    <string name="facebook_app_id" translatable="false" templateMergeStrategy="preserve">
+        1624392404511434
+    </string>
+    <string name="app_name">呱呱</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_done">Done</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_profile_setting">Profile</string>
+    <string name="title_activity_add_post">AddPostActivity</string>
+    <string name="action_settings">設定</string>
+    <string name="my_favorite_tag">我的收藏</string>
+    <string name="my_question_tag">我的問題</string>
+    <string name="title_activity_comment">留言</string>
+    <string name="add_post">問個問題</string>
+    <string name="post_default">我想要問..</string>
+    <string name="post_opt1">選項一</string>
+    <string name="post_opt2">選項二</string>
+    <string name="post_ask_2_choices_question">問二選一的問題</string>
+    <string name="post_share_to_fb">分享到Facebook</string>
+    <string name="title_activity_other_user_profile">OtherUserProfile</string>
+
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+
+    <string name="login_fb">使用Faceboo登入</string>
+    <string name="profile_name">姓名</string>
+    <string name="profile_logout_fb">登出</string>
+
+    <string name="see_result">直接看結果</string>
+    <string name="explore_edit_current_location">編輯當前位置</string>
+    <string name="explore_community_nearby">附近社群 </string>
+    <string name="explore_community_create">建立</string>
+    <string name="explore_community_select">已選擇社群</string>
+    <string name="explore_community_confirm">確認</string>
+
+    <string name="drawer_view_guagua">呱呱</string>
+    <string name="drawer_view_taiwan">台灣</string>
+    <string name="drawer_view_personal_page">觀看個人頁面</string>
+    <string name="drawer_view_community">社群</string>
+    <string name="drawer_view_explore">探索</string>
+
+</resources>

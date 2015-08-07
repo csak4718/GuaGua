@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:textSize="20dp"
-            android:text="Edit Current Location"
+            android:text="@string/explore_edit_current_location"
             android:textColor="@color/darkblue"
             android:id="@+id/txt_edit_location"/>
     </LinearLayout>
@@ -53,7 +53,7 @@
         android:gravity="center_vertical"
 
 
-        android:text="Community Nearby"
+        android:text="@string/explore_community_nearby"
         android:textSize="20dp"
         android:background="@color/cyan"
         android:textColor="@color/white"/>
@@ -81,7 +81,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/img_create_community"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="10dp"
             android:textSize="20dp"/>
 
 
@@ -91,7 +91,7 @@
             android:layout_height="25dp"
             android:paddingLeft="3dp"
             android:gravity="center_vertical"
-            android:text="Create>"
+            android:text="@string/explore_community_create"
             android:textSize="20dp"
             android:textColor="@color/gray"
             android:layout_alignParentRight="true"

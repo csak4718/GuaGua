@@ -28,7 +28,6 @@ import com.yahoo.mobile.itern.guagua.Util.Utils;
 import com.yahoo.mobile.itern.guagua.View.DrawerItemCommunity;
 
 import java.lang.reflect.Type;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -170,7 +169,7 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.View
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
         if(position == 0) {
-            holder.item.setTitle("呱呱");
+            holder.item.setTitle(mActivity.getResources().getString(R.string.drawer_view_guagua));
             holder.item.hideHandle();
             holder.item.setIcon(mActivity.getResources().getDrawable(R.drawable.pin));
             holder.item.setOnClickListener(new View.OnClickListener() {
@@ -187,7 +186,7 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.View
             });
         }
         else if(position == 1) {
-            holder.item.setTitle("Taiwan");
+            holder.item.setTitle(mActivity.getResources().getString(R.string.drawer_view_taiwan));
             holder.item.hideHandle();
             holder.item.setIcon(mActivity.getResources().getDrawable(R.drawable.pin));
             // Get Taiwan Community
@@ -217,7 +216,7 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.View
         else if(position == mList.size() + 2) {
             holder.item.setIcon(mActivity.getResources().getDrawable(R.drawable.pin_explore));
             holder.item.hideHandle();
-            holder.item.setTitle("Explore");
+            holder.item.setTitle(mActivity.getResources().getString(R.string.drawer_view_explore));
             holder.item.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {

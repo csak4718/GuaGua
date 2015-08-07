@@ -276,7 +276,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
 
     public void setupActionBar(){
         mActionBar = getSupportActionBar();
-        mActionBar.setTitle("Explore");
+        mActionBar.setTitle(getResources().getString(R.string.drawer_view_explore));
         mActionBar.setDisplayHomeAsUpEnabled(true);
     }
 

@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minLines="6"
-            android:hint="I want to ask...."
+            android:hint="@string/post_default"
             android:gravity="top"
             android:background = "@null"
             android:paddingTop="10dp"
@@ -84,7 +84,7 @@
                     android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:hint="選項1"
+                    android:hint="@string/post_opt1"
                     android:background="@null"
                     android:paddingTop="10dp"
                     android:paddingLeft="10dp"
@@ -104,7 +104,7 @@
                     android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:hint="選項2"
+                    android:hint="@string/post_opt2"
                     android:background="@null"
                     android:paddingTop="10dp"
                     android:paddingLeft="10dp"
@@ -129,7 +129,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Ask 2 choices question"
+                android:text="@string/post_ask_2_choices_question"
                 android:paddingTop="10dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
@@ -158,7 +158,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Share to Facebook"
+                android:text="@string/post_share_to_fb"
                 android:paddingTop="10dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
@@ -174,7 +174,6 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background= "#cccccc" />
-
     </LinearLayout>
 </ScrollView>
 
