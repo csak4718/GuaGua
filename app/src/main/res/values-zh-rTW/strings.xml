@@ -37,5 +37,10 @@
     <string name="explore_community_select">已選擇社群</string>
     <string name="explore_community_confirm">確認</string>
 
+    <string name="drawer_view_guagua">呱呱</string>
+    <string name="drawer_view_taiwan">台灣</string>
+    <string name="drawer_view_personal_page">觀看個人頁面</string>
+    <string name="drawer_view_community">社群</string>
+    <string name="drawer_view_explore">探索</string>
 
 </resources>
