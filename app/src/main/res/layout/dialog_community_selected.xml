@@ -19,13 +19,12 @@
             android:layout_margin="30dp"
             android:layout_marginTop="50dp">
 
-            <com.pkmmte.view.CircularImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/img_dialog_community_miniature"
                 android:layout_width="180dp"
                 android:layout_height="180dp"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal"
-                app:border="true"
                 app:border_width="5dp"
                 app:border_color="@color/gray"/>
 
