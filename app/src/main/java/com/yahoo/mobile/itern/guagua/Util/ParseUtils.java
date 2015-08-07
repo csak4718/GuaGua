@@ -156,6 +156,7 @@ public class ParseUtils {
         mPost.put(Common.OBJECT_POST_QB_NUM, 0);
         mPost.put(Common.OBJECT_POST_USER, ParseUser.getCurrentUser());
         mPost.put(Common.OBJECT_POST_CHOICE_QUESTION, choiceQuestion);
+        mPost.put(Common.OBJECT_POST_COMMUNITY, community);
 
         mPost.saveInBackground(new SaveCallback() {
             @Override
