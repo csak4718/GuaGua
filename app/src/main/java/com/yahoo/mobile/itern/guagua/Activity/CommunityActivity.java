@@ -415,7 +415,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
             @Override
             public void onClick(View v) {
                 ParseObject curCommunity = getCurCommunity();
-                ParseUtils.addCommunityToUser(curCommunity.getObjectId());
+                ParseUtils.addCommunityToUser(curCommunity);
                 mMainApplication.currentViewingCommunity = curCommunity;
                 Utils.gotoMainActivity(CommunityActivity.this);
                 dialog.dismiss();
