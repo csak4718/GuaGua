@@ -5,127 +5,84 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
     
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="#B3E8E3">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/drawer_img_profile"
+            android:src="@drawable/ic_account_circle_black_48dp"
+            android:layout_marginLeft="25dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="25dp" />
+        <TextView
+            android:id="@+id/drawer_txt_name"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:text="Rosa Huang"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_marginTop="70dp"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/drawer_img_profile"/>
+        <TextView
+            android:id="@+id/drawer_txt_view_personal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View Personal Page"
+            android:textColor="#0099A5"
+            android:textSize="15sp"
+            android:layout_below="@+id/drawer_txt_name"
+            android:layout_alignStart="@+id/drawer_txt_name"
+            android:layout_alignLeft="@+id/drawer_txt_name"/>
+
+    </RelativeLayout>
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingTop="15dp"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
         android:orientation="vertical">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:layout_marginLeft="10dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
                 android:text="Community"
-                style="?android:attr/textAppearanceMedium"/>
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:textColor="@android:color/black"/>
             <ImageButton
                 android:id="@+id/img_btn_edit_mode"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginRight="10dp"
                 android:layout_alignParentRight="true"
-                android:background="@drawable/setting" />
+                android:layout_centerVertical="true"
+                android:background="@drawable/edit_pen" />
         </RelativeLayout>
-
-        <ImageView
-            android:src="@drawable/divider"
-            android:layout_gravity="left"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="10dp"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view_community"
             android:scrollbars="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"/>
 
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginTop="10dp"
-        android:orientation="vertical">
-        <LinearLayout
-            android:id="@+id/drawer_profile_root"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:clickable="true"
-            android:background="#EAEAEA"
-            android:padding="5dp"
-            android:gravity="center_vertical">
-
-            <com.pkmmte.view.CircularImageView
-                android:id="@+id/drawer_img_profile"
-                android:src="@drawable/ic_account_circle_black_48dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_width="40dp"
-                android:layout_height="40dp" />
-
-            <TextView
-                android:id="@+id/drawer_txt_name"
-                style="?android:attr/textAppearanceMedium"
-                android:layout_gravity="center_vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#5E5B56"
-                android:text="Rosa Huang"/>
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/drawer_following_root"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:gravity="center_vertical"
-            android:clickable="true"
-            android:background="#D6D6D6"
-            android:padding="5dp">
-            <ImageView
-                android:src="@drawable/following"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:padding="10dp"
-                android:layout_width="40dp"
-                android:layout_height="40dp" />
-            <TextView
-                style="?android:attr/textAppearanceMedium"
-                android:layout_gravity="center_vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#5E5B56"
-                android:text="Following"/>
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/drawer_my_question_root"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:gravity="center_vertical"
-            android:clickable="true"
-            android:background="#D6D6D6"
-            android:padding="5dp">
-            <ImageView
-                android:src="@drawable/my_question"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:padding="10dp"
-                android:layout_width="40dp"
-                android:layout_height="40dp" />
-            <TextView
-                style="?android:attr/textAppearanceMedium"
-                android:layout_gravity="center_vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#5E5B56"
-                android:text="My Question"/>
-        </LinearLayout>
-    </LinearLayout>
-
-
 </LinearLayout>

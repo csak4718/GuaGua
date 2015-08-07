@@ -44,6 +44,7 @@ public class OtherUserProfileActivity extends ActionBarActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(mUserName);
         Utils.setCommunityActionBarColor(this);
+        Utils.setCommunityStatusBarColor(this);
     }
 
 

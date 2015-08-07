@@ -3,10 +3,20 @@
 
     <style name="AppTheme"
         parent="@style/Theme.AppCompat.Light.DarkActionBar">
-        <item name="circularImageViewStyle">@color/purple</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="elevation">0dp</item>
         <item name="actionBarStyle">@style/MyActionBar</item>
+    </style>
+
+    <style name="MainActivityTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <!-- colorPrimary is used for the default action bar background -->
+        <item name="windowActionModeOverlay">true</item>
+        <item name="android:textColorPrimary">@color/white</item>
+
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:colorBackground">@color/white</item>
+
     </style>
 
     <!-- the theme applied to the application or activity -->
@@ -16,7 +26,6 @@
         <item name="android:windowBackground">@color/window_background</item>
         <!-- Support library compatibility -->
         <item name="actionBarStyle">@style/MyActionBar</item>
-        <item name="circularImageViewStyle">@color/purple</item>
         <item name="android:windowContentOverlay">@null</item>
 
     </style>

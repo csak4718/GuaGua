@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -76,31 +77,21 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void setupDrawerProfile() {
-        LinearLayout mRoot;
+
         ImageView imgProfile;
         TextView txtName;
+        TextView txtViewPersonal;
         ParseUser user = ParseUser.getCurrentUser();
 
-        mRoot = (LinearLayout) findViewById(R.id.drawer_profile_root);
         imgProfile = (ImageView) findViewById(R.id.drawer_img_profile);
         txtName = (TextView) findViewById(R.id.drawer_txt_name);
+        txtViewPersonal = (TextView) findViewById(R.id.drawer_txt_view_personal);
 
         ParseFile imgFile = user.getParseFile(Common.OBJECT_USER_PROFILE_PIC);
         Uri imgUri = Uri.parse(imgFile.getUrl());
 
         txtName.setText(user.getString(Common.OBJECT_USER_NICK));
-        Picasso.with(this).load(imgUri.toString()).into(imgProfile);
-
-        mRoot.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, ProfileSettingActivity.class));
-            }
-        });
-    }
-    private void setupDrawerFollowing() {
-        LinearLayout mRoot = (LinearLayout) findViewById(R.id.drawer_following_root);
-        mRoot.setOnClickListener(new View.OnClickListener() {
+        txtViewPersonal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent it = new Intent(MainActivity.this, PersonalPageActivity.class);
@@ -108,19 +99,11 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(it);
             }
         });
+        Picasso.with(this).load(imgUri.toString()).into(imgProfile);
+
 
     }
-    private void setupDrawerMyQuestion() {
-        LinearLayout mRoot = (LinearLayout) findViewById(R.id.drawer_my_question_root);
-        mRoot.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent it = new Intent(MainActivity.this, PersonalPageActivity.class);
-                it.putExtra(Common.EXTRA_PERSONAL, Common.EXTRA_PERSONAL_MY_QUESTION);
-                startActivity(it);
-            }
-        });
-    }
+
 
     private void setupEditModeButton() {
         final ImageButton imgBtnEdit;
@@ -129,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(mCommunityAdapter.getEditMode()) {
-                    imgBtnEdit.setBackgroundDrawable(getResources().getDrawable(R.drawable.setting));
+                    imgBtnEdit.setBackgroundDrawable(getResources().getDrawable(R.drawable.edit_pen));
                 }
                 else {
                     imgBtnEdit.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_done_black_24dp));
@@ -179,8 +162,6 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerViewDragDropManager.attachRecyclerView(communityRecyclerView);
 
         setupDrawerProfile();
-        setupDrawerFollowing();
-        setupDrawerMyQuestion();
         setupEditModeButton();
 
     }
@@ -191,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
         mActionBar.setElevation(0);
 
         Utils.setCommunityActionBarColor(this);
+        Utils.setCommunityStatusBarColor(this);
 
         ParseUtils.getUserCommunity(ParseUser.getCurrentUser());
 
@@ -265,6 +247,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
+        setSupportActionBar(toolbar);
 
         setupActionBar();
         setupDrawerLayout();

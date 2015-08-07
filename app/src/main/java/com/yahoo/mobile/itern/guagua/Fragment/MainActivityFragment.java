@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
@@ -44,6 +45,8 @@ public class MainActivityFragment extends Fragment {
     private RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager;
     private List<ParseObject> mList;
 
+    private LinearLayout emptyCommunityRoot;
+
     public MainActivityFragment() {
     }
 
@@ -76,6 +79,7 @@ public class MainActivityFragment extends Fragment {
     private void refreshList(List<ParseObject> list) {
         mList.clear();
         mList.addAll(list);
+
         mAdapter.flushFilter();
         mAdapter.notifyDataSetChangedWithCache();
         mPullToRefreshView.setRefreshing(false);
@@ -86,6 +90,13 @@ public class MainActivityFragment extends Fragment {
         }
         else {
             mBtnAddPost.setVisibility(View.VISIBLE);
+        }
+
+        if(mList.size() == 0) {
+            emptyCommunityRoot.setVisibility(View.VISIBLE);
+        }
+        else {
+            emptyCommunityRoot.setVisibility(View.GONE);
         }
     }
 
@@ -105,6 +116,8 @@ public class MainActivityFragment extends Fragment {
         }
 
         mRecyclerView = (RecyclerView) getView().findViewById(R.id.recycler_view);
+        emptyCommunityRoot = (LinearLayout) getView().findViewById(R.id.empty_community_root);
+
         mLayoutManager = new LinearLayoutManager(getActivity());
 
         // touch guard manager  (this class is required to suppress scrolling while swipe-dismiss animation is running)

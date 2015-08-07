@@ -5,12 +5,50 @@
     tools:context=".CollectionFragment">
 
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/collection_recycler_view"
-        android:scrollbars="vertical"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
 
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/collection_recycler_view"
+            android:scrollbars="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <LinearLayout
+            android:id="@+id/empty_following_root"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone">
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/empty_following"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="80dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="STAR A QUESTION"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:textSize="25sp"
+                android:textColor="#BAB7B7"
+                android:textStyle="bold"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:gravity="center"
+                android:text="It’s easy to find the question you are following."
+                android:textSize="20sp"
+                android:textColor="#BAB7B7" />
+        </LinearLayout>
+    </FrameLayout>
 
 
 </RelativeLayout>

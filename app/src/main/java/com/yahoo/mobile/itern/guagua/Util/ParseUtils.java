@@ -3,6 +3,7 @@ package com.yahoo.mobile.itern.guagua.Util;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -262,7 +263,6 @@ public class ParseUtils {
     }
 
     static public void addCommunityToUser(final String communityObjectId){
-
         ParseUser user = ParseUser.getCurrentUser();
         ParseRelation<ParseObject> relation = user.getRelation(Common
                 .OBJECT_USER_COMMUNITY_RELATION);
@@ -274,11 +274,22 @@ public class ParseUtils {
             }
         });
     }
+
     static public void removeCommunityFromCurrentUser(final ParseObject community) {
         ParseUser user = ParseUser.getCurrentUser();
         ParseRelation<ParseObject> relation = user.getRelation(Common.OBJECT_USER_COMMUNITY_RELATION);
         relation.remove(community);
         user.saveInBackground();
+    }
+
+    static public ParseObject createCommunity(String title, Location location) {
+        ParseObject newCommunity = new ParseObject(Common.OBJECT_COMMUNITY);
+        newCommunity.put(Common.OBJECT_COMMUNITY_TITLE, title);
+        newCommunity.put(Common.OBJECT_COMMUNITY_LAT, String.valueOf(location.getLatitude()));
+        newCommunity.put(Common.OBJECT_COMMUNITY_LONG, String.valueOf(location.getLongitude()));
+        newCommunity.saveInBackground();
+
+        return newCommunity;
     }
 
     static public void likeComment(final ParseObject mComment, boolean add){

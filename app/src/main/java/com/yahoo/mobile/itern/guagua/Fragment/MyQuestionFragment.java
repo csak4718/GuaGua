@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -33,6 +34,8 @@ public class MyQuestionFragment extends Fragment {
     private RecyclerView.LayoutManager mLayoutManager;
     private List<ParseObject> mQuestions;
     private QuestionCardAdapter mAdapter;
+
+    private LinearLayout emptyQuestionRoot;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,7 +62,7 @@ public class MyQuestionFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRootView = inflater.inflate(R.layout.fragment_myquestion, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_my_question, container, false);
         return mRootView;
     }
 
@@ -71,6 +74,7 @@ public class MyQuestionFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
+        emptyQuestionRoot = (LinearLayout) mRootView.findViewById(R.id.empty_my_question_root);
         //ParseUtils.getAllCollections(mUserId);
     }
 
@@ -84,5 +88,12 @@ public class MyQuestionFragment extends Fragment {
         mQuestions.addAll(list);
         mAdapter.flushFilter();
         mAdapter.notifyDataSetChanged();
+
+        if(mQuestions.size() == 0) {
+            emptyQuestionRoot.setVisibility(View.VISIBLE);
+        }
+        else {
+            emptyQuestionRoot.setVisibility(View.GONE);
+        }
     }
 }

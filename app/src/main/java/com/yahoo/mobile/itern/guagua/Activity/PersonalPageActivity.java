@@ -21,6 +21,7 @@ public class PersonalPageActivity extends ActionBarActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         Utils.setCommunityActionBarColor(this);
+        Utils.setCommunityStatusBarColor(this);
     }
 
     @Override

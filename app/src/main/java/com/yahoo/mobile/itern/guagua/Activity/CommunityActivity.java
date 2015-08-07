@@ -29,7 +29,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.ParseObject;
-import com.pkmmte.view.CircularImageView;
 import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.Event.CommunityEvent;
 import com.yahoo.mobile.itern.guagua.Fragment.CommunityFragment;
@@ -45,6 +44,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by fanwang on 7/22/15.
@@ -52,6 +52,12 @@ import de.greenrobot.event.EventBus;
 
 public class CommunityActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks, OnMapReadyCallback,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.SnapshotReadyCallback {
+
+    private final int STATE_EXPLORE = 0;
+    private final int STATE_MAP = 1;
+    private final int STATE_SEARCH = 2;
+    private final int STATE_CREATE = 3;
+    private int mCurState;
 
     private final String TAG = "CommunityActivity";
 
@@ -62,6 +68,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     public ParseObject mCurCommunity;
     private List<ParseObject> mCommunities = new ArrayList<>();
 
+    private Context mContext;
     private ActionBar mActionBar;
     private Location mCurLocation;
     private Location mLastLocation;
@@ -70,6 +77,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     private LocationRequest mLocationRequest;
     private MainApplication mMainApplication;
     private MenuItem mExploreDone;
+    private MenuItem mCreateDone;
     private GoogleMap mMap;
 
     @Override
@@ -95,8 +103,9 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mCurState = STATE_EXPLORE;
         setContentView(R.layout.activity_community);
-
+        mContext = this;
         setupActionBar();
 
         mMainApplication = (MainApplication)this.getApplication();
@@ -131,7 +140,8 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         mCurLocation  = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         Log.d(TAG, "curLocation is " + mCurLocation);
-        findCurrentCommunity();
+
+        sortCommunityList();
 
         mMapFragment.setupMap();
         mExploreFragement.setupMap();
@@ -149,11 +159,12 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d(TAG, "Location changed: " + location.toString());
+        //Log.d(TAG, "Location changed: " + location.toString());
 
         Location prevLocation = getCurrentLocation();
         setCurrentLocation(location);
-        findCurrentCommunity();
+        sortCommunityList();
+
         mExploreFragement.mAdapter.notifyDataSetChanged();
 
         if(prevLocation==null && location!=null) {
@@ -162,18 +173,10 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         }
     }
 
-
-    public void findCurrentCommunity(){
-        updateCommunityList();
-        if(mCommunities.size()>0)
-            mCurCommunity = mCommunities.get(0);
-    }
-
     public void onCommunityChange(){
         mCommunityFragement.onCommunityChange();
         mMapFragment.onCommunityChange();
     }
-
 
     public void onEvent(CommunityEvent event) {
         Log.d("eventbus", "" + event.communityList.size());
@@ -183,18 +186,17 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     private void refreshList(List<ParseObject> list) {
         mCommunities.clear();
         mCommunities.addAll(list);
-        findCurrentCommunity();
-        mExploreFragement.mAdapter.notifyDataSetChanged();
+        sortCommunityList();
 
+        mExploreFragement.mAdapter.flushFilter();
+        mExploreFragement.mAdapter.notifyDataSetChanged();
     }
 
     public ParseObject getCurCommunity(){
-        findCurrentCommunity();
         return mCurCommunity;
     }
 
     public Location getCurrentLocation(){
-        //findCurrentCommunity();
         return mCurLocation;
     }
 
@@ -210,24 +212,44 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         mCurLocation = location;
     }
 
-
-
     public void switchToMapFragment(){
+        mCurState = STATE_MAP;
+        mCreateDone.setVisible(false);
         mExploreDone.setVisible(true);
+
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.community_content, mMapFragment)
                 .commit();
     }
 
-    public void switchToCommunityFragment(){
+    public void switchToCreateCommunity(){
+        mCurState = STATE_CREATE;
         mExploreDone.setVisible(false);
+        mCreateDone.setVisible(true);
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.community_content, mMapFragment)
+                .commit();
+    }
+
+    public void switchToSearch(){
+        mCurState = STATE_SEARCH;
+    }
+
+
+    public void switchToExploreFragment(){
+        mCurState = STATE_EXPLORE;
+        mExploreDone.setVisible(false);
+        mCreateDone.setVisible(false);
+        mExploreFragement.showMap();
+        //mActionBar.setDisplayHomeAsUpEnabled(true);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.community_content, mExploreFragement)
                 .commit();
     }
 
     //sort communities with distance to mLastLocation
-    public void updateCommunityList(){
+    public void sortCommunityList(){
         for(ParseObject com:mCommunities){
             Location comLocation = new Location(LocationManager.GPS_PROVIDER);
             comLocation.setLatitude(Double.parseDouble(com.getString("lat")));
@@ -244,17 +266,18 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
                 return lhs.getInt("distance") - rhs.getInt("distance");
             }
         });
+
     }
 
     public List<ParseObject> getAllCommunities(){
-        updateCommunityList();
+        sortCommunityList();
         return mCommunities;
     }
 
     public void setupActionBar(){
         mActionBar = getSupportActionBar();
         mActionBar.setTitle("Explore");
-        mActionBar.setHomeButtonEnabled(true);
+        mActionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     public void showCommunityDialog(){
@@ -274,15 +297,34 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
 
         mExploreDone = menu.findItem(R.id.item_explore_done);
         mExploreDone.setVisible(false);
+
+        mCreateDone = menu.findItem(R.id.item_create_done);
+        mCreateDone.setVisible(false);
+
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.item_explore_done:
-                switchToCommunityFragment();
+            case android.R.id.home:
+                if(mCurState == STATE_EXPLORE)
+                    this.finish();
+                else
+                    switchToExploreFragment();
                 return true;
+
+            case R.id.item_explore_done:
+                switchToExploreFragment();
+                return true;
+
+            case R.id.item_create_done:
+                String newCommunityTitle = (String)mExploreFragement.mNewCommunityTitle.getText();
+                ParseObject newCommunity = ParseUtils.createCommunity(newCommunityTitle , mLastLocation);
+                mCurCommunity = newCommunity;
+                showCommunityDialog();
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -355,8 +397,6 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
 
     @Override
     public void onSnapshotReady(Bitmap bitmap) {
-
-
         String curCommunityTitle = mCurCommunity.getString("title");
        //View v = getLayoutInflater().inflate(R.layout.dialog_community_selected, null);
 
@@ -364,7 +404,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_community_selected);
 
-        CircularImageView image = (CircularImageView) dialog.findViewById(R.id.img_dialog_community_miniature);
+        CircleImageView image = (CircleImageView) dialog.findViewById(R.id.img_dialog_community_miniature);
         image.setImageBitmap(cropBmpToRect(bitmap));
 
         TextView text = (TextView) dialog.findViewById(R.id.txt_dialog_content);
@@ -379,15 +419,16 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
                 mMainApplication.currentViewingCommunity = curCommunity;
                 Utils.gotoMainActivity(CommunityActivity.this);
                 dialog.dismiss();
+                ((CommunityActivity)mContext).finish();
             }
         });
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
         dialog.show();
     }
+
     public Bitmap cropBmpToRect(Bitmap srcBmp){
         Bitmap dstBmp;
         if (srcBmp.getWidth() >= srcBmp.getHeight()){
-
             dstBmp = Bitmap.createBitmap(
                     srcBmp,
                     srcBmp.getWidth()/2 - srcBmp.getHeight()/2,
@@ -397,7 +438,6 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
             );
 
         }else{
-
             dstBmp = Bitmap.createBitmap(
                     srcBmp,
                     0,
@@ -406,9 +446,6 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
                     srcBmp.getWidth()
             );
         }
-
-
         return dstBmp;
     }
-
 }
