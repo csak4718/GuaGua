@@ -1,6 +1,7 @@
 package com.yahoo.mobile.itern.guagua.View;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,6 +43,7 @@ public class LikeButton extends LinearLayout {
         mRoot = (LinearLayout) mView.findViewById(R.id.btn_like_root);
         badgeCount = (TextView) mView.findViewById(R.id.badgeCount);
         img = (ImageView) mView.findViewById(R.id.img);
+
     }
 
     public void setBadgeCount(int count) {
@@ -54,11 +56,9 @@ public class LikeButton extends LinearLayout {
     }
 
     public void setImgLike(){
-        img.setImageResource(R.drawable.ic_like);
+        img.setImageResource(R.drawable.ic_comment_like_activate);
     }
-    public void setImgDisLike(){
-        img.setImageResource(R.drawable.ic_like1);
-    }
+    public void setImgDisLike(){ img.setImageResource(R.drawable.ic_comment_like);}
     public void addBadgeCount(){
         badgeCount.setText(String.valueOf(Integer.valueOf(badgeCount.getText().toString()) + 1));
     }
@@ -67,5 +67,10 @@ public class LikeButton extends LinearLayout {
     }
     public int getImgHeight(){
         return img.getHeight();
+    }
+    public void setTextAlpha(int i){
+        int color = badgeCount.getCurrentTextColor();
+        badgeCount.setTextColor(Color.argb(i, Color.red(color), Color.green(color), Color
+                .blue(color)));
     }
 }
