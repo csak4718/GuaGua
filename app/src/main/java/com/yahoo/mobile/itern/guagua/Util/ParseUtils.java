@@ -264,7 +264,8 @@ public class ParseUtils {
 
     static public void addCommunityToUser(final String communityObjectId){
         ParseUser user = ParseUser.getCurrentUser();
-        ParseRelation<ParseObject> relation = user.getRelation(Common.OBJECT_USER_COMMUNITY_RELATION);
+        ParseRelation<ParseObject> relation = user.getRelation(Common
+                .OBJECT_USER_COMMUNITY_RELATION);
         relation.add(ParseObject.createWithoutData(Common.OBJECT_COMMUNITY, communityObjectId));
         user.saveInBackground(new SaveCallback() {
             @Override
@@ -292,7 +293,13 @@ public class ParseUtils {
     }
 
     static public void likeComment(final ParseObject mComment, boolean add){
-        mComment.put(Common.OBJECT_COMMENT_LIKES,mComment.getInt(Common.OBJECT_COMMENT_LIKES)+((add)?1:-1));
+        mComment.put(Common.OBJECT_COMMENT_LIKES, mComment.getInt(Common.OBJECT_COMMENT_LIKES) + ((add) ? 1 : -1));
         mComment.saveInBackground();
+    }
+
+    static public void addShareNum(final ParseObject mQuestion){
+        int temp = mQuestion.getInt(Common.OBJECT_POST_SHARE_NUM);
+        mQuestion.put(Common.OBJECT_POST_SHARE_NUM,temp+1);
+        mQuestion.saveInBackground();
     }
 }
