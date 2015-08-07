@@ -22,11 +22,10 @@
             android:paddingTop="25dp"
             android:paddingLeft="10dp"
             android:paddingRight="25dp">
-            <com.pkmmte.view.CircularImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/imgProfile"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                app:border="false"
                 android:src="@drawable/ic_account_circle_black_48dp" />
             <LinearLayout
                 android:layout_width="match_parent"

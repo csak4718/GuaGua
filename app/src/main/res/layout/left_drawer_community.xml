@@ -62,7 +62,7 @@
             android:padding="5dp"
             android:gravity="center_vertical">
 
-            <com.pkmmte.view.CircularImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/drawer_img_profile"
                 android:src="@drawable/ic_account_circle_black_48dp"
                 android:layout_marginLeft="10dp"

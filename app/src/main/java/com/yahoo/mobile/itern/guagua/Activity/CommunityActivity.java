@@ -29,7 +29,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.ParseObject;
-import com.pkmmte.view.CircularImageView;
 import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.Event.CommunityEvent;
 import com.yahoo.mobile.itern.guagua.Fragment.CommunityFragment;
@@ -45,6 +44,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by fanwang on 7/22/15.
@@ -404,7 +404,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_community_selected);
 
-        CircularImageView image = (CircularImageView) dialog.findViewById(R.id.img_dialog_community_miniature);
+        CircleImageView image = (CircleImageView) dialog.findViewById(R.id.img_dialog_community_miniature);
         image.setImageBitmap(cropBmpToRect(bitmap));
 
         TextView text = (TextView) dialog.findViewById(R.id.txt_dialog_content);
