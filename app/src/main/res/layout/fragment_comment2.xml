@@ -24,7 +24,7 @@
             android:id="@+id/edt_comment_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight=".80"
+            android:layout_weight="1"
             android:layout_gravity="center_vertical"
             android:padding="10dp"
             android:layout_marginLeft="10dp"
@@ -32,12 +32,11 @@
             android:text="Write a comment ..."
             android:textColor="@android:color/darker_gray"/>
         <ImageButton
-            android:layout_margin="10dp"
+            android:padding="10dp"
             android:layout_gravity="center_vertical"
             android:id="@+id/btn_comment_send"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight=".15"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
             android:src="@drawable/send_gray"
