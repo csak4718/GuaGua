@@ -11,7 +11,7 @@
     <ImageView
         android:id="@+id/drawer_item_icon"
         android:src="@drawable/pin"
-        android:layout_width="20dp"
+        android:layout_width="15dp"
         android:layout_height="20dp" />
 
     <TextView
@@ -28,8 +28,9 @@
     <ImageView
         android:id="@+id/drawer_item_handle"
         android:visibility="invisible"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="25dp"
+        android:scaleType="center"
         android:src="@drawable/ic_reorder_black_24dp"
         />
 

@@ -18,6 +18,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.squareup.picasso.Picasso;
 import com.yahoo.mobile.itern.guagua.Activity.MainActivity;
 import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.R;
@@ -251,7 +252,9 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.View
                 });
             }
             else {
-                holder.item.setIcon(mActivity.getResources().getDrawable(R.drawable.delete));
+                Picasso.with(mActivity)
+                        .load(R.drawable.delete)
+                        .into(holder.item.mImgIcon);
                 holder.item.showHandle();
                 // delete a community
                 holder.item.setIconOnClickListener(new View.OnClickListener() {
