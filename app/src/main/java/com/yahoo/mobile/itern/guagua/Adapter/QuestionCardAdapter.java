@@ -812,6 +812,11 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         else {
             loadFromCache(cachedQuestion.get(objectId), holder, mQuestion);
         }
+
+        if(!choiceQuestion){
+            holder.layoutSkipBtn.setVisibility(View.GONE);
+            holder.layoutFuncButtons.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

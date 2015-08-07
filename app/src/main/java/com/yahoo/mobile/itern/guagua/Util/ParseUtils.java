@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import com.parse.FindCallback;
 import com.parse.GetDataCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -262,17 +263,21 @@ public class ParseUtils {
         });
     }
 
-    static public void addCommunityToUser(final String communityObjectId){
+    static public void addCommunityToUser(final ParseObject community){
         ParseUser user = ParseUser.getCurrentUser();
         ParseRelation<ParseObject> relation = user.getRelation(Common
                 .OBJECT_USER_COMMUNITY_RELATION);
-        relation.add(ParseObject.createWithoutData(Common.OBJECT_COMMUNITY, communityObjectId));
+        relation.add(community);
         user.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 getUserCommunity(ParseUser.getCurrentUser());
             }
         });
+
+        ParseRelation<ParseObject> communityUsers = community.getRelation(Common.OBJECT_COMMUNITY_USERS);
+        communityUsers.add(user);
+        community.saveInBackground();
     }
 
     static public void removeCommunityFromCurrentUser(final ParseObject community) {
@@ -280,6 +285,10 @@ public class ParseUtils {
         ParseRelation<ParseObject> relation = user.getRelation(Common.OBJECT_USER_COMMUNITY_RELATION);
         relation.remove(community);
         user.saveInBackground();
+
+        ParseRelation<ParseObject> communityUsers = community.getRelation(Common.OBJECT_COMMUNITY_USERS);
+        communityUsers.remove(user);
+        community.saveInBackground();
     }
 
     static public ParseObject createCommunity(String title, Location location) {
