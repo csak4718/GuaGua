@@ -63,6 +63,8 @@ public class CommentAdapter2 extends RecyclerView.Adapter<CommentAdapter2.MainVi
         public TextView txtDate;
         public TextView numLikes;
         public boolean liked = false;
+
+
         public OtherViewHolder(View itemView) {
             super(itemView);
             imgCommentProfile = (ImageView) itemView.findViewById(R.id.img_comment_profile);
@@ -180,7 +182,8 @@ public class CommentAdapter2 extends RecyclerView.Adapter<CommentAdapter2.MainVi
                     ParseUtils.likeComment(comment, false);
                     holder.numLikes.setTextColor(Color.GRAY);
                     holder.imgCommentLike.setImageResource(R.drawable.ic_like1);
-                    holder.numLikes.setText(String.valueOf(Integer.valueOf(holder.numLikes.getText().toString
+                    holder.numLikes.setText(String.valueOf(Integer.valueOf(holder.numLikes
+                            .getText().toString
                             ()) - 1));
                     relation.remove(comment);
                     currentUser.saveInBackground();
@@ -190,7 +193,8 @@ public class CommentAdapter2 extends RecyclerView.Adapter<CommentAdapter2.MainVi
                     ParseUtils.likeComment(comment, true);
                     holder.numLikes.setTextColor(Color.RED);
                     holder.imgCommentLike.setImageResource(R.drawable.ic_like);
-                    holder.numLikes.setText(String.valueOf(Integer.valueOf(holder.numLikes.getText().toString
+                    holder.numLikes.setText(String.valueOf(Integer.valueOf(holder.numLikes
+                            .getText().toString
                             ()) + 1));
                     relation.add(comment);
                     currentUser.saveInBackground();
