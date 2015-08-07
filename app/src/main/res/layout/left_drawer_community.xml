@@ -36,7 +36,7 @@
             android:id="@+id/drawer_txt_view_personal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="View Personal Page"
+            android:text="@string/drawer_view_personal_page"
             android:textColor="#0099A5"
             android:textSize="15sp"
             android:layout_below="@+id/drawer_txt_name"
@@ -61,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:text="Community"
+                android:text="@string/drawer_view_community"
                 android:textStyle="bold"
                 android:textSize="20sp"
                 android:textColor="@android:color/black"/>
@@ -72,6 +72,7 @@
                 android:layout_marginRight="10dp"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
+                android:scaleType="center"
                 android:background="@drawable/edit_pen" />
         </RelativeLayout>
 

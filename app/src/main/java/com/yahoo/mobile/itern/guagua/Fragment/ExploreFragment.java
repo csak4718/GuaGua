@@ -5,13 +5,13 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.support.v7.widget.SearchView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -29,6 +29,8 @@ import com.yahoo.mobile.itern.guagua.Util.Utils;
  */
 
 public class ExploreFragment extends Fragment {
+    private final boolean mEnableUserCreateCommunity = true;
+
     private final String TAG = "CommunityFragment";
     private MainApplication mMainApplication;
     private Context mContext;
@@ -106,7 +108,6 @@ public class ExploreFragment extends Fragment {
 
     public void hideMap(){
         ((CommunityActivity)mContext).switchToSearch();
-        mCreateCommunityLayout.setVisibility(View.VISIBLE);
         mEditLocationLayout.setVisibility(View.GONE);
         mMapView.setVisibility(View.GONE);
     }
@@ -115,6 +116,7 @@ public class ExploreFragment extends Fragment {
         mCreateCommunityLayout.setVisibility(View.GONE);
 
         mEditLocationLayout.setVisibility(View.VISIBLE);
+        //Utils.hideSoftKeyboard((CommunityActivity) mContext);
         mMapView.setVisibility(View.VISIBLE);
     }
 
@@ -147,7 +149,6 @@ public class ExploreFragment extends Fragment {
             mCommunitySearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
-                    mCreateCommunityLayout.setVisibility(View.GONE);
                     mEditLocationLayout.setVisibility(View.VISIBLE);
                     mMapView.setVisibility(View.VISIBLE);
                     Utils.hideSoftKeyboard((CommunityActivity) mContext);
@@ -157,6 +158,10 @@ public class ExploreFragment extends Fragment {
 
                 @Override
                 public boolean onQueryTextChange(String newText) {
+                    if(newText.isEmpty() || !mEnableUserCreateCommunity)
+                        mCreateCommunityLayout.setVisibility(View.GONE);
+                    else
+                        mCreateCommunityLayout.setVisibility(View.VISIBLE);
                     mNewCommunityTitle.setText(newText);
                     mAdapter.setFilter(newText);
                     return false;

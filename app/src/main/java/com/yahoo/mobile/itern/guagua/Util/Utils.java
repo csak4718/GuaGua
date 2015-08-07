@@ -155,4 +155,9 @@ public class Utils {
                         });
         builder.create().show();
     }
+
+    static public int convertDp2Pixel(int dp, Context context) {
+        float scale = context.getResources().getDisplayMetrics().density;
+        return (int)(dp * scale);
+    }
 }
