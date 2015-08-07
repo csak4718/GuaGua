@@ -44,6 +44,7 @@ public class Common {
     public final static String OBJECT_COMMUNITY_LONG = "long";
     public final static String OBJECT_COMMUNITY_POSTS = "posts";
     public final static String OBJECT_COMMUNITY_COLOR = "communityColor";
+    public final static String OBJECT_COMMUNITY_STATUS_BAR_COLOR = "communityStatusBarColor";
 
     public final static String OBJECT_VOTED_QUESTION = "VotedQuestion";
     public final static String OBJECT_VOTED_QUESTION_QID = "questionId";
