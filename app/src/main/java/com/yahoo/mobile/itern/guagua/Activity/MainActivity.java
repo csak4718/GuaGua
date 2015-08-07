@@ -172,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
         mActionBar.setElevation(0);
 
         Utils.setCommunityActionBarColor(this);
+        Utils.setCommunityStatusBarColor(this);
 
         ParseUtils.getUserCommunity(ParseUser.getCurrentUser());
 
