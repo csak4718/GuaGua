@@ -15,7 +15,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -41,9 +40,12 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.Common;
+import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
-import com.yahoo.mobile.itern.guagua.View.CommentButton;
+import com.yahoo.mobile.itern.guagua.View.CommentButton2;
+import com.yahoo.mobile.itern.guagua.View.LikeButton;
 import com.yahoo.mobile.itern.guagua.View.OptionButton;
+import com.yahoo.mobile.itern.guagua.View.ShareButton;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -430,13 +432,13 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         }
     }
 
-    private void setupLikeButton(final ParseObject mQuestion, final ViewHolder holder) {
+    private void setupLikeButton(final ParseObject mQuestion, final ViewHolder holder, final Map<String, Object> cache) {
         //render BtnLike
         holder.liked = mFavoriteList.contains(mQuestion);
         if (holder.liked){
-            holder.imgBtnLike.setImageResource(R.drawable.ic_like);
+            holder.imgBtnLike.setImgLike();
         }else{
-            holder.imgBtnLike.setImageResource(R.drawable.ic_like1);
+            holder.imgBtnLike.setImgDisLike();
         }
 
         holder.imgBtnLike.setOnClickListener(new View.OnClickListener() {
@@ -449,15 +451,19 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                     currentUser.getRelation("likes");
                     ParseRelation<ParseObject> relation = currentUser.getRelation(Common
                             .OBJECT_USER_LIKES);
+                    int currentNum = mQuestion.getInt(Common.OBJECT_POST_QLIKES);
                     if (holder.liked == false) {
                         Log.d("On click", "get like");
                         relation.add(mQuestion);
                         currentUser.saveInBackground();
                         mFavoriteList.add(mQuestion);
-                        holder.imgBtnLike.setImageResource(R.drawable.ic_like);
+                        holder.imgBtnLike.setImgLike();
                         holder.liked = true;
+                        holder.imgBtnLike.addBadgeCount();
+                        mQuestion.put(Common.OBJECT_POST_QLIKES, currentNum + 1);
+                        cache.put(Common.QUESTION_CARD_LIKE_NUM, currentNum+1);
                         if (mAmin == true) {
-                            startLikeButtonAnimation(v);
+                            startLikeButtonAnimation(v,holder.imgBtnLike.getImgHeight());
                         }
 
                     } else {
@@ -465,14 +471,39 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                         relation.remove(mQuestion);
                         currentUser.saveInBackground();
                         mFavoriteList.remove(mQuestion);
-                        holder.imgBtnLike.setImageResource(R.drawable.ic_like1);
+                        holder.imgBtnLike.setImgDisLike();
                         holder.liked = false;
+                        holder.imgBtnLike.minusBadgeCount();
+                        mQuestion.put(Common.OBJECT_POST_QLIKES, currentNum - 1);
+                        cache.put(Common.QUESTION_CARD_LIKE_NUM, currentNum - 1);
                     }
-
+                    mQuestion.saveInBackground();
 
                 } else {
                     // show the signup or login screen
                 }
+            }
+        });
+    }
+
+    public void setupShareButton(final ParseObject mQuestion , final ViewHolder holder, final String objectId, final int shareNum, final Map<String, Object> cache){
+        holder.shareBtnPost.setBadgeCount(shareNum);
+        holder.shareBtnPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ShareDialog.canShow(ShareLinkContent.class)) {
+                    ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                            .setContentTitle("呱呱 - 投票結果")
+                            .setContentDescription(holder.txtTitle.getText().toString())
+                            .setContentUrl(Uri.parse("https://aqueous-falls-3271.herokuapp" +
+                                    ".com/guagua/" + objectId + "/results/"))
+                            .build();
+
+                    shareDialog.show(linkContent);
+                }
+                ParseUtils.addShareNum(mQuestion);
+                holder.shareBtnPost.addShareNum();
+                cache.put(Common.QUESTION_CARD_SHARE_NUM, shareNum +1 );
             }
         });
     }
@@ -513,6 +544,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         final int voteB = mQuestion.getInt(Common.OBJECT_POST_QB_NUM);
         final String voteOption = questionVotedOption(mQuestion);
         final Date mDate = mQuestion.getCreatedAt();
+        final int likeNum = mQuestion.getInt(Common.OBJECT_POST_QLIKES);
+        final int shareNum = mQuestion.getInt(Common.OBJECT_POST_SHARE_NUM);
 
         if(postUser != null) {
             postUser.fetchInBackground(new GetCallback<ParseUser>() {
@@ -556,31 +589,18 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         cache.put(Common.QUESTION_CARD_QB_NUM, voteB);
         cache.put(Common.QUESTION_CARD_VOTE_OPTION, voteOption);
         cache.put(Common.QUESTION_CARD_DATE, mDate);
-
-        holder.shareBtnPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (ShareDialog.canShow(ShareLinkContent.class)) {
-                    ShareLinkContent linkContent = new ShareLinkContent.Builder()
-                            .setContentTitle("呱呱 - 投票結果")
-                            .setContentDescription(holder.txtTitle.getText().toString())
-                            .setContentUrl(Uri.parse("https://aqueous-falls-3271.herokuapp" +
-                                    ".com/guagua/" + objectId + "/results/"))
-                            .build();
-
-                    shareDialog.show(linkContent);
-                }
-            }
-        });
+        cache.put(Common.QUESTION_CARD_LIKE_NUM, likeNum);
+        cache.put(Common.QUESTION_CARD_SHARE_NUM, shareNum);
 
 
         int progressA = (int)(voteA * 100.0 / (voteA + voteB));
         int progressB = (int) (voteB * 100.0 / (voteA + voteB));
         holder.btnA.setProgress(progressA);
         holder.btnB.setProgress(progressB);
+        holder.imgBtnLike.setBadgeCount(likeNum);
 
-        setupLikeButton(mQuestion, holder);
-
+        setupLikeButton(mQuestion, holder, cache);
+        setupShareButton(mQuestion, holder, objectId, shareNum, cache);
 
         ParseRelation<ParseObject> commentsRelation = mQuestion.getRelation(Common.OBJECT_POST_COMMENTS);
         commentsRelation.getQuery().countInBackground(new CountCallback() {
@@ -610,6 +630,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         final String voteOption = (String) cache.get(Common.QUESTION_CARD_VOTE_OPTION);
         final int commentNum = (cache.containsKey(Common.QUESTION_CARD_COMMENTS_NUM))?(int) cache.get(Common.QUESTION_CARD_COMMENTS_NUM):0;
         final Date mDate = (Date) cache.get(Common.QUESTION_CARD_DATE);
+        final int likeNum = (int) cache.get(Common.QUESTION_CARD_LIKE_NUM);
+        final int shareNum = (int) cache.get(Common.QUESTION_CARD_SHARE_NUM);
 
         holder.txtName.setText(nickName);
         if(profileImg != null) {
@@ -630,6 +652,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.btnB.setVoteText(optionB);
         holder.btnA.setVoteNum(voteA);
         holder.btnB.setVoteNum(voteB);
+        holder.imgBtnLike.setBadgeCount(likeNum);
 
         int progressA = (int)(voteA * 100.0 / (voteA + voteB));
         int progressB = (int) (voteB * 100.0 / (voteA + voteB));
@@ -643,17 +666,18 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             setCardNotVoted(holder, mQuestion, voteA, voteB, cache);
         }
 
-        setupLikeButton(mQuestion, holder);
+        setupLikeButton(mQuestion, holder, cache);
         setupCommentButton(holder, mQuestion.getObjectId(), commentNum);
+        setupShareButton(mQuestion,holder,mQuestion.getObjectId(), shareNum, cache);
     }
 
-    public void startLikeButtonAnimation(View v){
+    public void startLikeButtonAnimation(View v, int Height){
         final ImageView img = new ImageView(mContext);
         img.setImageResource(R.drawable.ic_like);
         final int[] xy = new int[2];
         final int[] fxy = new int[2];
         v.getLocationInWindow(xy);
-        ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(v.getHeight(),v.getHeight());
+        ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(Height,Height);
 
         //params.setMargins(100,100,100,100);
         img.setLayoutParams(params);
@@ -799,9 +823,9 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         public TextView txtDate;
         public OptionButton btnA;
         public OptionButton btnB;
-        public ImageButton shareBtnPost;
-        public CommentButton imgBtnComment;
-        public ImageButton imgBtnLike;
+        public ShareButton shareBtnPost;
+        public CommentButton2 imgBtnComment;
+        public LikeButton imgBtnLike;
         public LinearLayout layoutFuncButtons;
         public LinearLayout layoutSkipBtn;
         public TextView btnShowResult;
@@ -817,9 +841,9 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             txtDate = (TextView) v.findViewById(R.id.date);
             btnA = (OptionButton) v.findViewById(R.id.btnA);
             btnB = (OptionButton) v.findViewById(R.id.btnB);
-            shareBtnPost = (ImageButton)v.findViewById(R.id.shareBtnPost);
-            imgBtnComment = (CommentButton) v.findViewById(R.id.imgBtnComment);
-            imgBtnLike = (ImageButton) v.findViewById(R.id.imgBtnLike);
+            shareBtnPost = (ShareButton) v.findViewById(R.id.shareBtnPost);
+            imgBtnComment = (CommentButton2) v.findViewById(R.id.imgBtnComment);
+            imgBtnLike = (LikeButton) v.findViewById(R.id.imgBtnLike);
             layoutFuncButtons = (LinearLayout) v.findViewById(R.id.layout_function_buttons);
             layoutSkipBtn = (LinearLayout) v.findViewById(R.id.ghostbar);
             btnShowResult = (TextView) v.findViewById(R.id.btnShowResult);

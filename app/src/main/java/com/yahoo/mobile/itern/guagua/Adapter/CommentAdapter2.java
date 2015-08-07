@@ -9,9 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.parse.GetCallback;
@@ -66,7 +64,6 @@ public class CommentAdapter2 extends RecyclerView.Adapter<CommentAdapter2.MainVi
         public TextView numLikes;
         public boolean liked = false;
 
-        public ListView mlist;
 
         public OtherViewHolder(View itemView) {
             super(itemView);
@@ -77,7 +74,6 @@ public class CommentAdapter2 extends RecyclerView.Adapter<CommentAdapter2.MainVi
             boxLike = itemView.findViewById(R.id.comment_like_box);
             numLikes = (TextView) itemView.findViewById(R.id.num_comment_likes);
             imgCommentLike = (ImageView) itemView.findViewById(R.id.img_comment_like);
-            mlist = (ListView) itemView.findViewById(R.id.testlistView);
         }
     }
 
@@ -156,14 +152,6 @@ public class CommentAdapter2 extends RecyclerView.Adapter<CommentAdapter2.MainVi
         holder.numLikes.setText(String.valueOf(likes));
 
         setUpBoxLike(holder, comment);
-
-
-        String[] list = {"鉛筆","原子筆","鋼筆","毛筆","彩色筆"};
-        ArrayAdapter<String> listAdapter;
-
-        listAdapter = new ArrayAdapter(mContext,android.R.layout.simple_list_item_1,list);
-        holder.mlist.setAdapter(listAdapter);
-
     }
 
     @Override

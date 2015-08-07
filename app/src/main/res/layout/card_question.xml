@@ -9,8 +9,7 @@
     android:layout_marginBottom="5dp"
     android:layout_marginTop="5dp"
     android:layout_marginLeft="7dp"
-    android:layout_marginRight="7dp"
-    card_view:contentPadding="8dp">
+    android:layout_marginRight="7dp">
 
     <LinearLayout android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -89,37 +88,67 @@
             android:id="@+id/layout_function_buttons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="right"
-            android:visibility="visible"
-            android:layout_marginBottom="5dp"
-            android:paddingRight="15dp">
-            <ImageButton
-                android:id="@+id/imgBtnLike"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:scaleType="fitCenter"
-                android:adjustViewBounds="true"
-                android:src="@drawable/ic_like1"
-                android:background="@android:color/transparent"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="25dp"
-                />
-            <ImageButton
-                android:id="@+id/shareBtnPost"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:scaleType="fitCenter"
-                android:adjustViewBounds="true"
-                android:src="@drawable/ic_share"
-                android:background="@android:color/transparent"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="25dp" />
+            android:orientation="vertical"
+            android:visibility="visible">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background= "@color/gray"
+                android:layout_marginBottom="10dp"/>
 
-            <com.yahoo.mobile.itern.guagua.View.CommentButton
-                android:id="@+id/imgBtnComment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center">
+                    <com.yahoo.mobile.itern.guagua.View.LikeButton
+                        android:id="@+id/imgBtnLike"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scaleType="fitCenter"
+                        android:adjustViewBounds="true"
+                        android:background="@android:color/transparent"
+                        />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center">
+                    <com.yahoo.mobile.itern.guagua.View.ShareButton
+                        android:id="@+id/shareBtnPost"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scaleType="fitCenter"
+                        android:adjustViewBounds="true"
+                        android:background="@android:color/transparent"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center">
+                    <!--
+                    <com.yahoo.mobile.itern.guagua.View.CommentButton
+                        android:id="@+id/imgBtnComment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />-->
+                    <com.yahoo.mobile.itern.guagua.View.CommentButton2
+                        android:id="@+id/imgBtnComment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scaleType="fitCenter"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/ic_comment_black_24dp"
+                        android:background="@android:color/transparent"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
         </LinearLayout>
         <LinearLayout
             android:id="@+id/ghostbar"
@@ -128,8 +157,9 @@
             android:orientation="horizontal"
             android:gravity="right"
             android:layout_marginBottom="5dp"
-            android:paddingRight="15dp">
-            <com.yahoo.mobile.itern.guagua.View.CommentButton
+            android:paddingRight="15dp"
+            android:visibility="gone">
+            <com.yahoo.mobile.itern.guagua.View.CommentButton2
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="invisible"/>
