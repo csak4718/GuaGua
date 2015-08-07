@@ -43,4 +43,10 @@
     <string name="drawer_view_community">社群</string>
     <string name="drawer_view_explore">探索</string>
 
+    <string name="community_select_title">社群選擇</string>
+    <string name="community_create_title">社群建立</string>
+    <string name="community_select">您已選擇</string>
+    <string name="community_create">您已建立</string>
+
+
 </resources>

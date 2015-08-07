@@ -32,7 +32,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:src="@drawable/dialog_community_pin"/>
+                android:src="@drawable/dialog_community_pin"
+                android:visibility="invisible"/>
         </FrameLayout>
 
         <TextView
@@ -41,7 +42,6 @@
             android:layout_height="wrap_content"
             android:textSize="20dp"
             android:textStyle="bold"
-            android:text="@string/explore_community_select"
             android:layout_alignParentTop="true"
             android:layout_below="@id/img_dialog_community_miniature"
             android:layout_marginTop="10dp"

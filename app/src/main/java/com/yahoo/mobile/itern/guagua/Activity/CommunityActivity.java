@@ -26,6 +26,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.ParseObject;
@@ -319,9 +320,6 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
                 return true;
 
             case R.id.item_create_done:
-                String newCommunityTitle = (String)mExploreFragement.mNewCommunityTitle.getText();
-                ParseObject newCommunity = ParseUtils.createCommunity(newCommunityTitle , mLastLocation);
-                mCurCommunity = newCommunity;
                 showCommunityDialog();
                 return true;
 
@@ -346,11 +344,10 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
             Location location = this.getLastLocation();
             updateLocationOnMap(location, true);
         }
-/*
+
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng point) {
-                return;
                 Location location = new Location("dummyprovider");
                 location.setLatitude(point.latitude);
                 location.setLongitude(point.longitude);
@@ -359,12 +356,11 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
 
                 mMap.clear();
                 mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(point.latitude, point.longitude))
-                        .title(getCurCommunity().getString("title")))
-                        .showInfoWindow();
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_community_pin))
+                        .position(new LatLng(point.latitude, point.longitude)));
             }
         });
-
+/*
         mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
             public void onCameraChange(CameraPosition position) {
@@ -388,6 +384,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
             if(showMarker) {
                 mMap.clear();
                 mMap.addMarker(new MarkerOptions()
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_community_pin))
                         .position(new LatLng(location.getLatitude(), location.getLongitude())));
                         //.title(this.getCurCommunity().getString("title")))
                         //.showInfoWindow();
@@ -397,23 +394,72 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
 
     @Override
     public void onSnapshotReady(Bitmap bitmap) {
+        if(mCurState==STATE_CREATE)
+            showCommunityCreateDialog(bitmap);
+        else
+            showCommunitySelectDialog(bitmap);
+
+    }
+
+    public void showCommunitySelectDialog(Bitmap bitmap){
         String curCommunityTitle = mCurCommunity.getString("title");
-       //View v = getLayoutInflater().inflate(R.layout.dialog_community_selected, null);
+        //View v = getLayoutInflater().inflate(R.layout.dialog_community_selected, null);
 
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_community_selected);
 
+        TextView title = (TextView)dialog.findViewById(R.id.txt_dialog_title);
+        title.setText(getResources().getString(R.string.community_select_title));
+
         CircleImageView image = (CircleImageView) dialog.findViewById(R.id.img_dialog_community_miniature);
         image.setImageBitmap(cropBmpToRect(bitmap));
 
         TextView text = (TextView) dialog.findViewById(R.id.txt_dialog_content);
-        text.setText("You have selected \"" + curCommunityTitle + "\".");
+        text.setText(getResources().getString(R.string.community_select)+" \"" + curCommunityTitle + "\".");
 
         Button dialogButton = (Button) dialog.findViewById(R.id.btn_dialog_confirm_cummunity);
         dialogButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ParseObject curCommunity = getCurCommunity();
+                ParseUtils.addCommunityToUser(curCommunity.getObjectId());
+                mMainApplication.currentViewingCommunity = curCommunity;
+                Utils.gotoMainActivity(CommunityActivity.this);
+                dialog.dismiss();
+                ((CommunityActivity)mContext).finish();
+            }
+        });
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+        dialog.show();
+    }
+
+    public void showCommunityCreateDialog(Bitmap bitmap){
+        String curCommunityTitle = mCurCommunity.getString("title");
+        //View v = getLayoutInflater().inflate(R.layout.dialog_community_selected, null);
+
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_community_selected);
+
+        TextView title = (TextView)dialog.findViewById(R.id.txt_dialog_title);
+        title.setText(getResources().getString(R.string.community_create_title));
+
+        CircleImageView image = (CircleImageView) dialog.findViewById(R.id.img_dialog_community_miniature);
+        image.setImageBitmap(cropBmpToRect(bitmap));
+
+        TextView text = (TextView) dialog.findViewById(R.id.txt_dialog_content);
+        String newCommunityTitle = (String)mExploreFragement.mNewCommunityTitle.getText();
+        text.setText(getResources().getString(R.string.community_create)+" \"" + newCommunityTitle + "\".");
+
+        Button dialogButton = (Button) dialog.findViewById(R.id.btn_dialog_confirm_cummunity);
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String newCommunityTitle = (String)mExploreFragement.mNewCommunityTitle.getText();
+                ParseObject newCommunity = ParseUtils.createCommunity(newCommunityTitle , mLastLocation);
+                mCurCommunity = newCommunity;
+
                 ParseObject curCommunity = getCurCommunity();
                 ParseUtils.addCommunityToUser(curCommunity);
                 mMainApplication.currentViewingCommunity = curCommunity;
@@ -425,6 +471,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
         dialog.show();
     }
+
 
     public Bitmap cropBmpToRect(Bitmap srcBmp){
         Bitmap dstBmp;
