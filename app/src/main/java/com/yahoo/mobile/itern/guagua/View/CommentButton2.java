@@ -1,6 +1,7 @@
 package com.yahoo.mobile.itern.guagua.View;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +40,7 @@ public class CommentButton2 extends LinearLayout {
         mView = inflater.inflate(R.layout.button_comment2, this);
         mRoot = (LinearLayout) mView.findViewById(R.id.btn_comment_root);
         badgeCount = (TextView) mView.findViewById(R.id.badgeCount);
+
     }
 
     public void setBadgeCount(int count) {
@@ -48,5 +50,10 @@ public class CommentButton2 extends LinearLayout {
     @Override
     public void setOnClickListener(OnClickListener l) {
         mRoot.setOnClickListener(l);
+    }
+    public void setTextAlpha(int i){
+        int color = badgeCount.getCurrentTextColor();
+        int newColor = Color.argb(i, Color.red(color), Color.green(color), Color
+                .blue(color));
     }
 }

@@ -1,6 +1,7 @@
 package com.yahoo.mobile.itern.guagua.View;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +40,7 @@ public class ShareButton extends LinearLayout {
         mView = inflater.inflate(R.layout.button_share, this);
         mRoot = (LinearLayout) mView.findViewById(R.id.btn_share_root);
         badgeCount = (TextView) mView.findViewById(R.id.badgeCount);
+
     }
 
     public void setBadgeCount(int count) {
@@ -52,6 +54,17 @@ public class ShareButton extends LinearLayout {
 
     public void addShareNum(){
         int temp = Integer.valueOf(badgeCount.getText().toString());
-        badgeCount.setText(String.valueOf(temp+1));
+        String str;
+        if ((temp + 1) == 0){
+            str = "Like";
+        } else {
+            str = String.valueOf(temp + 1);
+        }
+        badgeCount.setText(str);
+    }
+    public void setTextAlpha(int i){
+        int color = badgeCount.getCurrentTextColor();
+        int newColor = Color.argb(i, Color.red(color), Color.green(color), Color
+                .blue(color));
     }
 }

@@ -7,9 +7,9 @@
 
     <ImageView
         android:id="@+id/img"
-        android:src="@drawable/ic_like1"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:src="@drawable/ic_comment_like"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
         android:layout_marginRight="5dp"
         android:layout_gravity="center_vertical"/>
     <TextView
@@ -17,8 +17,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:textSize="20dp"
+        android:textSize="18dp"
         android:text="0"
-        android:textColor="@android:color/black"/>
+        android:textColor="@android:color/darker_gray"/>
 
 </LinearLayout>

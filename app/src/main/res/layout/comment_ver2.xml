@@ -33,13 +33,21 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <TextView
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="5dp"
                 android:id="@+id/txt_comment_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textStyle="bold"
+                android:textColor="@android:color/black"
                 android:text="Fan Fan"/>
+            <TextView
+                android:id="@+id/txt_comment_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="12/25/2015"
+                android:layout_marginTop="5dp"
+                android:textColor="#a9a9a9"/>
             <TextView
                 android:id="@+id/txt_comment_msg"
                 android:layout_width="wrap_content"
@@ -49,7 +57,26 @@
                 android:text="I love u, how about u? Do you know the sky crys everyday?"
                 android:lineSpacingMultiplier="1.2"
                 android:textColor="@color/black"/>
-
+            <LinearLayout
+                android:id="@+id/comment_like_box"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginTop="20dp">
+                <ImageView
+                    android:id="@+id/img_comment_like"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/ic_like"
+                    android:layout_marginRight="5dp"/>
+                <TextView
+                    android:id="@+id/num_comment_likes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="15"
+                    android:textColor="@color/red"/>
+            </LinearLayout>
+<!--
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -85,7 +112,7 @@
                         android:text="15"
                         android:textColor="@color/red"/>
                 </LinearLayout>
-            </LinearLayout>
+            </LinearLayout>-->
 
         </LinearLayout>
 
@@ -94,6 +121,5 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background= "#cccccc"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="7dp"/>
 </LinearLayout>
