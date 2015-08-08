@@ -54,6 +54,8 @@ public class Common {
     public final static String OBJECT_VOTED_QUESTION_QID = "questionId";
     public final static String OBJECT_VOTED_QUESTION_OPTION = "option";
 
+    public final static String INSTALLATION_CHANNEL = "channels";
+
     public final static String EXTRA_COMMENT_POSTID = "postId";
 
     // extra data for launch OtherUserProfileActivity
