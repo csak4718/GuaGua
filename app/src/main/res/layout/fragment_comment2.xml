@@ -29,8 +29,8 @@
             android:padding="10dp"
             android:layout_marginLeft="10dp"
             android:background="@drawable/edit_text_rect"
-            android:text="Write a comment ..."
-            android:textColor="@android:color/darker_gray"/>
+            android:hint="Write a comment ..."
+            android:text=""/>
         <ImageButton
             android:padding="10dp"
             android:layout_gravity="center_vertical"
