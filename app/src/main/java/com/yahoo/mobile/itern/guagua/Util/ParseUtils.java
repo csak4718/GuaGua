@@ -197,6 +197,13 @@ public class ParseUtils {
                 getCommunityQuestions(community);
 
                 EventBus.getDefault().post(new ShareDuringPostEvent(mPost));
+
+
+                ParseObject myQuestion = new ParseObject(Common.OBJECT_MY_QUESTION);
+                myQuestion.put(Common.OBJECT_MY_QUESTION_USER, user);
+                myQuestion.put(Common.OBJECT_MY_QUESTION_QUESTION, mPost);
+                myQuestion.saveInBackground();
+
             }
         });
 
@@ -320,4 +327,27 @@ public class ParseUtils {
         mQuestion.put(Common.OBJECT_POST_SHARE_NUM,temp+1);
         mQuestion.saveInBackground();
     }
+
+
+    static public void userFollowingQuestion(final ParseUser user, final ParseObject question) {
+        ParseObject following = new ParseObject(Common.OBJECT_FOLLOWING);
+        following.put(Common.OBJECT_FOLLOWING_USER, user);
+        following.put(Common.OBJECT_FOLLOWING_QUESTION, question);
+        following.saveInBackground();
+    }
+
+    static public void userUnFollowingQuestion(final ParseUser user, final ParseObject question) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(Common.OBJECT_FOLLOWING);
+        query.whereEqualTo(Common.OBJECT_FOLLOWING_USER, user);
+        query.whereEqualTo(Common.OBJECT_FOLLOWING_QUESTION, question);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                for(ParseObject following : list) {
+                    following.deleteInBackground();
+                }
+            }
+        });
+    }
+
 }

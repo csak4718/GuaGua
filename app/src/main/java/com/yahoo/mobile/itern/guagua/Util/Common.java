@@ -54,6 +54,15 @@ public class Common {
     public final static String OBJECT_VOTED_QUESTION_QID = "questionId";
     public final static String OBJECT_VOTED_QUESTION_OPTION = "option";
 
+
+    public final static String OBJECT_FOLLOWING = "FollowingQuestion";
+    public final static String OBJECT_FOLLOWING_USER = "user";
+    public final static String OBJECT_FOLLOWING_QUESTION = "question";
+
+    public final static String OBJECT_MY_QUESTION = "MyQuestion";
+    public final static String OBJECT_MY_QUESTION_USER = "user";
+    public final static String OBJECT_MY_QUESTION_QUESTION = "question";
+
     public final static String INSTALLATION_CHANNEL = "channels";
 
     public final static String EXTRA_COMMENT_POSTID = "postId";

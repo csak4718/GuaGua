@@ -513,6 +513,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                             startLikeButtonAnimation(v,holder.imgBtnLike.getImgHeight());
                         }
 
+                        ParseUtils.userFollowingQuestion(ParseUser.getCurrentUser(), mQuestion);
+
                     } else {
                         Log.d("On click", "get dislike");
                         relation.remove(mQuestion);
@@ -523,6 +525,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                         holder.imgBtnLike.minusBadgeCount();
                         mQuestion.put(Common.OBJECT_POST_QLIKES, currentNum - 1);
                         cache.put(Common.QUESTION_CARD_LIKE_NUM, currentNum - 1);
+
+                        ParseUtils.userUnFollowingQuestion(ParseUser.getCurrentUser(), mQuestion);
                     }
                     mQuestion.saveInBackground();
 

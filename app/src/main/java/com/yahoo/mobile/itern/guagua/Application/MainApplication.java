@@ -38,6 +38,7 @@ public class MainApplication extends Application {
         Parse.initialize(this, "iMyUdfPQnXeU1bTHi3f8jhRw5oCx40UxvMfcicno", "fwtpApBFDvfTtUHJ5nwrdqD8y5lVoU3nePIQmW6k");
         ParseFacebookUtils.initialize(this);
 
+        ParsePush.subscribeInBackground("");
         ParseInstallation.getCurrentInstallation().saveInBackground();
 
         FlurryAgent.init(this, "G4GPJ92FFBWHGZCH8WCK");
