@@ -85,9 +85,11 @@ public class LoginActivity extends AppCompatActivity {
                             if (user.isNew()) {
                                 Log.d("MyApp", "User signed up and logged in through Facebook!");
                                 FbUtils.getUserProfile(AccessToken.getCurrentAccessToken());
+                                ParseUtils.linkInstallationWithUser();
                             } else {
                                 Log.d("MyApp", "User logged in through Facebook!");
                                 restoreUserSetting(user);
+                                ParseUtils.linkInstallationWithUser();
                             }
 
                         }

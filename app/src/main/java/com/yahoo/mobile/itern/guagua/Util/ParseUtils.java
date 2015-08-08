@@ -343,11 +343,18 @@ public class ParseUtils {
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
-                for(ParseObject following : list) {
+                for (ParseObject following : list) {
                     following.deleteInBackground();
                 }
             }
         });
     }
 
+    static public void linkInstallationWithUser() {
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        if(ParseUser.getCurrentUser() != null) {
+            installation.put(Common.INSTALLATION_USER, ParseUser.getCurrentUser());
+        }
+        installation.saveInBackground();
+    }
 }

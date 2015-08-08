@@ -64,6 +64,7 @@ public class Common {
     public final static String OBJECT_MY_QUESTION_QUESTION = "question";
 
     public final static String INSTALLATION_CHANNEL = "channels";
+    public final static String INSTALLATION_USER = "user";
 
     public final static String EXTRA_COMMENT_POSTID = "postId";
 

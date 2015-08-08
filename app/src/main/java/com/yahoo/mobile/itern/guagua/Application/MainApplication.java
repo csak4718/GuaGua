@@ -17,6 +17,7 @@ import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.yahoo.mobile.itern.guagua.Util.Common;
+import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 
 import java.util.List;
 import java.util.Locale;
@@ -39,7 +40,7 @@ public class MainApplication extends Application {
         ParseFacebookUtils.initialize(this);
 
         ParsePush.subscribeInBackground("");
-        ParseInstallation.getCurrentInstallation().saveInBackground();
+        ParseUtils.linkInstallationWithUser();
 
         FlurryAgent.init(this, "G4GPJ92FFBWHGZCH8WCK");
         super.onCreate();
