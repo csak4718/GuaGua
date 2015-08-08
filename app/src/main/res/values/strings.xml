@@ -17,8 +17,8 @@
     <string name="title_activity_comment">Comment</string>
     <string name="add_post">Ask Question</string>
     <string name="post_default">I want to ask...</string>
-    <string name="post_opt1">optional 1</string>
-    <string name="post_opt2">optional 2</string>
+    <string name="post_opt1">option 1</string>
+    <string name="post_opt2">option 2</string>
     <string name="post_ask_2_choices_question">Ask 2 choices question</string>
     <string name="post_share_to_fb">Share to Facebook</string>
     <string name="title_activity_other_user_profile">OtherUserProfile</string>
@@ -48,5 +48,7 @@
     <string name="community_create_title">Community Created</string>
     <string name="community_select">You have selected</string>
     <string name="community_create">You have created</string>
+
+    <string name="comment_hint">"Write a comment..."</string>
 
 </resources>
