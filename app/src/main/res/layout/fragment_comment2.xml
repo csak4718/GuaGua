@@ -19,21 +19,28 @@
         android:layout_height="60dp"
         android:layout_gravity="bottom"
         android:padding="5dp"
-        android:background="#FAFAFA">
+        android:background="#dfdfdf">
         <EditText
             android:id="@+id/edt_comment_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight=".80"
+            android:layout_weight="1"
             android:layout_gravity="center_vertical"
             android:padding="10dp"
-            android:background="@drawable/edit_text_rect"/>
-        <Button
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/edit_text_rect"
+            android:text="Write a comment ..."
+            android:textColor="@android:color/darker_gray"/>
+        <ImageButton
+            android:padding="10dp"
+            android:layout_gravity="center_vertical"
             android:id="@+id/btn_comment_send"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight=".20"
-            android:text="SEND"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:src="@drawable/send_gray"
+            android:alpha="100"
             android:background="@android:color/transparent"
             android:textColor="@android:color/holo_blue_dark"/>
     </LinearLayout>

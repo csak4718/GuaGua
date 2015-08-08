@@ -76,6 +76,7 @@ public class AddPostActivity extends ActionBarActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         Utils.setCommunityActionBarColor(this);
+        Utils.setCommunityStatusBarColor(this);
     }
 
 

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:id="@+id/btn_share_root">
+
+    <ImageView
+        android:src="@drawable/ic_share_gray"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_marginRight="5dp"
+        android:layout_gravity="center_vertical"/>
+    <TextView
+        android:id="@+id/badgeCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:textSize="18dp"
+        android:text="0"
+        android:textColor="@android:color/darker_gray"/>
+
+</LinearLayout>

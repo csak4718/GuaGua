@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import com.parse.FindCallback;
 import com.parse.GetDataCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -155,6 +156,7 @@ public class ParseUtils {
         mPost.put(Common.OBJECT_POST_QB_NUM, 0);
         mPost.put(Common.OBJECT_POST_USER, ParseUser.getCurrentUser());
         mPost.put(Common.OBJECT_POST_CHOICE_QUESTION, choiceQuestion);
+        mPost.put(Common.OBJECT_POST_COMMUNITY, community);
 
         mPost.saveInBackground(new SaveCallback() {
             @Override
@@ -262,16 +264,21 @@ public class ParseUtils {
         });
     }
 
-    static public void addCommunityToUser(final String communityObjectId){
+    static public void addCommunityToUser(final ParseObject community){
         ParseUser user = ParseUser.getCurrentUser();
-        ParseRelation<ParseObject> relation = user.getRelation(Common.OBJECT_USER_COMMUNITY_RELATION);
-        relation.add(ParseObject.createWithoutData(Common.OBJECT_COMMUNITY, communityObjectId));
+        ParseRelation<ParseObject> relation = user.getRelation(Common
+                .OBJECT_USER_COMMUNITY_RELATION);
+        relation.add(community);
         user.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 getUserCommunity(ParseUser.getCurrentUser());
             }
         });
+
+        ParseRelation<ParseObject> communityUsers = community.getRelation(Common.OBJECT_COMMUNITY_USERS);
+        communityUsers.add(user);
+        community.saveInBackground();
     }
 
     static public void removeCommunityFromCurrentUser(final ParseObject community) {
@@ -279,6 +286,10 @@ public class ParseUtils {
         ParseRelation<ParseObject> relation = user.getRelation(Common.OBJECT_USER_COMMUNITY_RELATION);
         relation.remove(community);
         user.saveInBackground();
+
+        ParseRelation<ParseObject> communityUsers = community.getRelation(Common.OBJECT_COMMUNITY_USERS);
+        communityUsers.remove(user);
+        community.saveInBackground();
     }
 
     static public ParseObject createCommunity(String title, Location location) {
@@ -292,7 +303,13 @@ public class ParseUtils {
     }
 
     static public void likeComment(final ParseObject mComment, boolean add){
-        mComment.put(Common.OBJECT_COMMENT_LIKES,mComment.getInt(Common.OBJECT_COMMENT_LIKES)+((add)?1:-1));
+        mComment.put(Common.OBJECT_COMMENT_LIKES, mComment.getInt(Common.OBJECT_COMMENT_LIKES) + ((add) ? 1 : -1));
         mComment.saveInBackground();
+    }
+
+    static public void addShareNum(final ParseObject mQuestion){
+        int temp = mQuestion.getInt(Common.OBJECT_POST_SHARE_NUM);
+        mQuestion.put(Common.OBJECT_POST_SHARE_NUM,temp+1);
+        mQuestion.saveInBackground();
     }
 }

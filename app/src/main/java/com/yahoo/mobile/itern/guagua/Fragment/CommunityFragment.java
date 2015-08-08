@@ -80,7 +80,7 @@ public class CommunityFragment extends Fragment {
             public void onClick(View v) {
                 ParseObject curCommunity = ((CommunityActivity)mContext).getCurCommunity();
                 if (curCommunity != null) {
-                    ParseUtils.addCommunityToUser(curCommunity.getObjectId());
+                    ParseUtils.addCommunityToUser(curCommunity);
                     mMainApplication.currentViewingCommunity = curCommunity;
                     Utils.gotoMainActivity(getActivity());
                 }

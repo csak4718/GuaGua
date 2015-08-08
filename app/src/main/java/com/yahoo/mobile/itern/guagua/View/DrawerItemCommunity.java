@@ -23,9 +23,9 @@ public class DrawerItemCommunity extends RelativeLayout {
 
     View mView;
     LinearLayout mRoot;
-    ImageView mImgIcon;
-    TextView mTxtTitle;
-    ImageView mImgHandle;
+    public ImageView mImgIcon;
+    public TextView mTxtTitle;
+    public ImageView mImgHandle;
 
     public View getContainerView() {
         return mRoot;

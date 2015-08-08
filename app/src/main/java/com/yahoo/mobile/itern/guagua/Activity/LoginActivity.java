@@ -159,6 +159,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         getSupportActionBar().hide();
+        Utils.setCommunityStatusBarColor(this);
+
         setContentView(R.layout.activity_login);
         mBtnLoginFacebook = (Button) findViewById(R.id.btn_login_facebook);
         mImgSplashLogo = (ImageView) findViewById(R.id.img_splash_logo);

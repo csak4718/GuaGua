@@ -25,6 +25,7 @@ public class CommentActivity extends ActionBarActivity {
         setContentView(R.layout.activity_comment);
 
         Utils.setCommunityActionBarColor(this);
+        Utils.setCommunityStatusBarColor(this);
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container_comment, CommentFragment.newInstance(mPostId))

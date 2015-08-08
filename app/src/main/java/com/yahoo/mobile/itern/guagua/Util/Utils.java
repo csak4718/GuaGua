@@ -12,9 +12,12 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import com.parse.ParseObject;
@@ -86,8 +89,25 @@ public class Utils {
         }
         return Color.parseColor("#5AD3D2");
     }
+    static public int getCurrentStatusBarColor(Activity activity) {
+        ParseObject community = getCurrentViewingCommunity(activity);
+        if(community != null) {
+            String hexCode = community.getString(Common.OBJECT_COMMUNITY_STATUS_BAR_COLOR);
+            if(hexCode != null) {
+                return Color.parseColor(hexCode);
+            }
+        }
+        return Color.parseColor("#0099A5");
+    }
     static public void setCommunityActionBarColor(AppCompatActivity activity) {
         activity.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Utils.getCurrentActionBarColor(activity)));
+    }
+    static public void setCommunityStatusBarColor(AppCompatActivity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = activity.getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(getCurrentStatusBarColor(activity));
+        }
     }
 
     static public void userLogout(Context context) {
@@ -134,5 +154,10 @@ public class Utils {
                             }
                         });
         builder.create().show();
+    }
+
+    static public int convertDp2Pixel(int dp, Context context) {
+        float scale = context.getResources().getDisplayMetrics().density;
+        return (int)(dp * scale);
     }
 }

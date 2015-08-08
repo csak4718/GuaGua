@@ -8,8 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -35,7 +35,7 @@ public class CommentFragment extends Fragment {
 
     private View mView;
     private EditText mEdtCommentText;
-    private Button mBtnCommentSend;
+    private ImageButton mBtnCommentSend;
     private String mPostObjectId;
     private RecyclerView mRecyclerView;
     private CommentAdapter2 mAdapter;
@@ -85,7 +85,7 @@ public class CommentFragment extends Fragment {
 
         mView = inflater.inflate(R.layout.fragment_comment2, container, false);
         mEdtCommentText = (EditText) mView.findViewById(R.id.edt_comment_text);
-        mBtnCommentSend = (Button) mView.findViewById(R.id.btn_comment_send);
+        mBtnCommentSend = (ImageButton) mView.findViewById(R.id.btn_comment_send);
         mRecyclerView = (RecyclerView) mView.findViewById(R.id.recycler_view_comment);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mList = new ArrayList<>();
