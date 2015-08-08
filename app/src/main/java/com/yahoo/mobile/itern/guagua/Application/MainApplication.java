@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import com.facebook.FacebookSdk;
 import com.flurry.android.FlurryAgent;
 import com.parse.Parse;
+import com.parse.ParseCrashReporting;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseObject;
@@ -27,6 +28,7 @@ public class MainApplication extends Application {
         setLocale();
         FacebookSdk.sdkInitialize(getApplicationContext());
         Parse.enableLocalDatastore(this);
+        ParseCrashReporting.enable(this);
         Parse.initialize(this, "iMyUdfPQnXeU1bTHi3f8jhRw5oCx40UxvMfcicno", "fwtpApBFDvfTtUHJ5nwrdqD8y5lVoU3nePIQmW6k");
         ParseFacebookUtils.initialize(this);
 
