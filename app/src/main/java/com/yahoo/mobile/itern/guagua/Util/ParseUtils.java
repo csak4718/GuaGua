@@ -12,10 +12,13 @@ import com.parse.GetDataCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
+import com.parse.PushService;
 import com.parse.SaveCallback;
 import com.yahoo.mobile.itern.guagua.Application.MainApplication;
 import com.yahoo.mobile.itern.guagua.Event.CollectionEvent;
@@ -26,6 +29,8 @@ import com.yahoo.mobile.itern.guagua.Event.ShareDuringPostEvent;
 import com.yahoo.mobile.itern.guagua.Event.UserCommunityEvent;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -185,13 +190,20 @@ public class ParseUtils {
 
                 user.saveInBackground();
 
-                if(picture != null) {
+                if (picture != null) {
                     savePictureToPostSync(mPost, picture);
                 }
 
                 getCommunityQuestions(community);
 
                 EventBus.getDefault().post(new ShareDuringPostEvent(mPost));
+
+
+                ParseObject myQuestion = new ParseObject(Common.OBJECT_MY_QUESTION);
+                myQuestion.put(Common.OBJECT_MY_QUESTION_USER, user);
+                myQuestion.put(Common.OBJECT_MY_QUESTION_QUESTION, mPost);
+                myQuestion.saveInBackground();
+
             }
         });
 
@@ -276,9 +288,8 @@ public class ParseUtils {
             }
         });
 
-        ParseRelation<ParseObject> communityUsers = community.getRelation(Common.OBJECT_COMMUNITY_USERS);
-        communityUsers.add(user);
-        community.saveInBackground();
+        String channel = "community_" + community.getObjectId();
+        ParsePush.subscribeInBackground(channel);
     }
 
     static public void removeCommunityFromCurrentUser(final ParseObject community) {
@@ -290,6 +301,10 @@ public class ParseUtils {
         ParseRelation<ParseObject> communityUsers = community.getRelation(Common.OBJECT_COMMUNITY_USERS);
         communityUsers.remove(user);
         community.saveInBackground();
+
+        String channel = "community_" + community.getObjectId();
+        ParsePush.unsubscribeInBackground(channel);
+
     }
 
     static public ParseObject createCommunity(String title, Location location) {
@@ -311,5 +326,35 @@ public class ParseUtils {
         int temp = mQuestion.getInt(Common.OBJECT_POST_SHARE_NUM);
         mQuestion.put(Common.OBJECT_POST_SHARE_NUM,temp+1);
         mQuestion.saveInBackground();
+    }
+
+
+    static public void userFollowingQuestion(final ParseUser user, final ParseObject question) {
+        ParseObject following = new ParseObject(Common.OBJECT_FOLLOWING);
+        following.put(Common.OBJECT_FOLLOWING_USER, user);
+        following.put(Common.OBJECT_FOLLOWING_QUESTION, question);
+        following.saveInBackground();
+    }
+
+    static public void userUnFollowingQuestion(final ParseUser user, final ParseObject question) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(Common.OBJECT_FOLLOWING);
+        query.whereEqualTo(Common.OBJECT_FOLLOWING_USER, user);
+        query.whereEqualTo(Common.OBJECT_FOLLOWING_QUESTION, question);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                for (ParseObject following : list) {
+                    following.deleteInBackground();
+                }
+            }
+        });
+    }
+
+    static public void linkInstallationWithUser() {
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        if(ParseUser.getCurrentUser() != null) {
+            installation.put(Common.INSTALLATION_USER, ParseUser.getCurrentUser());
+        }
+        installation.saveInBackground();
     }
 }

@@ -260,7 +260,7 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.View
                     @Override
                     public void onClick(View v) {
                         ParseUtils.removeCommunityFromCurrentUser(community);
-                        mList.remove(index);
+                        mList.remove(community);
                         updateCommunityOrder();
                         notifyItemRemoved(position);
                     }

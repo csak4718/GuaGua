@@ -5,13 +5,21 @@ import android.util.Log;
 import android.content.res.Configuration;
 import com.facebook.FacebookSdk;
 import com.flurry.android.FlurryAgent;
+import com.parse.FindCallback;
 import com.parse.Parse;
+import com.parse.ParseCrashReporting;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParsePush;
+import com.parse.ParseRelation;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.yahoo.mobile.itern.guagua.Util.Common;
+import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 
+import java.util.List;
 import java.util.Locale;
 
 
@@ -27,21 +35,12 @@ public class MainApplication extends Application {
         setLocale();
         FacebookSdk.sdkInitialize(getApplicationContext());
         Parse.enableLocalDatastore(this);
+        ParseCrashReporting.enable(this);
         Parse.initialize(this, "iMyUdfPQnXeU1bTHi3f8jhRw5oCx40UxvMfcicno", "fwtpApBFDvfTtUHJ5nwrdqD8y5lVoU3nePIQmW6k");
         ParseFacebookUtils.initialize(this);
 
-        ParsePush.subscribeInBackground("", new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e == null) {
-                    Log.d("com.parse.push", "successfully subscribed to the broadcast channel.");
-                } else {
-                    Log.e("com.parse.push", "failed to subscribe for push", e);
-                }
-            }
-        });
-
-
+        ParsePush.subscribeInBackground("");
+        ParseUtils.linkInstallationWithUser();
 
         FlurryAgent.init(this, "G4GPJ92FFBWHGZCH8WCK");
         super.onCreate();
