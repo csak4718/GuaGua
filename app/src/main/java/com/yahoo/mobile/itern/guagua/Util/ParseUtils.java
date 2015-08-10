@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.GetDataCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
@@ -90,6 +91,18 @@ public class ParseUtils {
                 int rhs_key = rhs.getInt(Common.OBJECT_POST_QA_NUM) + rhs.getInt(Common
                         .OBJECT_POST_QB_NUM);
                 return rhs_key - lhs_key;
+            }
+        });
+    }
+
+    static public void getQuestion(String objectId) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(Common.OBJECT_POST);
+        query.getInBackground(objectId, new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject question, ParseException e) {
+                if(e == null) {
+                    EventBus.getDefault().post(new QuestionEvent(Arrays.asList(question)));
+                }
             }
         });
     }
@@ -287,6 +300,10 @@ public class ParseUtils {
                 getUserCommunity(ParseUser.getCurrentUser());
             }
         });
+
+        ParseRelation<ParseObject> communityUsers = community.getRelation(Common.OBJECT_COMMUNITY_USERS);
+        communityUsers.add(user);
+        community.saveInBackground();
 
         String channel = "community_" + community.getObjectId();
         ParsePush.subscribeInBackground(channel);

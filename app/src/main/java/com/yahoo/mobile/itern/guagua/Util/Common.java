@@ -5,6 +5,8 @@ package com.yahoo.mobile.itern.guagua.Util;
  */
 public class Common {
 
+    public final static String PARSE_NOTIFICATION_OPEN = "com.parse.push.intent.OPEN";
+
     public final static String PARSE_COMMON_CREATED = "createdAt";
     public final static String PARSE_COMMON_UPDATED = "updatedAt";
 
