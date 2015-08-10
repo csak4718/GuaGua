@@ -301,6 +301,10 @@ public class ParseUtils {
             }
         });
 
+        ParseRelation<ParseObject> communityUsers = community.getRelation(Common.OBJECT_COMMUNITY_USERS);
+        communityUsers.add(user);
+        community.saveInBackground();
+
         String channel = "community_" + community.getObjectId();
         ParsePush.subscribeInBackground(channel);
     }
