@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.facebook.CallbackManager;
@@ -79,18 +80,18 @@ public class MainActivity extends AppCompatActivity {
 
         ImageView imgProfile;
         TextView txtName;
-        TextView txtViewPersonal;
+        RelativeLayout layoutViewPersonal;
         ParseUser user = ParseUser.getCurrentUser();
 
         imgProfile = (ImageView) findViewById(R.id.drawer_img_profile);
         txtName = (TextView) findViewById(R.id.drawer_txt_name);
-        txtViewPersonal = (TextView) findViewById(R.id.drawer_txt_view_personal);
+        layoutViewPersonal = (RelativeLayout) findViewById(R.id.drawer_txt_view_personal);
 
         ParseFile imgFile = user.getParseFile(Common.OBJECT_USER_PROFILE_PIC);
         Uri imgUri = Uri.parse(imgFile.getUrl());
 
         txtName.setText(user.getString(Common.OBJECT_USER_NICK));
-        txtViewPersonal.setOnClickListener(new View.OnClickListener() {
+        layoutViewPersonal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent it = new Intent(MainActivity.this, PersonalPageActivity.class);

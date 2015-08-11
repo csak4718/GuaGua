@@ -1,5 +1,6 @@
 package com.yahoo.mobile.itern.guagua.Activity;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.facebook.CallbackManager;
 import com.parse.ParseObject;
 import com.yahoo.mobile.itern.guagua.Adapter.QuestionCardAdapter;
 import com.yahoo.mobile.itern.guagua.Event.QuestionEvent;
@@ -26,6 +28,7 @@ public class NotificationActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private QuestionCardAdapter mAdapter;
+    private static CallbackManager callbackManager;
 
     private List<ParseObject> mList;
 
@@ -70,12 +73,13 @@ public class NotificationActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Utils.setCommunityActionBarColor(this);
         Utils.setCommunityStatusBarColor(this);
+        callbackManager = CallbackManager.Factory.create();
 
         mList = new ArrayList<>();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mLayoutManager = new LinearLayoutManager(this);
-        mAdapter = new QuestionCardAdapter(this, mList);
+        mAdapter = new QuestionCardAdapter(this, mList, callbackManager);
         mAdapter.setLikeAnimation(true);
 
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -105,5 +109,10 @@ public class NotificationActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 }
