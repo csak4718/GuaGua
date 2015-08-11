@@ -118,10 +118,9 @@ public class MainActivity extends AppCompatActivity {
         imgBtnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mCommunityAdapter.getEditMode()) {
+                if (mCommunityAdapter.getEditMode()) {
                     imgBtnEdit.setBackgroundDrawable(getResources().getDrawable(R.drawable.edit_pen));
-                }
-                else {
+                } else {
                     imgBtnEdit.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_done_black_24dp));
                 }
                 mCommunityAdapter.toggleEditMode();
@@ -248,9 +247,17 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    private void launchFromNotification(Intent it) {
+        Uri uri = it.getData();
+        String objectId = uri.getPath().substring(1);
+        Log.d("Question id", objectId);
+        ParseUtils.getQuestion(objectId);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
@@ -273,6 +280,16 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        Intent it = getIntent();
+        if(it != null && it.getAction() != null && it.getAction().equals("android.intent.action.VIEW")) {
+            launchFromNotification(it);
+        }
+        else {
+            ParseUtils.getCurrentCommunityQuestions(this);
+        }
+
+
     }
 
     @Override

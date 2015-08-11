@@ -18,7 +18,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-import com.yahoo.mobile.itern.guagua.Adapter.CommentAdapter2;
+import com.yahoo.mobile.itern.guagua.Adapter.CommentAdapter;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.Common;
 import com.yahoo.mobile.itern.guagua.Util.Utils;
@@ -38,7 +38,7 @@ public class CommentFragment extends Fragment {
     private ImageButton mBtnCommentSend;
     private String mPostObjectId;
     private RecyclerView mRecyclerView;
-    private CommentAdapter2 mAdapter;
+    private CommentAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private List<ParseObject> mList,mLikeList;
 
@@ -76,12 +76,20 @@ public class CommentFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        try {
-            mLikeList = ParseUser.getCurrentUser().getRelation(Common.OBJECT_USER_COMMENT_LIKES).getQuery().find();
-        } catch (ParseException e){
-            e.printStackTrace();
-            getActivity().finish();
-        }
+
+        mLikeList = new ArrayList<>();
+
+        ParseUser.getCurrentUser().getRelation(Common.OBJECT_USER_COMMENT_LIKES).getQuery()
+                .findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if(e == null) {
+                    mLikeList.addAll(list);
+                    mAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+
 
         mView = inflater.inflate(R.layout.fragment_comment2, container, false);
         mEdtCommentText = (EditText) mView.findViewById(R.id.edt_comment_text);
@@ -90,7 +98,7 @@ public class CommentFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mList = new ArrayList<>();
 
-        mAdapter = new CommentAdapter2(getActivity(), mList, mLikeList);
+        mAdapter = new CommentAdapter(getActivity(), mList, mLikeList);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
