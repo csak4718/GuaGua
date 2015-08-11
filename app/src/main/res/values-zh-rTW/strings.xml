@@ -8,6 +8,8 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_profile_setting">Profile</string>
     <string name="title_activity_add_post">AddPostActivity</string>
+    <string name="title_activity_notification">呱呱通知</string>
+
     <string name="action_settings">設定</string>
     <string name="my_favorite_tag">我的收藏</string>
     <string name="my_question_tag">我的問題</string>

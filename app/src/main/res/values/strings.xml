@@ -11,11 +11,14 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_profile_setting">Profile</string>
     <string name="title_activity_add_post">AddPostActivity</string>
+    <string name="title_activity_notification">GuaGua Notification</string>
+
     <string name="action_settings">Setting</string>
     <string name="my_favorite_tag">Following</string>
     <string name="my_question_tag">My Questions</string>
     <string name="title_activity_comment">Comment</string>
     <string name="add_post">Ask Question</string>
+
     <string name="post_default">I want to ask...</string>
     <string name="post_opt1">option 1</string>
     <string name="post_opt2">option 2</string>
@@ -52,5 +55,6 @@
     <string name="community_create">You have created</string>
 
     <string name="comment_hint">"Write a comment..."</string>
+
 
 </resources>
