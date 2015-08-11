@@ -42,6 +42,18 @@ public class LoginActivity extends AppCompatActivity {
     private String mNickName;
     private String mFbId;
 
+    private void gotoNextActivity() {
+        Intent it = getIntent();
+        if(it.getAction().equals("android.intent.action.VIEW")) {
+            Intent notiIntent = new Intent(this, NotificationActivity.class);
+            notiIntent.setData(it.getData());
+            startActivity(notiIntent);
+        }
+        else {
+            Utils.gotoMainActivity(this);
+        }
+        finish();
+    }
 
     private void restoreUserSetting(ParseUser user) {
         final MainApplication app = (MainApplication)getApplication();
@@ -51,8 +63,7 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void done(ParseObject parseObject, ParseException e) {
                     app.currentViewingCommunity = parseObject;
-                    Utils.gotoMainActivity(LoginActivity.this);
-                    finish();
+                    gotoNextActivity();
                 }
             });
         }
@@ -61,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     Utils.gotoMainActivity(LoginActivity.this);
-                    finish();
+                    gotoNextActivity();
                 }
             }, 700);
         }

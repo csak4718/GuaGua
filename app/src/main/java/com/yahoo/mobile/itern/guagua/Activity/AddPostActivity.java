@@ -125,8 +125,9 @@ public class AddPostActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_post) {
-            addPostFragment.addPost();
-            finish();
+            if(addPostFragment.addPost()) {
+                finish();
+            }
             return true;
         }
         if (id == android.R.id.home) {

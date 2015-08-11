@@ -1,6 +1,7 @@
 package com.yahoo.mobile.itern.guagua.Adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.parse.GetCallback;
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -23,8 +25,10 @@ import com.yahoo.mobile.itern.guagua.Util.Common;
 import com.yahoo.mobile.itern.guagua.Util.ParseUtils;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -50,6 +54,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MainView
         mCommentList = list;
         mCommentLikeList = likelist;
         mInflater = LayoutInflater.from(context);
+
+        cachedComments = new HashMap<>();
     }
 
     public static class MainViewHolder extends RecyclerView.ViewHolder {
@@ -123,11 +129,23 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MainView
         return vh;
     }
 
-    @Override
-    public void onBindViewHolder(final MainViewHolder mainViewHolder, int position) {
+    private void displayImage(ParseFile img, final ImageView imgView, final Map<String, Object> cache) {
+        img.getDataInBackground(new GetDataCallback() {
+            @Override
+            public void done(byte[] bytes, ParseException e) {
+                if (e == null) {
+                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0,
+                            bytes.length);
+                    if (bmp != null) {
+                        imgView.setImageBitmap(bmp);
+                        cache.put(Common.COMMENT_PROFILE_IMG, bmp);
+                    }
+                }
+            }
+        });
+    }
 
-        final OtherViewHolder holder = (OtherViewHolder) mainViewHolder;
-        final ParseObject comment = mCommentList.get(position);
+    private void loadFromParse(final OtherViewHolder holder, final ParseObject comment, final Map<String, Object> cache) {
         final ParseUser user = comment.getParseUser(Common.OBJECT_COMMENT_USER);
 
         if(user != null)
@@ -136,15 +154,50 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MainView
                 @Override
                 public void done(ParseObject parseObject, ParseException e) {
                     if(e == null) {
-                        holder.txtCommentName.setText(user.getString(Common.OBJECT_USER_NICK));
+                        final String nickname = user.getString(Common.OBJECT_USER_NICK);
+
+                        holder.txtCommentName.setText(nickname);
                         ParseFile imgFile = user.getParseFile(Common.OBJECT_USER_PROFILE_PIC);
-                        ParseUtils.displayImage(imgFile, holder.imgCommentProfile);
+                        displayImage(imgFile, holder.imgCommentProfile, cache);
+
+                        cache.put(Common.COMMENT_PARSE_USER, user);
+                        cache.put(Common.COMMENT_NICK, nickname);
                     }
                 }
             });
         }
+
+    }
+    private void loadFromCache(final OtherViewHolder holder, final ParseObject comment, final Map<String, Object> cache) {
+        final String nickname = (String) cache.get(Common.COMMENT_NICK);
+        final Bitmap profileImg = (Bitmap) cache.get(Common.COMMENT_PROFILE_IMG);
+
+        try {
+            holder.txtCommentName.setText(nickname);
+            holder.imgCommentProfile.setImageBitmap(profileImg);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onBindViewHolder(final MainViewHolder mainViewHolder, int position) {
+
+        final OtherViewHolder holder = (OtherViewHolder) mainViewHolder;
+        final ParseObject comment = mCommentList.get(position);
+        final String objectId = comment.getObjectId();
+
+        resetOtherViewHolder(holder);
+
+        if(cachedComments.get(objectId) == null) {
+            Map<String, Object> cache = new HashMap<>();
+            cachedComments.put(objectId, cache);
+            loadFromParse(holder, comment, cache);
+        }
         else {
-            resetOtherViewHolder(holder);
+            Map<String, Object> cache = cachedComments.get(objectId);
+            loadFromCache(holder, comment, cache);
         }
 
         final String commentMsg = comment.getString(Common.OBJECT_COMMENT_MSG);
@@ -187,7 +240,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MainView
                     holder.imgCommentLike.setImageResource(R.drawable.ic_like1);
                     holder.numLikes.setText(String.valueOf(Integer.valueOf(holder.numLikes
                             .getText().toString
-                            ()) - 1));
+                                    ()) - 1));
+                    mCommentLikeList.remove(comment);
                     relation.remove(comment);
                     currentUser.saveInBackground();
 
@@ -199,6 +253,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MainView
                     holder.numLikes.setText(String.valueOf(Integer.valueOf(holder.numLikes
                             .getText().toString
                             ()) + 1));
+                    mCommentLikeList.add(comment);
                     relation.add(comment);
                     currentUser.saveInBackground();
                 }
