@@ -24,6 +24,7 @@
     <string name="post_opt2">option 2</string>
     <string name="post_ask_2_choices_question">Ask 2 choices question</string>
     <string name="post_share_to_fb">Share to Facebook</string>
+    <string name="post_toast_question_empty">Question can not be empty</string>
     <string name="post_toast_option_empty">Option can not be empty</string>
 
     <string name="title_activity_other_user_profile">OtherUserProfile</string>

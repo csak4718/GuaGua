@@ -20,7 +20,8 @@
     <string name="post_opt2">選項二</string>
     <string name="post_ask_2_choices_question">問二選一的問題</string>
     <string name="post_share_to_fb">分享到Facebook</string>
-    <string name="post_toast_option_empty">選項一定要填值喔</string>
+    <string name="post_toast_question_empty">問題一定要填喔</string>
+    <string name="post_toast_option_empty">選項一定要填喔</string>
 
     <string name="title_activity_other_user_profile">OtherUserProfile</string>
 
