@@ -52,65 +52,78 @@
         android:paddingLeft="5dp"
         android:gravity="center_vertical"
 
-
         android:text="@string/explore_community_nearby"
         android:textSize="20dp"
         android:background="@color/cyan"
         android:textColor="@color/white"/>
 
-
-    <RelativeLayout
-        android:id="@+id/layout_create_community"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:focusable="true"
-        android:visibility="gone">
-
-        <ImageView
-            android:id="@+id/img_create_community"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_community_pin"/>
-
-        <TextView
-            android:id="@+id/txt_create_community_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/img_create_community"
-            android:layout_marginLeft="10dp"
-            android:textSize="20dp"/>
-
-
-        <TextView
-            android:id="@+id/txt_create_community_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="25dp"
-            android:paddingLeft="3dp"
-            android:gravity="center_vertical"
-            android:text="@string/explore_community_create"
-            android:textSize="20dp"
-            android:textColor="@color/gray"
-            android:layout_alignParentRight="true"
-            android:paddingRight="10dp"/>
-
-
-    </RelativeLayout>
-
-    <ListView
-        android:id="@+id/list_community_suggestion"
-        android:textSize="20dp"
-        android:layout_width="match_parent"
+    <FrameLayout
+        android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="3"
-        android:layout_gravity="center"
-        android:layout_below="@+id/map_search_view"
-        android:dividerHeight="10dp"
-        android:divider="@color/white"
-        android:fitsSystemWindows="true"/>
+        android:layout_weight="3">
+
+        <RelativeLayout
+            android:id="@+id/layout_create_community"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:focusable="true"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/img_create_community"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_community_pin"/>
+
+            <TextView
+                android:id="@+id/txt_create_community_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/img_create_community"
+                android:layout_marginLeft="10dp"
+                android:textSize="20dp"/>
+
+
+            <TextView
+                android:id="@+id/txt_create_community_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:paddingLeft="3dp"
+                android:gravity="center_vertical"
+                android:text="@string/explore_community_create"
+                android:textSize="20dp"
+                android:textColor="@color/gray"
+                android:layout_alignParentRight="true"
+                android:paddingRight="10dp"/>
+        </RelativeLayout>
+
+        <ListView
+            android:id="@+id/list_community_suggestion"
+            android:textSize="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:layout_below="@+id/map_search_view"
+            android:dividerHeight="10dp"
+            android:divider="@color/white"
+            android:fitsSystemWindows="true"
+            android:visibility="invisible"/>
+
+        <ProgressBar
+            android:id="@+id/progress_bar_community"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="visible"
+            style="@android:style/Widget.ProgressBar"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/cyan"/>
+
+    </FrameLayout>
 
 
 

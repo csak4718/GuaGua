@@ -47,5 +47,7 @@
     <string name="community_select">您已選擇</string>
     <string name="community_create">您已建立</string>
 
+    <string name="comment_hint">"留個言吧..."</string>
+
 
 </resources>
