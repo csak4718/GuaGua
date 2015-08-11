@@ -23,7 +23,7 @@
     </LinearLayout>
     <Button
         android:id="@+id/btn_login_facebook"
-        android:text="Log in with Facebook"
+        android:text="@string/login_fb"
         android:textColor="@android:color/white"
         android:paddingLeft="30dp"
         android:background="@drawable/login_fb"
