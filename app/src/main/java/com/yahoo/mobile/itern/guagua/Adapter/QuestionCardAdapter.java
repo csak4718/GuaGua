@@ -76,8 +76,9 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     private Map<String, Map<String, Object>> cachedQuestion;
     private boolean mAmin = false;
 
-    CallbackManager callbackManager;
     ShareDialog shareDialog;
+    private static ViewHolder currentholder;
+    private static ParseObject currentQuestion;
 
     public void notifyDataSetChangedWithCache() {
         mHandler.post(new Runnable() {
@@ -141,7 +142,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         });
     }
 
-    public QuestionCardAdapter(Context context, List<ParseObject> list) {
+    public QuestionCardAdapter(Context context, List<ParseObject> list, CallbackManager
+            callbackManager) {
         super();
 
         cachedQuestion = new HashMap<>();
@@ -159,17 +161,22 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         mInflater = LayoutInflater.from(context);
         setHasStableIds(true);
 
-        callbackManager = CallbackManager.Factory.create();
         shareDialog = new ShareDialog((Activity)mContext);
-
         shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
             public void onSuccess(Sharer.Result results) {
+                Log.d("QCA","onsharecallback");
+                ParseUtils.addShareNum(currentQuestion);
+                int shareNum = currentholder.shareBtnPost.getShareNum();
+                currentholder.shareBtnPost.addShareNum();
+                cachedQuestion.get(currentQuestion.getObjectId()).put(Common.QUESTION_CARD_SHARE_NUM, shareNum + 1);
             }
 
             public void onCancel() {
+                Log.d("QCA","On cancel");
             }
 
             public void onError(FacebookException e) {
+                Log.d("QCA",e.toString());
             }
         });
     }
@@ -193,7 +200,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
     @Override
     public QuestionCardAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                   int viewType) {
+                                                              int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_question, parent, false);
         ViewHolder vh = new ViewHolder(v);
@@ -469,7 +476,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                     if (e == null) {
                         Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0,
                                 bytes.length);
-                        if(bmp != null) {
+                        if (bmp != null) {
                             holder.imgViewQuestionPicture.setImageBitmap(bmp);
                             holder.imgViewQuestionPicture.setVisibility(View.VISIBLE);
                             setQuestionPictureHeight(holder);
@@ -553,10 +560,10 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                             .build();
 
                     shareDialog.show(linkContent);
+                    currentholder = holder;
+                    currentQuestion = mQuestion;
                 }
-                ParseUtils.addShareNum(mQuestion);
-                holder.shareBtnPost.addShareNum();
-                cache.put(Common.QUESTION_CARD_SHARE_NUM, shareNum +1 );
+
             }
         });
     }
@@ -959,4 +966,5 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         }
 
     }
+
 }

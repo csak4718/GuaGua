@@ -27,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.facebook.CallbackManager;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.Common;
 import com.yahoo.mobile.itern.guagua.View.SlidingTabLayout;
@@ -38,14 +39,16 @@ import java.util.List;
 public class MyFavoriteFragment extends Fragment {
 
     private int mtab;
+    private CallbackManager callbackManager;
 
-    public static MyFavoriteFragment newInstance(String str) {
+    public static MyFavoriteFragment newInstance(String str, CallbackManager callbackManager) {
         MyFavoriteFragment myFragment = new MyFavoriteFragment();
-        Log.d("MFF1",str);
+        Log.d("MFF1", str);
 
         Bundle args = new Bundle();
         args.putInt("someInt", (str.equals(Common.EXTRA_PERSONAL_MY_QUESTION))?1:0);
         myFragment.setArguments(args);
+        myFragment.callbackManager = callbackManager;
 
         return myFragment;
     }
@@ -59,13 +62,15 @@ public class MyFavoriteFragment extends Fragment {
         private final int mDividerColor;
         private final String tab1;
         private final String tab2;
+        private CallbackManager callbackManager;
 
-        SamplePagerItem(CharSequence title, int indicatorColor, int dividerColor, String text1, String text2) {
+        SamplePagerItem(CharSequence title, int indicatorColor, int dividerColor, String text1, String text2, CallbackManager callbackManager) {
             mTitle = title;
             mIndicatorColor = indicatorColor;
             mDividerColor = dividerColor;
             tab1 = text1;
             tab2 = text2;
+            this.callbackManager = callbackManager;
         }
 
         /**
@@ -76,10 +81,10 @@ public class MyFavoriteFragment extends Fragment {
             Log.d("MFF", "Creating PostFragment");
             if (getTitle().equals(tab1)){
                 Log.d("MFF", "collection");
-                return new CollectionFragment();
+                return CollectionFragment.newInstance(callbackManager);
             }else if (getTitle().equals(tab2)){
                 Log.d("MFF", "myquestion");
-                return new MyQuestionFragment();
+                return MyQuestionFragment.newInstance(callbackManager);
             }else{
                 return new AddPostActivityFragment();
             }
@@ -141,7 +146,7 @@ public class MyFavoriteFragment extends Fragment {
                 getResources().getColor(R.color.action_bar_background), // Indicator color
                 Color.TRANSPARENT, // Divider color
                 getString(R.string.my_favorite_tag),
-                getString(R.string.my_question_tag)
+                getString(R.string.my_question_tag),callbackManager
         ));
 
         mTabs.add(new SamplePagerItem(
@@ -149,7 +154,7 @@ public class MyFavoriteFragment extends Fragment {
                 getResources().getColor(R.color.action_bar_background), // Indicator color
                 Color.TRANSPARENT, // Divider color
                 getString(R.string.my_favorite_tag),
-                getString(R.string.my_question_tag)
+                getString(R.string.my_question_tag),callbackManager
         ));
 
         // END_INCLUDE (populate_tabs)
