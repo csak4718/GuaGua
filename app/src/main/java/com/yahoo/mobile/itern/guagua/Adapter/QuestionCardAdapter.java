@@ -434,7 +434,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                 lp.height = WindowManager.LayoutParams.MATCH_PARENT;
 
 
-                Bitmap bmp = ((BitmapDrawable)holder.imgViewQuestionPicture.getDrawable()).getBitmap();
+                Bitmap bmp = ((BitmapDrawable) holder.imgViewQuestionPicture.getDrawable())
+                        .getBitmap();
 
                 ImageView picture = (ImageView) dialog.findViewById(R.id.img_view_dialog_picture);
                 ImageButton btnClose = (ImageButton) dialog.findViewById(R.id.img_btn_close);
@@ -447,7 +448,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                 picture.setImageBitmap(bmp);
                 dialog.show();
                 dialog.getWindow().setAttributes(lp);
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#80000000")));
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor
+                        ("#80000000")));
             }
         });
     }
@@ -510,7 +512,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                         mQuestion.put(Common.OBJECT_POST_QLIKES, currentNum + 1);
                         cache.put(Common.QUESTION_CARD_LIKE_NUM, currentNum+1);
                         if (mAmin == true) {
-                            startLikeButtonAnimation(v,holder.imgBtnLike.getImgHeight());
+                            startLikeButtonAnimation2(v, holder.imgBtnLike.getImgHeight());
                         }
 
                         ParseUtils.userFollowingQuestion(ParseUser.getCurrentUser(), mQuestion);
@@ -720,7 +722,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
         setupLikeButton(mQuestion, holder, cache);
         setupCommentButton(holder, mQuestion.getObjectId(), commentNum);
-        setupShareButton(mQuestion,holder,mQuestion.getObjectId(), shareNum, cache);
+        setupShareButton(mQuestion, holder, mQuestion.getObjectId(), shareNum, cache);
     }
 
     public void startLikeButtonAnimation(View v, int Height){
@@ -731,24 +733,15 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         v.getLocationInWindow(xy);
         ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(Height,Height);
 
-        //params.setMargins(100,100,100,100);
         img.setLayoutParams(params);
-        //RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(xy[0],xy[1]);
-        //RelativeLayout rl = (RelativeLayout) v.getRootView().findViewById(R.id.main_layout);
         final ViewGroup rl = (ViewGroup) v.getRootView();
         View ap = rl.findViewById(R.id.action_search);
         ap.getLocationInWindow(fxy);
         int w = ap.getHeight();
-        //img.setLayoutParams(params);
         rl.addView(img);
         Log.d("Location", String.valueOf(xy[0]) + ' ' + String.valueOf(xy[1]));
-        //Animation am = new TranslateAnimation(img.getX(),img.getY(),10,500);
-        //Log.d("XY In windows", String.valueOf(xy[0]) + ' ' + String.valueOf(xy[1]));
-        //v.getLocationOnScreen(xy);
-        //Log.d("XY On screens",String.valueOf(xy[0])+' '+String.valueOf(xy[1]));
-        //Animation am = new TranslateAnimation(xy[0],fxy[0]+w/4,xy[1],fxy[1]+w/4);
-        fxy[0] = fxy[0]+w/4;
-        fxy[1] = fxy[1]+w/4;
+        fxy[0] = fxy[0]+w/2;
+        fxy[1] = fxy[1]+w/2;
         img.setX(xy[0]);
         img.setY(xy[1]);
         ValueAnimator am = ValueAnimator.ofFloat(0,(float)0.9);
@@ -787,6 +780,61 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         //img.setAnimation(am);
         //am.startNow();
         am.start();
+    }
+
+    public void startLikeButtonAnimation2(final View v, int Height){
+        final ImageView img = new ImageView(mContext);
+        img.setImageResource(R.drawable.ic_like);
+        final int[] xy = new int[2];
+        final int[] fxy = new int[2];
+        v.getLocationInWindow(xy);
+        ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(Height,Height);
+
+        img.setLayoutParams(params);
+        final ViewGroup rl = (ViewGroup) v.getRootView();
+        View ap = rl.findViewById(R.id.action_search);
+        rl.addView(img);
+        fxy[0] = xy[0];
+        fxy[1] = xy[1] - 300;
+        img.setX(xy[0]);
+        img.setY(xy[1]);
+        ValueAnimator am = ValueAnimator.ofFloat(0,1);
+        am.setDuration(1000);
+        am.setRepeatCount(0);
+        am.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                rl.removeView(img);
+            }
+        });
+        am.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = ((Float) (animation.getAnimatedValue()))
+                        .floatValue();
+                double t = 2*Math.PI*value;
+                v.getLocationOnScreen(xy);
+
+                //img.setMaxWidth((int) (18 * value));
+                //img.getLayoutParams().width = (int)(200*value);
+                //img.getLayoutParams().height = 200;
+                //img.requestLayout();
+                img.setTranslationX((float) (xy[0] + 20*Math.sin(t)));
+                img.setTranslationY((float) (xy[1] - 200*value));
+                img.setAlpha((int) (255 * (1 - value)));
+                // Set translation of your view here. Position can be calculated
+                // out of value. This code should move the view in a half circle.
+
+                /*if(value>0.5){
+                    img.setImageAlpha((int)(80*(1-value)));
+                }*/
+            }
+        });
+        //img.setAnimation(am);
+        //am.startNow();
+        am.start();
+
     }
 
 
