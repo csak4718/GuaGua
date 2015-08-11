@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.facebook.CallbackManager;
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
@@ -47,8 +48,17 @@ public class MainActivityFragment extends Fragment {
 
     private LinearLayout emptyCommunityRoot;
 
+    private CallbackManager callbackManager;
+
     public MainActivityFragment() {
     }
+
+    public static Fragment newInstance(CallbackManager callbackManager) {
+        MainActivityFragment fragment = new MainActivityFragment();
+        fragment.callbackManager = callbackManager;
+        return fragment;
+    }
+
 
     public void setFilter(final String queryText) {
         mRecyclerView.post(new Runnable() {
@@ -129,7 +139,7 @@ public class MainActivityFragment extends Fragment {
         mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
 
         mList = new ArrayList<>();
-        mAdapter = new QuestionCardAdapter(getActivity(), mList);
+        mAdapter = new QuestionCardAdapter(getActivity(), mList, callbackManager);
         mAdapter.setLikeAnimation(true);
 
         mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(mAdapter);      // wrap for swiping

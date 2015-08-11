@@ -23,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.CallbackManager;
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.RefactoredDefaultItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager;
@@ -66,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
     private Handler handler = new Handler();
     private Runnable filterRunnable;
 
+    private static CallbackManager callbackManager;
+
 
     public void closeDrawer() {
         mDrawerLayout.closeDrawers();
@@ -108,9 +111,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (mCommunityAdapter.getEditMode()) {
-                    imgBtnEdit.setBackgroundDrawable(getResources().getDrawable(R.drawable.edit_pen));
+                    imgBtnEdit.setBackgroundDrawable(getResources().getDrawable(R.drawable
+                            .edit_pen));
                 } else {
-                    imgBtnEdit.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_done_black_24dp));
+                    imgBtnEdit.setBackgroundDrawable(getResources().getDrawable(R.drawable
+                            .ic_done_black_24dp));
                 }
                 mCommunityAdapter.toggleEditMode();
                 mCommunityAdapter.notifyDataSetChanged();
@@ -255,9 +260,9 @@ public class MainActivity extends AppCompatActivity {
         setupActionBar();
         setupDrawerLayout();
 
-        mainFragment = new MainActivityFragment();
+        callbackManager = CallbackManager.Factory.create();
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.content_frame, mainFragment)
+                .replace(R.id.content_frame, MainActivityFragment.newInstance(callbackManager))
                 .commit();
 
         Intent it = getIntent();
@@ -333,5 +338,9 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
 }
