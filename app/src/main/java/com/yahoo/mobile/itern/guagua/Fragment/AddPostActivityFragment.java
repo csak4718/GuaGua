@@ -184,7 +184,7 @@ public class AddPostActivityFragment extends Fragment {
         getActivity().startActivityForResult(i, ACTIVITY_SELECT_IMAGE);
     }
 
-    public void addPost(){
+    public boolean addPost(){
         final String question = edtQuestion.getText().toString();
         String optionA = "";
         String optionB = "";
@@ -192,6 +192,11 @@ public class AddPostActivityFragment extends Fragment {
         if(mTwoChoiceQuestion) {
             optionA = edtOptA.getText().toString();
             optionB = edtOptB.getText().toString();
+            if(optionA.length() == 0 || optionB.length() == 0) {
+                Toast.makeText(getActivity(), getString(R.string.post_toast_option_empty), Toast.LENGTH_SHORT)
+                        .show();
+                return false;
+            }
         }
 
         ParseObject community = ((MainApplication) getActivity().getApplication()).currentViewingCommunity;
@@ -201,5 +206,6 @@ public class AddPostActivityFragment extends Fragment {
         }
         ParseUtils.postQuestions(question, optionA, optionB, community, mTwoChoiceQuestion, bitmap);
         Utils.hideSoftKeyboard(getActivity());
+        return true;
     }
 }
