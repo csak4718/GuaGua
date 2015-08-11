@@ -18,6 +18,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -43,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.lang.Integer;
 
 import de.greenrobot.event.EventBus;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -206,6 +208,14 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
     }
 
     public void setLastLocation(Location location){
+        if(mLastLocation==null && location!=null){
+            mLastLocation = location;
+            sortCommunityList();
+            mExploreFragement.mAdapter.notifyDataSetChanged();
+            mExploreFragement.showSuggestionList();
+
+        }
+
         mLastLocation = location;
     }
 
@@ -251,6 +261,7 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
 
     //sort communities with distance to mLastLocation
     public void sortCommunityList(){
+        //update distance
         for(ParseObject com:mCommunities){
             Location comLocation = new Location(LocationManager.GPS_PROVIDER);
             comLocation.setLatitude(Double.parseDouble(com.getString("lat")));
@@ -258,8 +269,9 @@ public class CommunityActivity extends ActionBarActivity implements GoogleApiCli
             if(mLastLocation != null)
                 com.put("distance", (int)mLastLocation.distanceTo(comLocation));
             else
-                com.put("distance", (int)1E15);
+                com.put("distance", Integer.MAX_VALUE);
         }
+
 
         Collections.sort(mCommunities, new Comparator<ParseObject>() {
             @Override
