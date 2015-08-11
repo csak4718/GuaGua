@@ -165,10 +165,10 @@ public class CommentAdapter2 extends RecyclerView.Adapter<CommentAdapter2.MainVi
     private void setUpBoxLike(final OtherViewHolder holder, final ParseObject comment){
         holder.liked = mCommentLikeList.contains(comment);
         if (holder.liked){
-            holder.imgCommentLike.setImageResource(R.drawable.ic_like);
+            holder.imgCommentLike.setImageResource(R.drawable.ic_comment_like_activate);
             holder.numLikes.setTextColor(Color.RED);
         }else{
-            holder.imgCommentLike.setImageResource(R.drawable.ic_like1);
+            holder.imgCommentLike.setImageResource(R.drawable.ic_comment_like);
             holder.numLikes.setTextColor(Color.GRAY);
         }
 
@@ -181,7 +181,7 @@ public class CommentAdapter2 extends RecyclerView.Adapter<CommentAdapter2.MainVi
                     holder.liked = false;
                     ParseUtils.likeComment(comment, false);
                     holder.numLikes.setTextColor(Color.GRAY);
-                    holder.imgCommentLike.setImageResource(R.drawable.ic_like1);
+                    holder.imgCommentLike.setImageResource(R.drawable.ic_comment_like);
                     holder.numLikes.setText(String.valueOf(Integer.valueOf(holder.numLikes
                             .getText().toString
                             ()) - 1));
@@ -192,7 +192,7 @@ public class CommentAdapter2 extends RecyclerView.Adapter<CommentAdapter2.MainVi
                     holder.liked = true;
                     ParseUtils.likeComment(comment, true);
                     holder.numLikes.setTextColor(Color.RED);
-                    holder.imgCommentLike.setImageResource(R.drawable.ic_like);
+                    holder.imgCommentLike.setImageResource(R.drawable.ic_comment_like_activate);
                     holder.numLikes.setText(String.valueOf(Integer.valueOf(holder.numLikes
                             .getText().toString
                             ()) + 1));
