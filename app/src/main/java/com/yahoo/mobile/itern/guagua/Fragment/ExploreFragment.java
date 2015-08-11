@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.support.v7.widget.SearchView;
 import android.widget.TextView;
@@ -38,14 +39,15 @@ public class ExploreFragment extends Fragment {
 
     private GoogleMap mMap;
     private MapView mMapView;
+    private ProgressBar mProgressBar;
     public CommunitySuggestionAdapter mAdapter;
     private SearchView mCommunitySearchView;
     private ListView mSuggestionList;
     private LinearLayout mEditLocationLayout;
 
     private RelativeLayout mCreateCommunityLayout;
-    public TextView mNewCommunityTitle;
     private TextView mNewCommunityCreateBtn;
+    public TextView mNewCommunityTitle;
 
     public ExploreFragment() {
     }
@@ -93,7 +95,7 @@ public class ExploreFragment extends Fragment {
 
         mSuggestionList = (ListView)rootView.findViewById(R.id.list_community_suggestion);
         mAdapter = new CommunitySuggestionAdapter(mContext, R.layout.suggestion_item, ((CommunityActivity)mContext).getAllCommunities());
-        mSuggestionList.setAdapter(mAdapter);
+
 
         mNewCommunityCreateBtn = (TextView)rootView.findViewById(R.id.txt_create_community_btn);
         mNewCommunityCreateBtn.setOnClickListener(new View.OnClickListener() {
@@ -103,6 +105,7 @@ public class ExploreFragment extends Fragment {
             }
         });
 
+        mProgressBar = (ProgressBar)rootView.findViewById(R.id.progress_bar_community);
         return rootView;
     }
 
@@ -176,6 +179,12 @@ public class ExploreFragment extends Fragment {
                 }
             });
         }
+    }
+
+    public void showSuggestionList(){
+        mSuggestionList.setAdapter(mAdapter);
+        mSuggestionList.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.GONE);
     }
 
 }

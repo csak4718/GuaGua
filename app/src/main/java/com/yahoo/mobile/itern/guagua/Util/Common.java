@@ -97,6 +97,10 @@ public class Common {
     public final static String QUESTION_CARD_LIKE_NUM = "QLikes";
     public final static String QUESTION_CARD_SHARE_NUM = "shareNum";
 
+    public final static String COMMENT_PARSE_USER = "parseUser";
+    public final static String COMMENT_NICK = "nickname";
+    public final static String COMMENT_PROFILE_IMG = "profileImg";
+
     public final static String SHARED_COMMUNITY_NAME = "community";
     public final static String SHARED_COMMUNITY_KEY_ORDER = "communityOrder";
 
