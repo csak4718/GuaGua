@@ -8,6 +8,8 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_profile_setting">Profile</string>
     <string name="title_activity_add_post">AddPostActivity</string>
+    <string name="title_activity_notification">呱呱通知</string>
+
     <string name="action_settings">設定</string>
     <string name="my_favorite_tag">我的收藏</string>
     <string name="my_question_tag">我的問題</string>
@@ -18,12 +20,15 @@
     <string name="post_opt2">選項二</string>
     <string name="post_ask_2_choices_question">問二選一的問題</string>
     <string name="post_share_to_fb">分享到Facebook</string>
+    <string name="post_toast_question_empty">問題一定要填喔</string>
+    <string name="post_toast_option_empty">選項一定要填喔</string>
+
     <string name="title_activity_other_user_profile">OtherUserProfile</string>
 
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
 
-    <string name="login_fb">使用Faceboo登入</string>
+    <string name="login_fb">使用 Facebook 登入</string>
     <string name="profile_name">姓名</string>
     <string name="profile_logout_fb">登出</string>
 
