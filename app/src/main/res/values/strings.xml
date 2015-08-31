@@ -33,6 +33,7 @@
     <string name="drawer_close">Close</string>
 
 
+    <string name="fb_icon">&#xf082;</string>
     <string name="login_fb">Log in with Facebook</string>
     <string name="profile_name">Name</string>
     <string name="profile_logout_fb">Log Out</string>

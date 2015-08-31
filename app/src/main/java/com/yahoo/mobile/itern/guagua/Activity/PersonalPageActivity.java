@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.facebook.CallbackManager;
 import com.yahoo.mobile.itern.guagua.Fragment.MyFavoriteFragment;
 import com.yahoo.mobile.itern.guagua.R;
 import com.yahoo.mobile.itern.guagua.Util.Common;
@@ -16,6 +17,7 @@ import com.yahoo.mobile.itern.guagua.Util.Utils;
 public class PersonalPageActivity extends ActionBarActivity {
 
     public String tab;
+    private static CallbackManager callbackManager;
 
     private void setupActionBar() {
         ActionBar actionBar = getSupportActionBar();
@@ -30,6 +32,8 @@ public class PersonalPageActivity extends ActionBarActivity {
         setContentView(R.layout.activity_personal_page);
         setupActionBar();
 
+        callbackManager = CallbackManager.Factory.create();
+
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             if(extras == null) {
@@ -39,7 +43,7 @@ public class PersonalPageActivity extends ActionBarActivity {
             }
 
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            MyFavoriteFragment fragment = MyFavoriteFragment.newInstance(tab);
+            MyFavoriteFragment fragment = MyFavoriteFragment.newInstance(tab, callbackManager);
             transaction.replace(R.id.sample_content_fragment, fragment);
             transaction.commit();
         } else{
@@ -71,5 +75,10 @@ public class PersonalPageActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 }

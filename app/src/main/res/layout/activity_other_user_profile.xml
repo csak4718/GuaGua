@@ -20,12 +20,12 @@
         android:id="@+id/btn_view_other_on_fb"
         android:text="View Fan Fan on Facebook"
         android:textColor="@android:color/white"
-        android:paddingLeft="40dp"
         android:gravity="center"
+        android:paddingLeft="30dp"
         android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_margin="20dp"
-        android:background="@drawable/fb_btn_background"/>
+        android:background="@drawable/login_fb"/>
 
 </LinearLayout>

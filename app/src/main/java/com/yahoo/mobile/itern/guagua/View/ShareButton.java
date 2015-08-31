@@ -62,6 +62,9 @@ public class ShareButton extends LinearLayout {
         }
         badgeCount.setText(str);
     }
+    public int getShareNum(){
+        return Integer.valueOf(badgeCount.getText().toString());
+    }
     public void setTextAlpha(int i){
         int color = badgeCount.getCurrentTextColor();
         int newColor = Color.argb(i, Color.red(color), Color.green(color), Color

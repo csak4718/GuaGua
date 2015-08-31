@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.facebook.CallbackManager;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.yahoo.mobile.itern.guagua.Adapter.QuestionCardAdapter;
@@ -34,9 +35,15 @@ public class MyQuestionFragment extends Fragment {
     private RecyclerView.LayoutManager mLayoutManager;
     private List<ParseObject> mQuestions;
     private QuestionCardAdapter mAdapter;
+    CallbackManager callbackManager;
 
     private LinearLayout emptyQuestionRoot;
 
+    public static Fragment newInstance(CallbackManager callbackManager) {
+        MyQuestionFragment fragment = new MyQuestionFragment();
+        fragment.callbackManager = callbackManager;
+        return fragment;
+    }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +51,7 @@ public class MyQuestionFragment extends Fragment {
         mUser = ParseUser.getCurrentUser();
         ParseUtils.getMyQuestions(mUser);
         mQuestions = new ArrayList<>();
-        mAdapter = new QuestionCardAdapter(getActivity(), mQuestions);
+        mAdapter = new QuestionCardAdapter(getActivity(), mQuestions, callbackManager);
     }
 
     @Override

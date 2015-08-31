@@ -6,8 +6,10 @@
     android:background="@android:color/white">
     
     <RelativeLayout
+        android:id="@+id/drawer_txt_view_personal"
         android:layout_width="match_parent"
         android:layout_height="150dp"
+        android:clickable="true"
         android:background="#B3E8E3">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -33,7 +35,6 @@
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@+id/drawer_img_profile"/>
         <TextView
-            android:id="@+id/drawer_txt_view_personal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/drawer_view_personal_page"
